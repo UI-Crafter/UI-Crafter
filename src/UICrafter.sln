@@ -8,7 +8,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UICrafter.Client", "UICraft
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UICrafter.Mobile", "UICrafter.Mobile\UICrafter.Mobile.csproj", "{49308044-B1A6-423C-84F7-A2FC4CF54BFB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UICrafter.Core", "UICrafter.Core\UICrafter.Core.csproj", "{3C31D310-1609-40AE-B528-C8CAB3E943C9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UICrafter.Core", "UICrafter.Core\UICrafter.Core.csproj", "{3C31D310-1609-40AE-B528-C8CAB3E943C9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
