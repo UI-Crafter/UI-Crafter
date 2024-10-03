@@ -1,4 +1,4 @@
-﻿namespace UICrafter.Client.Handlers;
+namespace UICrafter.Core.Handlers;
 
 public interface IUserHandler
 {

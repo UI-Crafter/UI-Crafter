@@ -1,5 +1,6 @@
-﻿
 namespace UICrafter.Client.Handlers;
+
+using UICrafter.Core.Handlers;
 
 public class UserHandler : IUserHandler
 {

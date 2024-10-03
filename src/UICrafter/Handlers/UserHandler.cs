@@ -1,12 +1,9 @@
-﻿namespace UICrafter.Handlers;
+namespace UICrafter.Handlers;
 
 using System.Collections.Generic;
-using UICrafter.Client.Handlers;
+using UICrafter.Core.Handlers;
 
 public class UserHandler : IUserHandler
 {
-    public IEnumerable<dynamic> GetUsers()
-    {
-        throw new NotImplementedException(); // EF Core
-    }
+	public IEnumerable<dynamic> GetUsers() => throw new NotImplementedException(); // EF Core
 }
