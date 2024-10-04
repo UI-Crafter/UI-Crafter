@@ -1,10 +1,9 @@
-﻿namespace UICrafter.Mobile
+﻿namespace UICrafter.Mobile;
+
+public partial class MainPage : ContentPage
 {
-    public partial class MainPage : ContentPage
-    {
-        public MainPage()
-        {
-            InitializeComponent();
-        }
-    }
+	public MainPage()
+	{
+		InitializeComponent();
+	}
 }

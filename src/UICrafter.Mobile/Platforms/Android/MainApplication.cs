@@ -1,10 +1,10 @@
-namespace UICrafter.Mobile;
+namespace UICrafter.Mobile.Platforms.Android;
 
-using Android.App;
-using Android.Runtime;
+using global::Android.App;
+using global::Android.Runtime;
 
 [Application]
-public class MainApplication(IntPtr handle, JniHandleOwnership ownership) : MauiApplication(handle, ownership)
+public class MainApplication(nint handle, JniHandleOwnership ownership) : MauiApplication(handle, ownership)
 {
 	protected override MauiApp CreateMauiApp() => MauiProgram.CreateMauiApp();
 }
