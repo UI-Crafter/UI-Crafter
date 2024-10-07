@@ -1,7 +1,98 @@
 @page "/uicrafter"
 
-<h3>UICrafterPage</h3>
+<div style="display: flex;">
+    <!-- Left section: Component Grid (15%) -->
+    <div style="width: 15%; padding-right: 1rem;">
+        <MudText Style="padding-bottom: 1rem;">Components:</MudText>
+        <MudGrid>
+            <MudItem xs="4" Class="component-item">
+                <MudIconButton Icon="@Icons.Material.Filled.SmartButton" Variant="Variant.Outlined" Class="square-icon"/>
+                <MudText>Button</MudText>
+            </MudItem>
+
+            <MudItem xs="4" Class="component-item">
+                <MudPaper Elevation="4" Class="square-icon">
+                    <MudIcon Icon="@Icons.Material.Filled.TextFields" />
+                </MudPaper>
+                <MudText>Textbox</MudText>
+            </MudItem>
+
+            <MudItem xs="4" Class="component-item">
+                <MudPaper Elevation="4" Class="square-icon">
+                    <MudIcon Icon="@Icons.Material.Filled.Input" />
+                </MudPaper>
+                <MudText>Input</MudText>
+            </MudItem>
+
+            <MudItem xs="4" Class="component-item">
+                <MudPaper Elevation="4" Class="square-icon">
+                    <MudIcon Icon="@Icons.Material.Filled.List" />
+                </MudPaper>
+                <MudText>List</MudText>
+            </MudItem>
+        </MudGrid>
+    </div>
+
+    <!-- Center section: Dropzone (70%) -->
+    <div style="width: 70%; display: flex; justify-content: center; align-items: center;">
+        <MudDropContainer T="DropItem" Items="_items" ItemsSelector="@((item,dropzone) => item.Identifier == dropzone)" ItemDropped="ItemUpdated" Class="d-flex flex-wrap flex-grow-1">
+            <ChildContent>
+                <MudDropZone T="DropItem" Identifier="Drop Zone 1" AllowReorder="true" Class="rounded mud-background-gray pa-6 ma-8 flex-grow-1">
+                    <MudText Typo="Typo.h6" Class="mb-4">App-view:</MudText>
+                </MudDropZone>
+            </ChildContent>
+            <ItemRenderer>
+                <MudPaper Elevation="25" Class="pa-4 my-4">@context.Name</MudPaper>
+            </ItemRenderer>
+        </MudDropContainer>
+    </div>
+
+    <!-- Right section: Properties (15%) -->
+    <div style="width: 15%; padding-left: 1rem;">
+        <MudText Style="padding-bottom: 1rem;">Properties:</MudText>
+    </div>
+</div>
+
 
 @code {
+    private void ItemUpdated(MudItemDropInfo<DropItem> dropItem)
+    {
+        dropItem.Item.Identifier = dropItem.DropzoneIdentifier;
+    }
 
+    private List<DropItem> _items = new()
+    {
+        new DropItem(){ Name = "Drag me!", Identifier = "Drop Zone 1" },
+        new DropItem(){ Name = "Or me!", Identifier = "Drop Zone 1" },
+        new DropItem(){ Name = "Just Mud", Identifier = "Drop Zone 1" },
+    };
+
+    public class DropItem
+    {
+        public string Name { get; init; }
+        public string Identifier { get; set; }
+    }
 }
+
+<style>
+    .square-icon {
+        width: 2.5rem; 
+        height: 2.5rem; 
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 0.25rem;
+    }
+
+    .square-icon:hover {
+            background-color: var(--mud-palette-info);
+    }
+
+    .component-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        text-align: center;
+    }
+</style>
