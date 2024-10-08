@@ -42,7 +42,14 @@
                 </MudDropZone>
             </ChildContent>
             <ItemRenderer>
-                <MudPaper Elevation="25" Class="pa-4 my-4">@context.Name</MudPaper>
+                @if (context.Name == "Drag me!")
+                {
+                    <MudPaper Elevation="25" Style="background: red;" Class="pa-4 my-4">@context.Name</MudPaper>
+                }
+                else
+                {
+                    <MudPaper Elevation="25" Class="pa-4 my-4">@context.Name</MudPaper>
+                }
             </ItemRenderer>
         </MudDropContainer>
     </div>
