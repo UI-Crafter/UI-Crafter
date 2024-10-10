@@ -15,6 +15,7 @@
 
   <ItemGroup>
     <Folder Include="API\" />
+    <Folder Include="wwwroot\css\" />
   </ItemGroup>
 
 </Project>
