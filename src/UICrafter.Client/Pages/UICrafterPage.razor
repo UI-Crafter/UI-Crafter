@@ -1,56 +1,53 @@
 @page "/uicrafter"
 
-<div style="display: flex;">
+<div style="display: flex; flex-direction: row;">
     <!-- Left section: Component Grid (15%) -->
-    <div style="width: 15%; padding-right: 1rem;">
-        <MudText Style="padding-bottom: 1rem;">Components:</MudText>
-        <MudGrid>
-            <MudItem xs="4" Class="d-flex flex-column justify-start align-center">
-                <MudIconButton Icon="@Icons.Material.Filled.SmartButton" Variant="Variant.Outlined" OnClick=@AddNewButton Size="Size.Large" />
-                <MudText>Button</MudText>
-            </MudItem>
+    <div style="width: 15%; padding-right: 1rem; display: flex; flex-direction: column;">
+        <MudText Class="">Components:</MudText>
 
-            <MudItem xs="4" Class="d-flex flex-column justify-start align-center">
-                <MudIconButton Icon="@Icons.Material.Filled.TextFields" Variant="Variant.Outlined" OnClick=@AddNewTextbox Size="Size.Large" />
-                <MudText>Textbox</MudText>
-            </MudItem>
+        <MudContainer Class="rounded mud-background-gray pa-4 my-2">
+            <MudGrid>
+                <MudItem sm="12" lg="4" Class="d-flex flex-column justify-start align-center">
+                    <MudIconButton Icon="@Icons.Material.Filled.SmartButton" Variant="Variant.Outlined" OnClick=@AddNewButton Size="Size.Large" />
+                    <MudText>Button</MudText>
+                </MudItem>
 
-            <MudItem xs="4" Class="d-flex flex-column justify-start align-center">
-                <MudIconButton Icon="@Icons.Material.Filled.Input" Variant="Variant.Outlined" OnClick=@AddNewInputField Size="Size.Large" />
-                <MudText>Input</MudText>
-            </MudItem>
-        </MudGrid>
+                <MudItem sm="12" lg="4" Class="d-flex flex-column justify-start align-center">
+                    <MudIconButton Icon="@Icons.Material.Filled.TextFields" Variant="Variant.Outlined" OnClick=@AddNewTextbox Size="Size.Large" />
+                    <MudText>Textbox</MudText>
+                </MudItem>
+
+                <MudItem sm="12" lg="4" Class="d-flex flex-column justify-start align-center">
+                    <MudIconButton Icon="@Icons.Material.Filled.Input" Variant="Variant.Outlined" OnClick=@AddNewInputField Size="Size.Large" />
+                    <MudText>Input</MudText>
+                </MudItem>
+            </MudGrid>
+        </MudContainer>
     </div>
 
-    <!-- Center section: Dropzone (70%) -->
-    <div style="width: 70%; display: flex; justify-content: center; align-items: center;">
+    <!-- Center section: Dropzone (60%) -->
+    <div style="width: 60%; display: flex; flex-direction: column; align-items: center;">
+        <MudText>App-view:</MudText>
+
         <MudContainer MaxWidth="MaxWidth.Small">
             <MudDropContainer T="UIComponent" @ref="_dropContainer" Items="_uIComponents" ItemsSelector="@((item,dropzone) => item.DropZoneID == dropzone)" ItemDropped="ComponentUpdated" Class="d-flex flex-wrap flex-grow-1">
                 <ChildContent>
-                    <MudDropZone T="UIComponent" Identifier="Drop Zone 1" AllowReorder="true" Class="rounded mud-background-gray pa-6 ma-8 flex-grow-1">
-                        <MudText Typo="Typo.h6" Class="mb-4">App-view:</MudText>
+                    <MudDropZone T="UIComponent" Identifier="Drop Zone 1" AllowReorder="true" Class="rounded mud-background-gray pa-2 my-2 flex-grow-1" Style="height: 45rem; overflow: auto;">
                     </MudDropZone>
                 </ChildContent>
                 <ItemRenderer>
                     @if (context is UIButton button)
                     {
-                        @* <MudPaper Elevation="4" Class="pa-4 my-4">"@button.Label, @button.Color"</MudPaper> *@
-                        <MudButton Variant="Variant.Filled" Color="@Color.Primary">@button.Label, @button.URL</MudButton>
+                        <MudButton Class="mb-2" Variant="Variant.Filled">@button.Label, @button.URL</MudButton>
                     }
                     else if (context is UIInputField inputField)
                     {
-                        @* <MudPaper Elevation="4" Class="pa-4 my-4">"@inputField.Value, @inputField.Placeholder"</MudPaper> *@
-                        <MudTextField @bind-Value="@inputField.Value" Label="@inputField.Placeholder" Variant="Variant.Outlined"></MudTextField>
+                        <MudTextField @bind-Value="@inputField.Value" Class="mb-2" Label="@inputField.Placeholder" Variant="Variant.Outlined"></MudTextField>
                         @* <MudText Typo="Typo.subtitle1">Current Value: @inputField.Value</MudText> *@
                     }
                     else if (context is UITextBox textBox)
                     {
-                        @* <MudPaper Elevation="4" Class="pa-4 my-4">"@textBox.Content"</MudPaper> *@
-                        @* <MudText Typo="Typo.body1">@textBox.Content</MudText> *@
-                        <MudPaper Elevation="2" Style="padding: 8px; border: 1px solid black;">
-                            <MudText Typo="Typo.body1">@textBox.Content</MudText>
-                        </MudPaper>
-
+                        <MudTextField @bind-Value="@textBox.Content" Label="@textBox.Label" ReadOnly="true" ShrinkLabel="true" Lines=@textBox.NumberOfLines Variant="Variant.Outlined" />
                     }
                     else
                     {
@@ -61,41 +58,51 @@
         </MudContainer>
     </div>
 
-    <!-- Right section: Properties (15%) -->
-    <div style="width: 15%; padding-left: 1rem;">
-        <MudText Style="padding-bottom: 1rem;">Properties:</MudText>
+    <!-- Right section: Properties (25%) -->
+    <div style="width: 25%; padding-left: 1rem; display: flex; flex-direction: column;">
+        <MudText>Properties:</MudText>
 
-        @if (_selectedComponent is not null)
-        {
-            @if (_selectedComponent is UIButton button)
+        <MudContainer Class="rounded mud-background-gray pa-4 my-2">
+            @if (_selectedComponent is not null)
             {
-                <MudTextField @bind-Value="button.Label" Label="Button Label" Variant="Variant.Outlined"></MudTextField>
-                <MudTextField @bind-Value="button.URL" Label="Button URL" Variant="Variant.Outlined"></MudTextField>
+                @if (_selectedComponent is UIButton button)
+                {
+                    <MudTextField @bind-Value="button.Label" Class="pa-2" Label="Button Label" Variant="Variant.Outlined" MaxLength="25"></MudTextField>
+                    <MudTextField @bind-Value="button.URL" Class="pa-2" Label="Button URL" Variant="Variant.Outlined"></MudTextField>
+                }
+                else if (_selectedComponent is UIInputField inputField)
+                {
+                    <MudTextField @bind-Value="inputField.Placeholder" Class="pa-2" Label="Input Placeholder" Variant="Variant.Outlined" MaxLength="25"></MudTextField>
+                }
+                else if (_selectedComponent is UITextBox textBox)
+                {
+                    <MudTextField @bind-Value="textBox.Label" Class="pa-2" Label="Textbox label" Variant="Variant.Outlined"></MudTextField>
+                    <MudTextField @bind-Value="textBox.NumberOfLines" Class="pa-2" Label="Textbox Content" Variant="Variant.Outlined"></MudTextField>
+                    <MudTextField @bind-Value="textBox.Content" Class="pa-2" Label="Textbox Content" Variant="Variant.Outlined" Lines="4"></MudTextField>
+                }
+                <MudContainer Class="d-flex justify-center gap-4 my-2">
+                    <MudIconButton Icon="@Icons.Material.Filled.Save" Variant="Variant.Outlined" OnClick=@SaveSelectedComponent Size="Size.Large" />
+                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Variant="Variant.Outlined" OnClick=@DeleteSelectedComponent Size="Size.Large" />
+                </MudContainer>
             }
-            else if (_selectedComponent is UIInputField inputField)
+            else
             {
-                <MudTextField @bind-Value="inputField.Placeholder" Label="Input Placeholder" Variant="Variant.Outlined"></MudTextField>
+                <MudText Typo="Typo.body1">No component selected.</MudText>
             }
-            else if (_selectedComponent is UITextBox textBox)
-            {
-                <MudTextField @bind-Value="textBox.Content" Label="Textbox Content" Variant="Variant.Outlined"></MudTextField>
-            }
-        }
-        else
-        {
-            <MudText Typo="Typo.body1">No component selected.</MudText>
-        }
+        </MudContainer>
     </div>
 </div>
 
 
 @code {
-    private MudDropContainer<UIComponent> _dropContainer;
-    private UIComponent _selectedComponent;
+    private MudDropContainer<UIComponent>? _dropContainer;
+    private UIComponent? _selectedComponent;
     private List<UIComponent> _uIComponents = new() { };
 
     private void ComponentUpdated(MudItemDropInfo<UIComponent> component)
     {
+        if (component is null || component.Item is null) return;
+
         component.Item.DropZoneID = component.DropzoneIdentifier;
         _selectedComponent = component.Item;
     }
@@ -110,21 +117,35 @@
     {
         AddNewUIComponent(new UIButton { Label = "New Button", URL = "" });
         // _uIComponents.Add(new UIButton { Label = "New Button", URL = "www.soup.dk" });
-        // _dropContainer.Refresh();
+        _dropContainer?.Refresh();
     }
 
     private void AddNewInputField()
     {
         AddNewUIComponent(new UIInputField { Placeholder = "New Input Field" });
         // _uIComponents.Add(new UIInputField { Placeholder = "New Input Field" });
-        // _dropContainer.Refresh();
+        _dropContainer?.Refresh();
     }
 
     private void AddNewTextbox()
     {
-        AddNewUIComponent(new UITextBox { Content = "New Textbox" });
+        AddNewUIComponent(new UITextBox { Content = "New Textbox", Label = "New Textbox" });
         // _uIComponents.Add(new UITextBox { Content = "New Textbox" });
-        // _dropContainer.Refresh();
+        _dropContainer?.Refresh();
+    }
+
+    private void DeleteSelectedComponent()
+    {
+        if (_selectedComponent is null) return;
+
+        _uIComponents.Remove(_selectedComponent);
+        _selectedComponent = null;
+        _dropContainer?.Refresh();
+    }
+
+    private void SaveSelectedComponent()
+    {
+        _dropContainer?.Refresh();
     }
 
     public abstract class UIComponent
@@ -150,6 +171,8 @@
     public class UITextBox : UIComponent
     {
         public override string Type { get; } = "TextBox";
+        public string Label { get; set; } = "";
         public string Content { get; set; } = "";
+        public int NumberOfLines { get; set; } = 2;
     }
 }
