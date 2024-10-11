@@ -5,22 +5,18 @@
     <div style="width: 15%; padding-right: 1rem;">
         <MudText Style="padding-bottom: 1rem;">Components:</MudText>
         <MudGrid>
-            <MudItem xs="4" Class="component-item">
+            <MudItem xs="4" Class="d-flex flex-column justify-start align-center">
+                <MudIconButton Icon="@Icons.Material.Filled.SmartButton" Variant="Variant.Outlined" OnClick=@AddNewButton Size="Size.Large" />
+                <MudText>Button</MudText>
+            </MudItem>
+
+            <MudItem xs="4" Class="d-flex flex-column justify-start align-center">
                 <MudIconButton Icon="@Icons.Material.Filled.TextFields" Variant="Variant.Outlined" OnClick=@AddNewTextbox Size="Size.Large" />
                 <MudText>Textbox</MudText>
             </MudItem>
 
-            <MudItem xs="4" Class="component-item">
-                <MudPaper Elevation="4" Class="square-icon" @onclick="AddNewButton">
-                    <MudIcon Icon="@Icons.Material.Filled.SmartButton" />
-                </MudPaper>
-                <MudText>Button</MudText>
-            </MudItem>
-
-            <MudItem xs="4" Class="component-item">
-                <MudPaper Elevation="4" Class="square-icon" @onclick="AddNewInputField">
-                    <MudIcon Icon="@Icons.Material.Filled.Input" />
-                </MudPaper>
+            <MudItem xs="4" Class="d-flex flex-column justify-start align-center">
+                <MudIconButton Icon="@Icons.Material.Filled.Input" Variant="Variant.Outlined" OnClick=@AddNewInputField Size="Size.Large" />
                 <MudText>Input</MudText>
             </MudItem>
         </MudGrid>
@@ -68,11 +64,69 @@
     <!-- Right section: Properties (15%) -->
     <div style="width: 15%; padding-left: 1rem;">
         <MudText Style="padding-bottom: 1rem;">Properties:</MudText>
+
+        @if (_selectedComponent is not null)
+        {
+            @if (_selectedComponent is UIButton button)
+            {
+                <MudTextField @bind-Value="button.Label" Label="Button Label" Variant="Variant.Outlined"></MudTextField>
+                <MudTextField @bind-Value="button.URL" Label="Button URL" Variant="Variant.Outlined"></MudTextField>
+            }
+            else if (_selectedComponent is UIInputField inputField)
+            {
+                <MudTextField @bind-Value="inputField.Placeholder" Label="Input Placeholder" Variant="Variant.Outlined"></MudTextField>
+            }
+            else if (_selectedComponent is UITextBox textBox)
+            {
+                <MudTextField @bind-Value="textBox.Content" Label="Textbox Content" Variant="Variant.Outlined"></MudTextField>
+            }
+        }
+        else
+        {
+            <MudText Typo="Typo.body1">No component selected.</MudText>
+        }
     </div>
 </div>
 
 
 @code {
+    private MudDropContainer<UIComponent> _dropContainer;
+    private UIComponent _selectedComponent;
+    private List<UIComponent> _uIComponents = new() { };
+
+    private void ComponentUpdated(MudItemDropInfo<UIComponent> component)
+    {
+        component.Item.DropZoneID = component.DropzoneIdentifier;
+        _selectedComponent = component.Item;
+    }
+
+    private void AddNewUIComponent(UIComponent component)
+    {
+        _uIComponents.Add(component);
+        _selectedComponent = component;
+    }
+
+    private void AddNewButton()
+    {
+        AddNewUIComponent(new UIButton { Label = "New Button", URL = "" });
+        // _uIComponents.Add(new UIButton { Label = "New Button", URL = "www.soup.dk" });
+        // _dropContainer.Refresh();
+    }
+
+    private void AddNewInputField()
+    {
+        AddNewUIComponent(new UIInputField { Placeholder = "New Input Field" });
+        // _uIComponents.Add(new UIInputField { Placeholder = "New Input Field" });
+        // _dropContainer.Refresh();
+    }
+
+    private void AddNewTextbox()
+    {
+        AddNewUIComponent(new UITextBox { Content = "New Textbox" });
+        // _uIComponents.Add(new UITextBox { Content = "New Textbox" });
+        // _dropContainer.Refresh();
+    }
+
     public abstract class UIComponent
     {
         public virtual string Type { get; } = "";
@@ -98,60 +152,4 @@
         public override string Type { get; } = "TextBox";
         public string Content { get; set; } = "";
     }
-
-    private void ComponentUpdated(MudItemDropInfo<UIComponent> component)
-    {
-        component.Item.DropZoneID = component.DropzoneIdentifier;
-    }
-
-    private List<UIComponent> _uIComponents = new()
-    {
-        
-    };
-
-    private MudDropContainer<UIComponent> _dropContainer;
-
-    // Add new button component
-    private void AddNewButton()
-    {
-        _uIComponents.Add(new UIButton { Label = "New Button", URL = "www.soup.dk" });
-        _dropContainer.Refresh();
-    }
-
-    // Add new input field component
-    private void AddNewInputField()
-    {
-        _uIComponents.Add(new UIInputField { Placeholder = "New Input Field" });
-        _dropContainer.Refresh();
-    }
-
-    // Add new textbox component
-    private void AddNewTextbox()
-    {
-        _uIComponents.Add(new UITextBox { Content = "New Textbox" });
-        _dropContainer.Refresh();
-    }
 }
-
-<style>
-    .square-icon {
-        width: 2.5rem;
-        height: 2.5rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-bottom: 0.25rem;
-    }
-
-        .square-icon:hover {
-            background-color: var(--mud-palette-info);
-        }
-
-    .component-item {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: flex-start;
-        text-align: center;
-    }
-</style>
