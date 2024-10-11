@@ -1,11 +1,11 @@
 @page "/uicrafter"
 
-<div style="display: flex; flex-direction: row;">
+<MudStack Row="true">
     <!-- Left section: Component Grid (15%) -->
-    <div style="width: 15%; padding-right: 1rem; display: flex; flex-direction: column;">
+    <MudStack Style="width: 15%;">
         <MudText Class="">Components:</MudText>
 
-        <MudContainer Class="rounded mud-background-gray pa-4 my-2">
+        <MudContainer Class="rounded mud-background-gray pa-4">
             <MudGrid>
                 <MudItem sm="12" lg="4" Class="d-flex flex-column justify-start align-center">
                     <MudIconButton Icon="@Icons.Material.Filled.SmartButton" Variant="Variant.Outlined" OnClick=@AddNewButton Size="Size.Large" />
@@ -23,16 +23,16 @@
                 </MudItem>
             </MudGrid>
         </MudContainer>
-    </div>
+    </MudStack>
 
     <!-- Center section: Dropzone (60%) -->
-    <div style="width: 60%; display: flex; flex-direction: column; align-items: center;">
+    <MudStack Style="width: 60%;" Class="align-center">
         <MudText>App-view:</MudText>
 
         <MudContainer MaxWidth="MaxWidth.Small">
             <MudDropContainer T="UIComponent" @ref="_dropContainer" Items="_uIComponents" ItemsSelector="@((item,dropzone) => item.DropZoneID == dropzone)" ItemDropped="ComponentUpdated" Class="d-flex flex-wrap flex-grow-1">
                 <ChildContent>
-                    <MudDropZone T="UIComponent" Identifier="Drop Zone 1" AllowReorder="true" Class="rounded mud-background-gray pa-2 my-2 flex-grow-1" Style="height: 45rem; overflow: auto;">
+                    <MudDropZone T="UIComponent" Identifier="Drop Zone 1" AllowReorder="true" Class="rounded mud-background-gray pa-2 flex-grow-1" Style="height: 45rem; overflow: auto;">
                     </MudDropZone>
                 </ChildContent>
                 <ItemRenderer>
@@ -55,10 +55,10 @@
                 </ItemRenderer>
             </MudDropContainer>
         </MudContainer>
-    </div>
+    </MudStack>
 
     <!-- Right section: Properties (25%) -->
-    <div style="width: 25%; padding-left: 1rem; display: flex; flex-direction: column;">
+    <MudStack Style="width: 25%;">
         <MudText>Properties:</MudText>
 
         <MudStack Class="rounded mud-background-gray pa-4 my-2 ">
@@ -89,8 +89,8 @@
                 <MudText Typo="Typo.body1">No component selected.</MudText>
             }
         </MudStack>
-    </div>
-</div>
+    </MudStack>
+</MudStack>
 
 
 @code {
