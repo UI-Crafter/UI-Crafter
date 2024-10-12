@@ -9,13 +9,19 @@
 
   <ItemGroup>
     <ProjectReference Include="..\UICrafter.Client\UICrafter.Client.csproj" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.8" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.10" />
   </ItemGroup>
 
 
   <ItemGroup>
     <Folder Include="API\" />
     <Folder Include="wwwroot\css\" />
+  </ItemGroup>
+
+
+  <ItemGroup>
+    <None Include="..\UICrafter.Mobile\Components\Pages\MyMudButton.razor" Link="MyMudButton.razor" />
+    <None Include="..\UICrafter.Mobile\Components\Pages\PocButton.razor" Link="PocButton.razor" />
   </ItemGroup>
 
 </Project>

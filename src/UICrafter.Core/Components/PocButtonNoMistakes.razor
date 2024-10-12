@@ -1,0 +1,79 @@
+@using MudBlazor
+@using UICrafter.Core.Models
+@using System.Diagnostics
+@using Microsoft.AspNetCore.Components
+@using System.Net.Http
+@using System.Net.Http.Json
+
+@inject HttpClient Http
+
+<MudButton OnClick="CallApi"
+           Color="@GetColor()"
+           Disabled="@IsDisabled()">
+    @Model.Name
+</MudButton>
+
+@if (!string.IsNullOrEmpty(Model.JSONResponse))
+{
+    <div>
+        <h4>API Response:</h4>
+        <pre>@Model.JSONResponse</pre>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public PocButtonModel Model { get; set; }
+
+    [Parameter]
+    public EventCallback<string> OnApiResponseReceived { get; set; }
+
+    public async Task CallApi()
+    {
+        if (!string.IsNullOrEmpty(Model.URL))
+        {
+            try
+            {
+                // Make the API call
+                Model.JSONResponse = await Http.GetStringAsync(Model.URL);
+                await OnApiResponseReceived.InvokeAsync(Model.JSONResponse);
+                Debug.WriteLine("API call succeeded");
+            }
+            catch (Exception ex)
+            {
+                Model.JSONResponse = $"Error: {ex.Message}";
+                Debug.WriteLine($"API call failed: {ex.Message}");
+            }
+        }
+        else
+        {
+            Model.JSONResponse = "No URL specified for API call.";
+        }
+    }
+    // private void OnClick()
+    // {
+    //     // Button click logic (if any)
+    //     Debug.WriteLine($"{Model.Name} Button Clicked!");
+    // }
+
+    private Color GetColor()
+    {
+        // Map the string color from Model.Color to MudBlazor's Color enum
+        return Model.Color?.ToLower() switch
+        {
+            "primary" => Color.Primary,
+            "secondary" => Color.Secondary,
+            "success" => Color.Success,
+            "error" => Color.Error,
+            "warning" => Color.Warning,
+            "info" => Color.Info,
+            _ => Color.Default // Fallback to default if no match
+        };
+    }
+
+    private bool IsDisabled()
+    {
+        // You can add logic to disable the button if necessary
+        return Model.Id == null; // For example, disable if no ID is set
+    }
+}

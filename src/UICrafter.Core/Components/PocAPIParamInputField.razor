@@ -1,0 +1,33 @@
+@using MudBlazor
+@using UICrafter.Core.Models
+
+<MudNumericField @bind-Value="Model.ParamIndex"
+                 Label="@Model.Name"
+                 Color="@GetColor()"
+                 Variant="Variant.Outlined"
+                 Min="0">
+</MudNumericField>
+
+@if (Model.ParamIndex.HasValue)
+{
+    <div>Parameter Index: @Model.ParamIndex</div>
+}
+
+@code {
+    [Parameter]
+    public PocAPIParamInputFieldModel Model { get; set; }
+
+    private Color GetColor()
+    {
+        return Model.Color?.ToLower() switch
+        {
+            "primary" => Color.Primary,
+            "secondary" => Color.Secondary,
+            "success" => Color.Success,
+            "error" => Color.Error,
+            "warning" => Color.Warning,
+            "info" => Color.Info,
+            _ => Color.Default
+        };
+    }
+}

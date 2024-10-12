@@ -1,0 +1,134 @@
+@* @page "/appview"
+
+<h3>AppView</h3>
+
+<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="LoadView">
+    Load View
+</MudButton>
+
+@if (testlist.Count > 1)
+{
+    @foreach (int i in testlist)
+    {
+        if (i == 1)
+        {
+            <MudButton Variant="Variant.Filled" Color="Color.Secondary">
+                I Loaded a MudBlazor Button
+            </MudButton>
+        }
+    }
+}
+
+@code {
+    List<int> testlist = new List<int> { 1 };
+
+    void LoadView()
+    {
+        // Add items to the list
+        for (int i = 1; i < 10; i++)
+        {
+            testlist.Add(i);
+        }
+
+        // Trigger a UI refresh
+        StateHasChanged();
+    }
+} *@
+
+
+
+@* @page "/appview"
+
+<h3>AppView</h3>
+
+<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="LoadView">
+    Load View
+</MudButton>
+
+@if (componentTypeList.Count > 0)
+{
+    @foreach (var componentType in componentTypeList)
+    {
+        <DynamicComponent Type="@componentType" />
+    }
+}
+
+@code {
+    // List of component types
+    List<Type> componentTypeList = new List<Type>();
+
+    void LoadView()
+    {
+        // Clear the existing component type list
+        componentTypeList.Clear();
+
+        // Add component types to the list (these should be component classes)
+        componentTypeList.Add(typeof(MyFirstComponent));
+        componentTypeList.Add(typeof(MySecondComponent));
+
+        // Trigger a UI refresh
+        StateHasChanged();
+    }
+} *@
+
+
+@page "/appview"
+@using System.Diagnostics
+@using UICrafter.Core.Components
+
+<h3>Dynamic Component List</h3>
+
+<!-- Button to add a variety of components to the list -->
+<MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="AddComponentsToList">
+    Add Component to List
+</MudButton>
+
+
+<TestComponent />
+
+@foreach (var component in componentList)
+{
+    @component
+}
+
+@code {
+    // List of RenderFragments to store dynamic components
+    List<RenderFragment> componentList = new List<RenderFragment>();
+    int index = 0;
+    // Method to add components to the list when the button is clicked
+    void AddComponentsToList()
+    {
+        componentList.Clear();
+
+        componentList.Add(CreateButtonComponent($"Button {index}", Color.Secondary));
+
+        componentList.Add(CreateLabelComponent($"Label {index}"));
+
+        componentList.Add(CreateTextBoxComponent($"TextBox {index}", $"Default {index}"));
+
+        index++;
+
+        // Trigger UI update
+        StateHasChanged();
+
+        
+    }
+
+    // Create a RenderFragment for a custom MudButton component
+    RenderFragment CreateButtonComponent(string buttonText, Color color) => @<PocButton ButtonText="@buttonText" ButtonColor="@color" OnClick="() => OnButtonClick(buttonText)" />;
+
+    // Create a RenderFragment for a simple label component
+    RenderFragment CreateLabelComponent(string labelText) => @<MudText Typo="Typo.h6">@labelText</MudText>;
+
+    // Create a RenderFragment for a custom MudTextField (TextBox) component
+    RenderFragment CreateTextBoxComponent(string label, string value) => @<MudTextField Label="@label" Value="@value" Variant="Variant.Filled" />;
+
+    // Handle the button click event
+    void OnButtonClick(string buttonText)
+    {
+        Debug.WriteLine($"{buttonText} clicked");
+    }
+}
+
+
+
