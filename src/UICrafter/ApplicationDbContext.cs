@@ -5,10 +5,11 @@ using UICrafter.Models;
 
 public class ApplicationDbContext : DbContext
 {
-
 	public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
 	public DbSet<AppViewEntity> AppViews { get; set; }
+
+	protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder) { }
 
 	protected override void OnModelCreating(ModelBuilder modelBuilder)
 	{
@@ -30,11 +31,12 @@ public class ApplicationDbContext : DbContext
 			entity.Property(e => e.CreatedAtUTC)
 				.IsRequired();
 
-			entity.Property(e => e.UpdatedAtURC)
-			.IsRequired();
+			entity.Property(e => e.UpdatedAtUTC)
+				.IsRequired();
 
 			entity.HasIndex(e => e.UserId)
-			  .HasDatabaseName("IX_AppViewEntity_UserId");
+				  .HasDatabaseName("IX_AppViewEntity_UserId");
 		});
 	}
 }
+

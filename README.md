@@ -6,6 +6,25 @@ UI Crafter is a low-code development tool designed to help users create simple m
 
 The main goal of UI Crafter is to simplify app development by providing an easy-to-use drag-and-drop interface for building views. Users can create and test app views without needing to go through the complexities of deployment or backend setup.
 
+## Running the project
+UI Crafter server project uses`EF Core` and has a dependency on `PostgrSQL`. The project is setup with a docker-compose file that will spin up a default instance that will work out of the box.
+
+Start up a docker container with postgres
+```sh
+docker-compose up -d
+```
+
+Change directory to server project
+```sh
+cd src/UICrafter/
+```
+
+Run database update based on project migrations
+```sh
+dotnet ef database update
+```
+The project should now be runnable as normal
+
 ## Project Structure
 
 ### Backend

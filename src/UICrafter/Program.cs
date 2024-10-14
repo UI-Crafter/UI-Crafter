@@ -34,17 +34,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IAppViewRepository, AppViewRepository>();
 
 // Database setup
-if (builder.Environment.IsDevelopment())
-{
-	// Use InMemory database for development
-	builder.Services.AddDbContext<ApplicationDbContext>(options =>
-	options.UseInMemoryDatabase("UICrafterDB"));
-}
-else
-{
-	builder.Services.AddDbContext<ApplicationDbContext>(options =>
-	options.UseNpgsql(builder.Configuration.GetConnectionString("PostgresConnection")));
-}
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+		options.UseNpgsql(builder.Configuration.GetConnectionString("PostgresConnection")));
 
 var app = builder.Build();
 
@@ -67,6 +58,8 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseAntiforgery();
 
+app.UseGrpcWeb();
+
 app.MapRazorComponents<App>()
 	.AddInteractiveServerRenderMode()
 	.AddInteractiveWebAssemblyRenderMode()
@@ -87,6 +80,6 @@ app.MapGet("api/prototest", () =>
 	return base64Person;
 });
 
-app.MapGrpcService<AppViewServicegRPC>();
+app.MapGrpcService<AppViewServicegRPC>().EnableGrpcWeb();
 
 app.Run();
