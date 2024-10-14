@@ -137,24 +137,22 @@
     {
         _uIComponents.Add(component);
         _selectedComponent = component;
+        _dropContainer?.Refresh();
     }
 
     private void AddNewButton()
     {
         AddNewUIComponent(new UIButton { Label = "New Button", URL = "" });
-        _dropContainer?.Refresh();
     }
 
     private void AddNewInputField()
     {
         AddNewUIComponent(new UIInputField { Placeholder = "New Input Field" });
-        _dropContainer?.Refresh();
     }
 
     private void AddNewTextbox()
     {
         AddNewUIComponent(new UITextBox { Content = "New Textbox", Label = "New Textbox" });
-        _dropContainer?.Refresh();
     }
 
     private void DeleteSelectedComponent()
