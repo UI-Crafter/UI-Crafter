@@ -1,8 +1,18 @@
-﻿@page "/testpage"
+@page "/testpage"
+@using UICrafter.Core.AppView
 
 <TestComponent/>
 
+<ProtobuffersTestComponent/>
+
 
 @code {
+    [Inject] IAppViewRepository AppViewRepository { get; set; }
 
+    private IList<AppView>? _appViews;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _appViews = await AppViewRepository.GetAppViewsByUserIdAsync("s");
+    }
 }

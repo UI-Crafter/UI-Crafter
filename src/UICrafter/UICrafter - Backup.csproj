@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Grpc.AspNetCore" Version="2.66.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.10">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
@@ -24,12 +23,6 @@
 
   <ItemGroup>
     <Folder Include="wwwroot\css\" />
-  </ItemGroup>
-
-
-  <ItemGroup>
-    <None Include="..\UICrafter.Mobile\Components\Pages\MyMudButton.razor" Link="MyMudButton.razor" />
-    <None Include="..\UICrafter.Mobile\Components\Pages\PocButton.razor" Link="PocButton.razor" />
   </ItemGroup>
 
 </Project>
