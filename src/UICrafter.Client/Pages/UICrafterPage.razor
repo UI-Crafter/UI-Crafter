@@ -38,7 +38,7 @@
                 <ItemRenderer>
                     @if (context is UIButton button)
                     {
-                        <MudButton Class="mb-2" Variant="Variant.Filled" @onfocus="()=>SelectComponent(button)">@button.Label, @button.URL</MudButton>
+                        <MudButton Class="mb-2" Variant="Variant.Filled" @onfocus="()=>SelectComponent(button)">@button.Label</MudButton>
                     }
                     else if (context is UIInputField inputField)
                     {
@@ -55,6 +55,11 @@
                 </ItemRenderer>
             </MudDropContainer>
         </MudContainer>
+
+        <MudStack Row="true">
+            <MudTextField @bind-Value="@AppViewName" Label="App-view name" Variant="Variant.Outlined"></MudTextField>
+            <MudIconButton Icon="@Icons.Material.Filled.Save" OnClick=@SaveSelectedComponent Size="Size.Large" />
+        </MudStack>
     </MudStack>
 
     <!-- Right section: Properties (25%) -->
@@ -76,8 +81,17 @@
                 else if (_selectedComponent is UITextBox textBox)
                 {
                     <MudTextField @bind-Value="textBox.Label"  Label="Textbox label" Variant="Variant.Outlined"></MudTextField>
-                    <MudTextField @bind-Value="textBox.NumberOfLines"  Label="Textbox Content" Variant="Variant.Outlined"></MudTextField>
+                    <MudTextField @bind-Value="textBox.NumberOfLines"  Label="Number of lines" Variant="Variant.Outlined"></MudTextField>
                     <MudTextField @bind-Value="textBox.Content"  Label="Textbox Content" Variant="Variant.Outlined" Lines="4"></MudTextField>
+                    <MudSelect @bind-Value="textBox.SourceRef">
+                        <MudSelectItem Value="Guid.Empty">None</MudSelectItem>
+                        @foreach(var component in _uIComponents){
+                            if(component is UIButton button)
+                            {
+                                <MudSelectItem Value="button.Guid">@button.Label</MudSelectItem>
+                            }
+                        }
+                    </MudSelect>
                 }
                 <MudButtonGroup Variant="Variant.Outlined" Class="mx-auto">
                     <MudIconButton Icon="@Icons.Material.Filled.Save" OnClick=@SaveSelectedComponent Size="Size.Large" />
@@ -97,13 +111,25 @@
     private MudDropContainer<UIComponent>? _dropContainer;
     private UIComponent? _selectedComponent;
     private List<UIComponent> _uIComponents = new() { };
+    private String AppViewName = "";
 
     private void ComponentUpdated(MudItemDropInfo<UIComponent> component)
     {
         if (component is null || component.Item is null) return;
 
+        int oldIndex = _uIComponents.IndexOf(component.Item);
+        int newIndex = component.IndexInZone;
+
+        if(oldIndex != newIndex)
+        {
+            var tmp = _uIComponents[oldIndex];
+            _uIComponents.RemoveAt(oldIndex);
+            _uIComponents.Insert(newIndex, tmp);
+            // Console.WriteLine("Old: " + oldIndex + "\n" + "New: " + newIndex);
+        }
+
         component.Item.DropZoneID = component.DropzoneIdentifier;
-        _selectedComponent = component.Item;
+        // _selectedComponent = component.Item;
     }
 
     private void AddNewUIComponent(UIComponent component)
@@ -151,6 +177,7 @@
 
     public abstract class UIComponent
     {
+        public Guid Guid = Guid.NewGuid();
         public virtual string Type { get; } = "";
         public string DropZoneID { get; set; } = "Drop Zone 1";
     }
@@ -175,5 +202,6 @@
         public string Label { get; set; } = "";
         public int NumberOfLines { get; set; } = 2;
         public string Content { get; set; } = "";
+        public Guid SourceRef { get; set; } = Guid.Empty;
     }
 }
