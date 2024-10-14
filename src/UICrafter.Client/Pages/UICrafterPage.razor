@@ -71,22 +71,23 @@
             {
                 @if (_selectedComponent is UIButton button)
                 {
-                    <MudTextField @bind-Value="button.Label"  Label="Button Label" Variant="Variant.Outlined" MaxLength="25"></MudTextField>
-                    <MudTextField @bind-Value="button.URL"  Label="Button URL" Variant="Variant.Outlined"></MudTextField>
+                    <MudTextField @bind-Value="button.Label" Label="Button Label" Variant="Variant.Outlined" MaxLength="25"></MudTextField>
+                    <MudTextField @bind-Value="button.URL" Label="Button URL" Variant="Variant.Outlined"></MudTextField>
                 }
                 else if (_selectedComponent is UIInputField inputField)
                 {
-                    <MudTextField @bind-Value="inputField.Placeholder"  Label="Input Placeholder" Variant="Variant.Outlined" MaxLength="25"></MudTextField>
+                    <MudTextField @bind-Value="inputField.Placeholder" Label="Input Placeholder" Variant="Variant.Outlined" MaxLength="25"></MudTextField>
                 }
                 else if (_selectedComponent is UITextBox textBox)
                 {
-                    <MudTextField @bind-Value="textBox.Label"  Label="Textbox label" Variant="Variant.Outlined"></MudTextField>
-                    <MudTextField @bind-Value="textBox.NumberOfLines"  Label="Number of lines" Variant="Variant.Outlined"></MudTextField>
-                    <MudTextField @bind-Value="textBox.Content"  Label="Textbox Content" Variant="Variant.Outlined" Lines="4"></MudTextField>
+                    <MudTextField @bind-Value="textBox.Label" Label="Textbox label" Variant="Variant.Outlined"></MudTextField>
+                    <MudTextField @bind-Value="textBox.NumberOfLines" Label="Number of lines" Variant="Variant.Outlined"></MudTextField>
+                    <MudTextField @bind-Value="textBox.Content" Label="Textbox Content" Variant="Variant.Outlined" Lines="4"></MudTextField>
                     <MudSelect @bind-Value="textBox.SourceRef">
                         <MudSelectItem Value="Guid.Empty">None</MudSelectItem>
-                        @foreach(var component in _uIComponents){
-                            if(component is UIButton button)
+                        @foreach (var component in _uIComponents)
+                        {
+                            if (component is UIButton button)
                             {
                                 <MudSelectItem Value="button.Guid">@button.Label</MudSelectItem>
                             }
@@ -120,7 +121,7 @@
         int oldIndex = _uIComponents.IndexOf(component.Item);
         int newIndex = component.IndexInZone;
 
-        if(oldIndex != newIndex)
+        if (oldIndex != newIndex)
         {
             var tmp = _uIComponents[oldIndex];
             _uIComponents.RemoveAt(oldIndex);
@@ -159,6 +160,18 @@
     private void DeleteSelectedComponent()
     {
         if (_selectedComponent is null) return;
+
+        if (_selectedComponent is UIButton button)
+        {
+            var textBoxesWithSourceRef = _uIComponents
+            .FindAll(component => component is UITextBox textBox && textBox.SourceRef == button.Guid)
+            .Cast<UITextBox>();
+
+            foreach (var textBox in textBoxesWithSourceRef)
+            {
+                textBox.SourceRef = Guid.Empty;
+            }
+        }
 
         _uIComponents.Remove(_selectedComponent);
         _selectedComponent = null;
