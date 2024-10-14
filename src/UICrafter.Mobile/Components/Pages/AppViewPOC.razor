@@ -105,7 +105,7 @@
         }
         else if (model is PocTextBoxModel)
         {
-            <PocTextBox Model="(PocTextBoxModel)model" />
+            <PocTextBox Model="(PocTextBoxModel)model " />
         }
         else if (model is PocAPIParamInputFieldModel)
         {
@@ -140,6 +140,13 @@ else
                 Name = "Dog Facts Label",
                 Description = "This label will hold the title.",
                 Color = "secondary"
+            },
+            new PocTextBoxModel
+            {
+                Id = 3,
+                Name = "jsonresponse",
+                Description = "", // This will be bound to the JSON response dynamically
+                Color = "success",
             },
             new PocTextBoxModel
             {
