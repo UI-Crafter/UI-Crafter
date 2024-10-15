@@ -4,10 +4,11 @@
 @using Microsoft.AspNetCore.Components
 @using System.Net.Http
 @using System.Net.Http.Json
+@using UICrafter.Core.Utility
 
 @inject HttpClient Http
 
-<MudButton OnClick="CallApi"
+@* <MudButton OnClick="CallApi"
            Color="@GetColor()"
            Disabled="@IsDisabled()">
     @Model.Name
@@ -75,5 +76,75 @@
     {
         // You can add logic to disable the button if necessary
         return Model.Id == null; // For example, disable if no ID is set
+    }
+} *@
+
+
+<MudButton OnClick="CallApi"
+           Color="@GetColor()"
+           Disabled="@IsDisabled()">
+    @Model.Name
+</MudButton>
+
+@if (!string.IsNullOrEmpty(Model.JSONResponse))
+{
+    <div>
+        <h4>API Response:</h4>
+        <pre>@Model.JSONResponse</pre>
+    </div>
+}
+
+    @code {
+        [Parameter]
+        public PocButtonModel Model { get; set; }
+
+        [CascadingParameter]
+        public StupidStore StupidStore { get; set; }
+
+        private async Task CallApi()
+        {
+            try
+            {
+                // Simulate API call to get the response (e.g., dog facts API)
+                var response = await Http.GetStringAsync(Model.URL);
+                // check if response was successful
+                if (response == null)
+                {
+                    Debug.WriteLine($"Error calling API for button {Model.Name}: Response is null");
+                    //Change Button color to red
+                    Model.Color = "error";
+
+                    return;
+                }
+
+                Model.Color = "success";
+                // Notify StupidStore with the response
+                StupidStore.NotifySubscribers(Model.Id.ToString(), response);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error calling API for button {Model.Name}: {ex.Message}");
+            }
+        }
+    
+
+
+    private Color GetColor()
+    {
+        return Model.Color?.ToLower() switch
+        {
+            "primary" => Color.Primary,
+            "secondary" => Color.Secondary,
+            "success" => Color.Success,
+            "error" => Color.Error,
+            "warning" => Color.Warning,
+            "info" => Color.Info,
+            _ => Color.Default
+        };
+    }
+
+    private bool IsDisabled()
+    {
+        return Model.Id == null;
     }
 }

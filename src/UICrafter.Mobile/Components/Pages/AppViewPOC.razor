@@ -1,3 +1,151 @@
+@page "/button-test"
+@using UICrafter.Core.Components
+@using UICrafter.Core.Models
+@using UICrafter.Core.Utility
+
+<PageTitle>Dynamic Components Test</PageTitle>
+
+<h3>Dynamic Components Rendered from List</h3>
+
+@if (models != null && models.Any())
+{
+    <CascadingValue Value="stupidStore">
+    @foreach (var model in models)
+    {
+        @if (model is PocButtonModel buttonModel)
+        {
+            <PocButtonNoMistakes Model="buttonModel" />
+        }
+        else if (model is PocLabelModel labelModel)
+        {
+            <PocLabel Model="labelModel" />
+        }
+        else if (model is PocTextBoxModel textBoxModel)
+        {
+            <PocTextBox Model="textBoxModel" />
+        }
+    }
+    </CascadingValue>
+}
+else
+{
+    <p>No components to display.</p>
+}
+
+@code {
+    private List<BaseModel> models;
+    private StupidStore stupidStore = new StupidStore();  // Shared store for updating TextBoxes
+
+    protected override void OnInitialized()
+    {
+        // Initialize 3 buttons, 3 textboxes, and 3 labels
+        models = new List<BaseModel>
+        {
+            new PocButtonModel
+            {
+                Id = 1,
+                Name = "Button 1",
+                Description = "Button 1 Description",
+                Type = UItype.Button,
+                Color = "primary",
+                URL = "https://dog-api.kinduff.com/api/facts?number=1"
+            },
+            new PocLabelModel
+            {
+                Id = 201,
+                Name = "Label 1",
+                Description = "Label for Button 1",
+                Color = "secondary"
+            },
+            new PocTextBoxModel
+            {
+                Id = 101,
+                Name = "TextBox 1",
+                Description = "TextBox 1 will hold the JSON response from Button 1",
+                Color = "info",
+                buttonGUID = "1",  // Linking with Button 1
+                JsonField = "facts"
+            },
+            
+
+            new PocButtonModel
+            {
+                Id = 2,
+                Name = "Button 2",
+                Description = "Button 2 Description",
+                Type = UItype.Button,
+                Color = "success",
+                URL = "https://dog-api.kinduff.com/api/facts?number=2"
+            },
+            new PocLabelModel
+            {
+                Id = 202,
+                Name = "Label 2",
+                Description = "Label for Button 2",
+                Color = "info"
+            },
+            new PocTextBoxModel
+            {
+                Id = 102,
+                Name = "TextBox 2",
+                Description = "TextBox 2 will hold the JSON response from Button 2",
+                Color = "warning",
+                buttonGUID = "2",  // Linking with Button 2
+                JsonField = "facts"
+            },
+            
+            new PocTextBoxModel
+            {
+                Id = 103,
+                Name = "TextBox for Success or Not",
+                Description = "TextBox 2 will hold the JSON response from Button 3 field success",
+                Color = "success",
+                buttonGUID = "2",  // Linking with Button 3
+                JsonField = "success"
+            },
+            new PocTextBoxModel
+            {
+                Id = 103,
+                Name = "TextBox for Success or Not",
+                Description = "TextBox 2 will hold the JSON response from Button 3 field success",
+                Color = "success",
+                buttonGUID = "2",  // Linking with Button 3
+                JsonField = "response"
+            },
+
+            new PocButtonModel
+            {
+                Id = 3,
+                Name = "Button 3",
+                Description = "Button 3 Description",
+                Type = UItype.Button,
+                Color = "danger",
+                URL = "https://dog-api.kinduff.com/api/facts?number=3"
+            },
+            new PocLabelModel
+            {
+                Id = 203,
+                Name = "Label 3",
+                Description = "Label for Button 3",
+                Color = "dark"
+            },
+            new PocTextBoxModel
+            {
+                Id = 103,
+                Name = "TextBox 3",
+                Description = "TextBox 3 will hold the JSON response from Button 3",
+                Color = "success",
+                buttonGUID = "3",  // Linking with Button 3
+                JsonField = "success"
+            }
+            
+        };
+    }
+}
+
+
+
+
 @* @page "/button-test"
 @using UICrafter.Core.Components
 @using UICrafter.Core.Models
@@ -83,7 +231,7 @@
 }
  *@
 
- @page "/button-test"
+@*  @page "/button-test"
 @using UICrafter.Core.Components
 @using UICrafter.Core.Models
 
@@ -192,4 +340,4 @@ else
         await Task.CompletedTask;
         StateHasChanged(); // Refresh UI
     }
-}
+} *@

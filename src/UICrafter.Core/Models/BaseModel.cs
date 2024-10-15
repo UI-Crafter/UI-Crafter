@@ -37,7 +37,9 @@ public class PocLabelModel : BaseModel
 
 public class PocTextBoxModel : BaseModel
 {
+	public string? buttonGUID { get; set; }
 
+	public string? JsonField { get; set; }
 }
 
 public class PocAPIParamInputFieldModel : BaseModel
