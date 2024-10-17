@@ -1,0 +1,51 @@
+@using UICrafter.Core.Models
+@using UICrafter.Core.Utility
+
+<h3>ProtobuffersTestComponent</h3>
+
+@if (person != null)
+{
+    <p>ID: @person.Id</p>
+    <p>Name: @person.Name</p>
+    <p>Email: @person.Email</p>
+}
+else
+{
+    <p>Loading...</p>
+}
+
+@code {
+    private Person? person;
+
+    [Inject]
+    public IHttpClientProvider HttpClientProvider { get; set; } = default!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Call the API and deserialize the person
+        await FetchPersonFromApi();
+    }
+
+    private async Task FetchPersonFromApi()
+    {
+        try
+        {
+            // Create a new HttpClient instance using IHttpClientFactory
+            var httpClient = HttpClientProvider.GetDefaultHttpClient();
+
+            // Call the API and get the base64 encoded protobuf
+            var base64Response = await httpClient.GetStringAsync("api/prototest");
+
+            // Convert base64 to byte array
+            byte[] personBytes = Convert.FromBase64String(base64Response);
+
+            // Deserialize the byte array into a Person object
+            person = Person.Parser.ParseFrom(personBytes);
+        }
+        catch (Exception ex)
+        {
+            // Handle any errors (for example, log them)
+            Console.WriteLine("Error fetching person: " + ex.Message);
+        }
+    }
+}
