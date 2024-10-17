@@ -1,5 +1,7 @@
 using Google.Protobuf;
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Identity.Web;
 using MudBlazor.Services;
 using UICrafter;
 using UICrafter.Components;
@@ -15,15 +17,11 @@ var builder = WebApplication.CreateBuilder(args);
 // Add MudBlazor services
 builder.Services.AddMudServices();
 
-// Add services to the container.
-builder.Services.AddRazorComponents()
-	.AddInteractiveServerComponents()
-	.AddInteractiveWebAssemblyComponents();
-
+// Http setup
 builder.Services.AddHttpClient();
 builder.Services.AddScoped<IHttpClientProvider, HttpClientProvider>();
 
-//gRPC
+// gRPC
 builder.Services.AddGrpc();
 
 // Swagger setup
@@ -36,6 +34,19 @@ builder.Services.AddScoped<IAppViewRepository, AppViewRepository>();
 // Database setup
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 		options.UseNpgsql(builder.Configuration.GetConnectionString("PostgresConnection")));
+
+// Auth
+builder.Services.AddMicrosoftIdentityWebAppAuthentication(builder.Configuration);
+builder.Services.AddScoped<AuthenticationStateProvider, PersistingAuthenticationStateProvider>();
+builder.Services.AddAuthorization();
+builder.Services.AddCascadingAuthenticationState();
+
+// Add services to the container.
+builder.Services.AddRazorComponents()
+	.AddInteractiveServerComponents()
+	.AddInteractiveWebAssemblyComponents();
+
+builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
 
@@ -78,7 +89,7 @@ app.MapGet("api/prototest", () =>
 	var base64Person = Convert.ToBase64String(serializedPerson);
 
 	return base64Person;
-});
+}).RequireAuthorization();
 
 app.MapGrpcService<AppViewServicegRPC>().EnableGrpcWeb();
 
