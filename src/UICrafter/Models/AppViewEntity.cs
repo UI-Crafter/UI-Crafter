@@ -12,7 +12,7 @@ public class AppViewEntity
 	public required string Name { get; set; }
 	public required byte[] Content { get; set; }
 	public DateTime CreatedAtUTC { get; set; }
-	public DateTime UpdatedAtURC { get; set; }
+	public DateTime UpdatedAtUTC { get; set; }
 }
 
 
@@ -21,12 +21,12 @@ public partial class AppViewMapper
 {
 	// Map from AppViewEntity to gRPC AppView
 	[MapProperty(nameof(AppViewEntity.CreatedAtUTC), nameof(AppView.CreatedAtUTC))]
-	[MapProperty(nameof(AppViewEntity.UpdatedAtURC), nameof(AppView.UpdatedAtUTC))]
+	[MapProperty(nameof(AppViewEntity.UpdatedAtUTC), nameof(AppView.UpdatedAtUTC))]
 	public partial AppView ToGrpcAppView(AppViewEntity entity);
 
 	// Map from gRPC AppView to AppViewEntity
 	[MapProperty(nameof(AppView.CreatedAtUTC), nameof(AppViewEntity.CreatedAtUTC))]
-	[MapProperty(nameof(AppView.UpdatedAtUTC), nameof(AppViewEntity.UpdatedAtURC))]
+	[MapProperty(nameof(AppView.UpdatedAtUTC), nameof(AppViewEntity.UpdatedAtUTC))]
 	public partial AppViewEntity ToAppViewEntity(AppView appView);
 
 	// Custom mapping for converting DateTime to Timestamp

@@ -24,7 +24,7 @@ public class AppViewRepository : IAppViewRepository
 				UserId = view.UserId,
 				Name = view.Name,
 				CreatedAtUTC = Timestamp.FromDateTime(view.CreatedAtUTC),
-				UpdatedAtUTC = Timestamp.FromDateTime(view.UpdatedAtURC),
+				UpdatedAtUTC = Timestamp.FromDateTime(view.UpdatedAtUTC),
 			})
 			.ToList());
 
@@ -46,7 +46,7 @@ public class AppViewRepository : IAppViewRepository
 	{
 		var entity = _appViewMapper.ToAppViewEntity(view);
 		entity.CreatedAtUTC = DateTime.UtcNow;
-		entity.UpdatedAtURC = DateTime.UtcNow;
+		entity.UpdatedAtUTC = DateTime.UtcNow;
 
 		_dbContext.AppViews.Add(entity);
 		await _dbContext.SaveChangesAsync();
@@ -62,7 +62,7 @@ public class AppViewRepository : IAppViewRepository
 
 		entity.Name = view.Name;
 		entity.Content = view.Content.ToByteArray();
-		entity.UpdatedAtURC = DateTime.UtcNow;
+		entity.UpdatedAtUTC = DateTime.UtcNow;
 
 		await _dbContext.SaveChangesAsync();
 
