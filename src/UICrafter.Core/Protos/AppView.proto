@@ -1,0 +1,57 @@
+syntax = "proto3";
+option csharp_namespace = "UICrafter.Core.AppView";
+
+import "google/protobuf/timestamp.proto";
+import "google/protobuf/Empty.proto";
+
+message AppView {
+  int64 Id = 1;
+  string UserId = 2;
+  string Name = 3;
+  google.protobuf.Timestamp CreatedAtUTC = 4;
+  google.protobuf.Timestamp UpdatedAtUTC = 5;
+  bytes Content = 6;
+}
+
+// Request and response messages for CRUD operations
+message CreateAppViewRequest {
+  AppView app_view = 1;
+}
+
+message GetAppViewRequest {
+  int64 id = 1;
+}
+
+message UpdateAppViewRequest {
+  AppView app_view = 1;
+}
+
+message DeleteAppViewRequest {
+  int64 id = 1;
+}
+
+message ListAppViewsRequest {
+  string user_id = 1; // UserId is now required
+}
+
+message ListAppViewsResponse {
+  repeated AppView app_views = 1;
+}
+
+// CRUD service definition for AppView
+service AppViewService {
+  // Create a new AppView
+  rpc CreateAppView(CreateAppViewRequest) returns (AppView);
+
+  // Get an AppView by ID
+  rpc GetAppView(GetAppViewRequest) returns (AppView);
+
+  // Update an existing AppView
+  rpc UpdateAppView(UpdateAppViewRequest) returns (AppView);
+
+  // Delete an AppView by ID
+  rpc DeleteAppView(DeleteAppViewRequest) returns (google.protobuf.Empty);
+
+  // List all AppViews for a user (user_id is required)
+  rpc ListAppViews(ListAppViewsRequest) returns (ListAppViewsResponse);
+}
