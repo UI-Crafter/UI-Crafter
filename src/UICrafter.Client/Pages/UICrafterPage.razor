@@ -1,190 +1,29 @@
+@using UICrafter.Client.Components
+
 @page "/uicrafter"
 
 <MudStack Row="true">
     <!-- Left section: Component Grid (15%) -->
-    <MudStack Style="width: 15%;">
-        <MudText Class="">Components:</MudText>
-
-        <MudContainer Class="rounded mud-background-gray pa-4">
-            <MudGrid>
-                <MudItem sm="12" lg="4" Class="d-flex flex-column justify-start align-center">
-                    <MudIconButton Icon="@Icons.Material.Filled.SmartButton" Variant="Variant.Outlined" OnClick=@AddNewButton Size="Size.Large" />
-                    <MudText>Button</MudText>
-                </MudItem>
-
-                <MudItem sm="12" lg="4" Class="d-flex flex-column justify-start align-center">
-                    <MudIconButton Icon="@Icons.Material.Filled.TextFields" Variant="Variant.Outlined" OnClick=@AddNewTextbox Size="Size.Large" />
-                    <MudText>Textbox</MudText>
-                </MudItem>
-
-                <MudItem sm="12" lg="4" Class="d-flex flex-column justify-start align-center">
-                    <MudIconButton Icon="@Icons.Material.Filled.Input" Variant="Variant.Outlined" OnClick=@AddNewInputField Size="Size.Large" />
-                    <MudText>Input</MudText>
-                </MudItem>
-            </MudGrid>
-        </MudContainer>
-    </MudStack>
+    <ComponentGrid @bind-SelectedComponent="@SelectedComponent" @bind-DropContainer="@DropContainer" UIComponents="@UIComponents" />
 
     <!-- Center section: Dropzone (60%) -->
     <MudStack Style="width: 60%;" Class="align-center">
         <MudText>App-view:</MudText>
 
-        <MudContainer MaxWidth="MaxWidth.Small">
-            <MudDropContainer T="UIComponent" @ref="_dropContainer" Items="_uIComponents" ItemsSelector="@((item,dropzone) => item.DropZoneID == dropzone)" ItemDropped="ComponentUpdated" Class="d-flex flex-wrap flex-grow-1">
-                <ChildContent>
-                    <MudDropZone T="UIComponent" Identifier="Drop Zone 1" AllowReorder="true" Class="rounded mud-background-gray pa-2 flex-grow-1" Style="height: 45rem; overflow: auto;">
-                    </MudDropZone>
-                </ChildContent>
-                <ItemRenderer>
-                    @if (context is UIButton button)
-                    {
-                        <MudButton Class="mb-2" Variant="Variant.Filled" @onfocus="()=>SelectComponent(button)">@button.Label</MudButton>
-                    }
-                    else if (context is UIInputField inputField)
-                    {
-                        <MudTextField @bind-Value="@inputField.Value" Class="mb-2" Label="@inputField.Placeholder" Variant="Variant.Outlined" @onfocus="()=>SelectComponent(inputField)"></MudTextField>
-                    }
-                    else if (context is UITextBox textBox)
-                    {
-                        <MudTextField @bind-Value="@textBox.Content" Label="@textBox.Label" ReadOnly="true" ShrinkLabel="true" Lines=@textBox.NumberOfLines Variant="Variant.Outlined" @onfocus="()=>SelectComponent(textBox)" />
-                    }
-                    else
-                    {
-                        <MudPaper Elevation="4" Class="pa-4 my-4">Unknown Component</MudPaper>
-                    }
-                </ItemRenderer>
-            </MudDropContainer>
-        </MudContainer>
+        <AppViewDesigner @bind-SelectedComponent="@SelectedComponent" @bind-DropContainer="@DropContainer" UIComponents="@UIComponents" />
 
-        <MudStack Row="true">
-            <MudTextField @bind-Value="@AppViewName" Label="App-view name" Variant="Variant.Outlined"></MudTextField>
-            <MudIconButton Icon="@Icons.Material.Filled.Save" OnClick=@SaveSelectedComponent Size="Size.Large" />
-        </MudStack>
+        <AppViewButtons @bind-DropContainer="@DropContainer" UIComponents="@UIComponents" />
     </MudStack>
 
-    <!-- Right section: Properties (25%) -->
-    <MudStack Style="width: 25%;">
-        <MudText>Properties:</MudText>
-
-        <MudStack Class="rounded mud-background-gray pa-4 my-2 ">
-            @if (_selectedComponent is not null)
-            {
-                @if (_selectedComponent is UIButton button)
-                {
-                    <MudTextField @bind-Value="button.Label" Label="Button Label" Variant="Variant.Outlined" MaxLength="25"></MudTextField>
-                    <MudTextField @bind-Value="button.URL" Label="Button URL" Variant="Variant.Outlined"></MudTextField>
-                }
-                else if (_selectedComponent is UIInputField inputField)
-                {
-                    <MudTextField @bind-Value="inputField.Placeholder" Label="Input Placeholder" Variant="Variant.Outlined" MaxLength="25"></MudTextField>
-                }
-                else if (_selectedComponent is UITextBox textBox)
-                {
-                    <MudTextField @bind-Value="textBox.Label" Label="Textbox label" Variant="Variant.Outlined"></MudTextField>
-                    <MudTextField @bind-Value="textBox.NumberOfLines" Label="Number of lines" Variant="Variant.Outlined"></MudTextField>
-                    <MudTextField @bind-Value="textBox.Content" Label="Textbox Content" Variant="Variant.Outlined" Lines="4"></MudTextField>
-                    <MudSelect @bind-Value="textBox.SourceRef">
-                        <MudSelectItem Value="Guid.Empty">None</MudSelectItem>
-                        @foreach (var component in _uIComponents)
-                        {
-                            if (component is UIButton button)
-                            {
-                                <MudSelectItem Value="button.Guid">@button.Label</MudSelectItem>
-                            }
-                        }
-                    </MudSelect>
-                }
-                <MudButtonGroup Variant="Variant.Outlined" Class="mx-auto">
-                    <MudIconButton Icon="@Icons.Material.Filled.Save" OnClick=@SaveSelectedComponent Size="Size.Large" />
-                    <MudIconButton Icon="@Icons.Material.Filled.Delete" OnClick=@DeleteSelectedComponent Size="Size.Large" />
-                </MudButtonGroup>
-            }
-            else
-            {
-                <MudText Typo="Typo.body1">No component selected.</MudText>
-            }
-        </MudStack>
-    </MudStack>
+    <!-- Right section: Component Properties (25%) -->
+    <ComponentProperties @bind-SelectedComponent="@SelectedComponent" @bind-DropContainer="@DropContainer" UIComponents="@UIComponents" />
 </MudStack>
 
 
 @code {
-    private MudDropContainer<UIComponent>? _dropContainer;
-    private UIComponent? _selectedComponent;
-    private List<UIComponent> _uIComponents = new() { };
-    private String AppViewName = "";
-
-    private void ComponentUpdated(MudItemDropInfo<UIComponent> component)
-    {
-        if (component is null || component.Item is null) return;
-
-        int oldIndex = _uIComponents.IndexOf(component.Item);
-        int newIndex = component.IndexInZone;
-
-        if (oldIndex != newIndex)
-        {
-            var tmp = _uIComponents[oldIndex];
-            _uIComponents.RemoveAt(oldIndex);
-            _uIComponents.Insert(newIndex, tmp);
-            // Console.WriteLine("Old: " + oldIndex + "\n" + "New: " + newIndex);
-        }
-
-        component.Item.DropZoneID = component.DropzoneIdentifier;
-        // _selectedComponent = component.Item;
-    }
-
-    private void AddNewUIComponent(UIComponent component)
-    {
-        _uIComponents.Add(component);
-        _selectedComponent = component;
-        _dropContainer?.Refresh();
-    }
-
-    private void AddNewButton()
-    {
-        AddNewUIComponent(new UIButton { Label = "New Button", URL = "" });
-    }
-
-    private void AddNewInputField()
-    {
-        AddNewUIComponent(new UIInputField { Placeholder = "New Input Field" });
-    }
-
-    private void AddNewTextbox()
-    {
-        AddNewUIComponent(new UITextBox { Content = "New Textbox", Label = "New Textbox" });
-    }
-
-    private void DeleteSelectedComponent()
-    {
-        if (_selectedComponent is null) return;
-
-        if (_selectedComponent is UIButton button)
-        {
-            var textBoxesWithSourceRef = _uIComponents
-            .FindAll(component => component is UITextBox textBox && textBox.SourceRef == button.Guid)
-            .Cast<UITextBox>();
-
-            foreach (var textBox in textBoxesWithSourceRef)
-            {
-                textBox.SourceRef = Guid.Empty;
-            }
-        }
-
-        _uIComponents.Remove(_selectedComponent);
-        _selectedComponent = null;
-        _dropContainer?.Refresh();
-    }
-
-    private void SaveSelectedComponent()
-    {
-        _dropContainer?.Refresh();
-    }
-
-    private void SelectComponent(UIComponent component)
-    {
-        _selectedComponent = component;
-    }
+    private UIComponent? SelectedComponent { get; set; }
+    private MudDropContainer<UIComponent>? DropContainer { get; set; }
+    private List<UIComponent> UIComponents { get; set; } = new List<UIComponent>();
 
     public abstract class UIComponent
     {
