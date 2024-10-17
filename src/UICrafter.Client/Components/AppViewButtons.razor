@@ -1,0 +1,59 @@
+@using static UICrafter.Client.Pages.UICrafterPage
+
+<MudStack Row="true">
+    <MudTextField @bind-Value="@AppViewName" Label="App-view name" Variant="Variant.Outlined"></MudTextField>
+
+    <MudButtonGroup Variant="Variant.Outlined" Class="ma-auto">
+        <MudIconButton Icon="@Icons.Material.Filled.Save" Size="Size.Large" OnClick="@SaveAppView" />
+        <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Large" OnClick="@DeleteAppView" />
+        <MudIconButton Icon="@Icons.Material.Filled.Clear" Size="Size.Large" OnClick="@ClearAppView" />
+        <MudIconButton Icon="@Icons.Material.Filled.Download" Size="Size.Large" OnClick="@LoadAppView" />
+    </MudButtonGroup>
+</MudStack>
+
+@code {
+    private String AppViewName { get; set; } = default!;
+
+    [Parameter]
+    public required List<UIComponent> UIComponents { get; set; }
+
+    private MudDropContainer<UIComponent>? _internalDropContainer;
+    [Parameter]
+    public required MudDropContainer<UIComponent>? DropContainer
+    {
+        get => _internalDropContainer;
+        set
+        {
+            if (DropContainerChanged.HasDelegate && value != _internalDropContainer)
+            {
+                _internalDropContainer = value;
+                DropContainerChanged.InvokeAsync(value);
+            }
+        }
+    }
+    [Parameter]
+    public required EventCallback<MudDropContainer<UIComponent>?> DropContainerChanged { get; set; }
+
+    private void SaveAppView()
+    {
+        
+    }
+
+    private void DeleteAppView()
+    {
+
+    }
+
+    private void ClearAppView()
+    {
+        if (UIComponents.Count == 0) return;
+
+        UIComponents.Clear();
+        DropContainer?.Refresh();
+    }
+
+    private void LoadAppView()
+    {
+
+    }
+}

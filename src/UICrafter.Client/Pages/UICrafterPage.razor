@@ -1,80 +1,33 @@
+@using UICrafter.Client.Components
+
 @page "/uicrafter"
 
-<div style="display: flex;">
+<MudStack Row="true">
     <!-- Left section: Component Grid (15%) -->
-    <div style="width: 15%; padding-right: 1rem;">
-        <MudText Style="padding-bottom: 1rem;">Components:</MudText>
-        <MudGrid>
-            <MudItem xs="4" Class="component-item">
-                <MudIconButton Icon="@Icons.Material.Filled.TextFields" Variant="Variant.Outlined" OnClick=@AddNewTextbox Size="Size.Large" />
-                <MudText>Textbox</MudText>
-            </MudItem>
+    <ComponentGrid @bind-SelectedComponent="@SelectedComponent" @bind-DropContainer="@DropContainer" UIComponents="@UIComponents" />
 
-            <MudItem xs="4" Class="component-item">
-                <MudPaper Elevation="4" Class="square-icon" @onclick="AddNewButton">
-                    <MudIcon Icon="@Icons.Material.Filled.SmartButton" />
-                </MudPaper>
-                <MudText>Button</MudText>
-            </MudItem>
+    <!-- Center section: Dropzone (60%) -->
+    <MudStack Style="width: 60%;" Class="align-center">
+        <MudText>App-view:</MudText>
 
-            <MudItem xs="4" Class="component-item">
-                <MudPaper Elevation="4" Class="square-icon" @onclick="AddNewInputField">
-                    <MudIcon Icon="@Icons.Material.Filled.Input" />
-                </MudPaper>
-                <MudText>Input</MudText>
-            </MudItem>
-        </MudGrid>
-    </div>
+        <AppViewDesigner @bind-SelectedComponent="@SelectedComponent" @bind-DropContainer="@DropContainer" UIComponents="@UIComponents" />
 
-    <!-- Center section: Dropzone (70%) -->
-    <div style="width: 70%; display: flex; justify-content: center; align-items: center;">
-        <MudContainer MaxWidth="MaxWidth.Small">
-            <MudDropContainer T="UIComponent" @ref="_dropContainer" Items="_uIComponents" ItemsSelector="@((item,dropzone) => item.DropZoneID == dropzone)" ItemDropped="ComponentUpdated" Class="d-flex flex-wrap flex-grow-1">
-                <ChildContent>
-                    <MudDropZone T="UIComponent" Identifier="Drop Zone 1" AllowReorder="true" Class="rounded mud-background-gray pa-6 ma-8 flex-grow-1">
-                        <MudText Typo="Typo.h6" Class="mb-4">App-view:</MudText>
-                    </MudDropZone>
-                </ChildContent>
-                <ItemRenderer>
-                    @if (context is UIButton button)
-                    {
-                        @* <MudPaper Elevation="4" Class="pa-4 my-4">"@button.Label, @button.Color"</MudPaper> *@
-                        <MudButton Variant="Variant.Filled" Color="@Color.Primary">@button.Label, @button.URL</MudButton>
-                    }
-                    else if (context is UIInputField inputField)
-                    {
-                        @* <MudPaper Elevation="4" Class="pa-4 my-4">"@inputField.Value, @inputField.Placeholder"</MudPaper> *@
-                        <MudTextField @bind-Value="@inputField.Value" Label="@inputField.Placeholder" Variant="Variant.Outlined"></MudTextField>
-                        @* <MudText Typo="Typo.subtitle1">Current Value: @inputField.Value</MudText> *@
-                    }
-                    else if (context is UITextBox textBox)
-                    {
-                        @* <MudPaper Elevation="4" Class="pa-4 my-4">"@textBox.Content"</MudPaper> *@
-                        @* <MudText Typo="Typo.body1">@textBox.Content</MudText> *@
-                        <MudPaper Elevation="2" Style="padding: 8px; border: 1px solid black;">
-                            <MudText Typo="Typo.body1">@textBox.Content</MudText>
-                        </MudPaper>
+        <AppViewButtons @bind-DropContainer="@DropContainer" UIComponents="@UIComponents" />
+    </MudStack>
 
-                    }
-                    else
-                    {
-                        <MudPaper Elevation="4" Class="pa-4 my-4">Unknown Component</MudPaper>
-                    }
-                </ItemRenderer>
-            </MudDropContainer>
-        </MudContainer>
-    </div>
-
-    <!-- Right section: Properties (15%) -->
-    <div style="width: 15%; padding-left: 1rem;">
-        <MudText Style="padding-bottom: 1rem;">Properties:</MudText>
-    </div>
-</div>
+    <!-- Right section: Component Properties (25%) -->
+    <ComponentProperties @bind-SelectedComponent="@SelectedComponent" @bind-DropContainer="@DropContainer" UIComponents="@UIComponents" />
+</MudStack>
 
 
 @code {
+    private UIComponent? SelectedComponent { get; set; }
+    private MudDropContainer<UIComponent>? DropContainer { get; set; }
+    private List<UIComponent> UIComponents { get; set; } = new List<UIComponent>();
+
     public abstract class UIComponent
     {
+        public Guid Guid = Guid.NewGuid();
         public virtual string Type { get; } = "";
         public string DropZoneID { get; set; } = "Drop Zone 1";
     }
@@ -96,62 +49,9 @@
     public class UITextBox : UIComponent
     {
         public override string Type { get; } = "TextBox";
+        public string Label { get; set; } = "";
+        public int NumberOfLines { get; set; } = 2;
         public string Content { get; set; } = "";
-    }
-
-    private void ComponentUpdated(MudItemDropInfo<UIComponent> component)
-    {
-        component.Item.DropZoneID = component.DropzoneIdentifier;
-    }
-
-    private List<UIComponent> _uIComponents = new()
-    {
-        
-    };
-
-    private MudDropContainer<UIComponent> _dropContainer;
-
-    // Add new button component
-    private void AddNewButton()
-    {
-        _uIComponents.Add(new UIButton { Label = "New Button", URL = "www.soup.dk" });
-        _dropContainer.Refresh();
-    }
-
-    // Add new input field component
-    private void AddNewInputField()
-    {
-        _uIComponents.Add(new UIInputField { Placeholder = "New Input Field" });
-        _dropContainer.Refresh();
-    }
-
-    // Add new textbox component
-    private void AddNewTextbox()
-    {
-        _uIComponents.Add(new UITextBox { Content = "New Textbox" });
-        _dropContainer.Refresh();
+        public Guid SourceRef { get; set; } = Guid.Empty;
     }
 }
-
-<style>
-    .square-icon {
-        width: 2.5rem;
-        height: 2.5rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-bottom: 0.25rem;
-    }
-
-        .square-icon:hover {
-            background-color: var(--mud-palette-info);
-        }
-
-    .component-item {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: flex-start;
-        text-align: center;
-    }
-</style>

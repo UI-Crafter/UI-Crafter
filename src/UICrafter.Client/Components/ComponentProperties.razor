@@ -1,0 +1,109 @@
+@using static UICrafter.Client.Pages.UICrafterPage
+
+<MudStack Style="width: 25%;">
+    <MudText>Properties:</MudText>
+
+    <MudStack Class="rounded mud-background-gray pa-4 my-2 ">
+        @if (SelectedComponent is not null)
+        {
+            @if (SelectedComponent is UIButton button)
+            {
+                <MudTextField @bind-Value="button.Label" Label="Button Label" Variant="Variant.Outlined" MaxLength="25"></MudTextField>
+                <MudTextField @bind-Value="button.URL" Label="Button URL" Variant="Variant.Outlined"></MudTextField>
+            }
+            else if (SelectedComponent is UIInputField inputField)
+            {
+                <MudTextField @bind-Value="inputField.Placeholder" Label="Input Placeholder" Variant="Variant.Outlined" MaxLength="25"></MudTextField>
+            }
+            else if (SelectedComponent is UITextBox textBox)
+            {
+                <MudTextField @bind-Value="textBox.Label" Label="Textbox label" Variant="Variant.Outlined"></MudTextField>
+                <MudTextField @bind-Value="textBox.NumberOfLines" Label="Number of lines" Variant="Variant.Outlined"></MudTextField>
+                <MudTextField @bind-Value="textBox.Content" Label="Textbox Content" Variant="Variant.Outlined" Lines="4"></MudTextField>
+                <MudSelect @bind-Value="textBox.SourceRef">
+                    <MudSelectItem Value="Guid.Empty">None</MudSelectItem>
+                    @foreach (var component in UIComponents)
+                    {
+                        if (component is UIButton button)
+                        {
+                            <MudSelectItem Value="button.Guid">@button.Label</MudSelectItem>
+                        }
+                    }
+                </MudSelect>
+            }
+            <MudButtonGroup Variant="Variant.Outlined" Class="mx-auto">
+                <MudIconButton Icon="@Icons.Material.Filled.Save" OnClick=@SaveSelectedComponent Size="Size.Large" />
+                <MudIconButton Icon="@Icons.Material.Filled.Delete" OnClick=@DeleteSelectedComponent Size="Size.Large" />
+            </MudButtonGroup>
+        }
+        else
+        {
+            <MudText Typo="Typo.body1">No component selected.</MudText>
+        }
+    </MudStack>
+</MudStack>
+
+@code {
+    [Parameter]
+    public required List<UIComponent> UIComponents { get; set; }
+
+    private UIComponent? _internalSelectedComponent;
+    [Parameter]
+    public required UIComponent? SelectedComponent
+    {
+        get => _internalSelectedComponent;
+        set
+        {
+            if (SelectedComponentChanged.HasDelegate && value != _internalSelectedComponent)
+            {
+                _internalSelectedComponent = value;
+                SelectedComponentChanged.InvokeAsync(value);
+            }
+        }
+    }
+    [Parameter]
+    public required EventCallback<UIComponent?> SelectedComponentChanged { get; set; }
+
+    private MudDropContainer<UIComponent>? _internalDropContainer;
+    [Parameter]
+    public required MudDropContainer<UIComponent>? DropContainer
+    {
+        get => _internalDropContainer;
+        set
+        {
+            if (DropContainerChanged.HasDelegate && value != _internalDropContainer)
+            {
+                _internalDropContainer = value;
+                DropContainerChanged.InvokeAsync(value);
+            }
+        }
+    }
+    [Parameter]
+    public required EventCallback<MudDropContainer<UIComponent>?> DropContainerChanged { get; set; }
+
+    private void DeleteSelectedComponent()
+    {
+        if (SelectedComponent is null) return;
+
+        if (SelectedComponent is UIButton button)
+        {
+            var textBoxesWithSourceRef = UIComponents
+            .FindAll(component => component is UITextBox textBox && textBox.SourceRef == button.Guid)
+            .Cast<UITextBox>();
+
+            foreach (var textBox in textBoxesWithSourceRef)
+            {
+                textBox.SourceRef = Guid.Empty;
+            }
+        }
+
+        UIComponents.Remove(SelectedComponent);
+        SelectedComponent = null;
+        DropContainer?.Refresh();
+    }
+
+    private void SaveSelectedComponent()
+    {
+        DropContainer?.Refresh();
+    }
+}
