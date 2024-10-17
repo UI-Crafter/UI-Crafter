@@ -82,7 +82,7 @@
 
 <MudButton OnClick="CallApi"
            Color="@GetColor()"
-           Disabled="@IsDisabled()">
+           Disabled=@isDisabled>
     @Model.Name
 </MudButton>
 
@@ -94,17 +94,23 @@
     </div>
 }
 
-    @code {
-        [Parameter]
-        public PocButtonModel Model { get; set; }
+@code {
+    private bool isDisabled = false;
 
-        [CascadingParameter]
-        public StupidStore StupidStore { get; set; }
+    [Parameter]
+    public PocButtonModel Model { get; set; }
 
-        private async Task CallApi()
+    [CascadingParameter]
+    public StupidStore StupidStore { get; set; }
+
+    private async Task CallApi()
+    {
+        try
         {
-            try
-            {
+            isDisabled = true;
+            var tmp = Model.Name;
+            Model.Name = "Loading...";
+
                 // Simulate API call to get the response (e.g., dog facts API)
                 var response = await Http.GetStringAsync(Model.URL);
                 // check if response was successful
@@ -116,8 +122,10 @@
 
                     return;
                 }
-
+                await Task.Delay(2000);
+                Model.Name = tmp;
                 Model.Color = "success";
+                isDisabled = false;
                 // Notify StupidStore with the response
                 StupidStore.NotifySubscribers(Model.Id.ToString(), response);
             }
@@ -141,10 +149,5 @@
             "info" => Color.Info,
             _ => Color.Default
         };
-    }
-
-    private bool IsDisabled()
-    {
-        return Model.Id == null;
     }
 }
