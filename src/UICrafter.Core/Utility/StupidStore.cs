@@ -1,39 +1,40 @@
-namespace UICrafter.Core.Utility
+namespace UICrafter.Core.Utility;
+
+public class StupidStore
 {
-	public class StupidStore
+	// Initialize JsonProcessor
+	//private readonly JsonProcessor _jsonProcessor = new();
+
+	// Subscribers now expect callbacks that accept Dictionary<string, object>
+	private readonly Dictionary<string, List<Action<Dictionary<string, object>>>> _subscribers = [];
+
+	public void Subscribe(string buttonGUID, Action<Dictionary<string, object>> callback)
 	{
-		// Initialize JsonProcessor
-		private readonly JsonProcessor _jsonProcessor = new();
-
-		// Subscribers now expect callbacks that accept Dictionary<string, object>
-		private readonly Dictionary<string, List<Action<Dictionary<string, object>>>> _subscribers = new();
-
-		public void Subscribe(string buttonGUID, Action<Dictionary<string, object>> callback)
+		if (!_subscribers.TryGetValue(buttonGUID, out var value))
 		{
-			if (!_subscribers.ContainsKey(buttonGUID))
-			{
-				_subscribers[buttonGUID] = new List<Action<Dictionary<string, object>>>();
-			}
-			_subscribers[buttonGUID].Add(callback);
+			value = [];
+			_subscribers[buttonGUID] = value;
 		}
 
-		public void Unsubscribe(string buttonGUID, Action<Dictionary<string, object>> callback)
-		{
-			if (_subscribers.ContainsKey(buttonGUID))
-			{
-				_subscribers[buttonGUID].Remove(callback);
-			}
-		}
+		value.Add(callback);
+	}
 
-		public void NotifySubscribers(string buttonGUID, string jsonResponse)
+	public void Unsubscribe(string buttonGUID, Action<Dictionary<string, object>> callback)
+	{
+		if (_subscribers.TryGetValue(buttonGUID, out var value))
 		{
-			var processedData = _jsonProcessor.ProcessJson(jsonResponse);
-			if (_subscribers.ContainsKey(buttonGUID))
+			value.Remove(callback);
+		}
+	}
+
+	public void NotifySubscribers(string buttonGUID, string jsonResponse)
+	{
+		var processedData = JsonProcessor.ProcessJson(jsonResponse);
+		if (_subscribers.TryGetValue(buttonGUID, out var value))
+		{
+			foreach (var callback in value)
 			{
-				foreach (var callback in _subscribers[buttonGUID])
-				{
-					callback(processedData);
-				}
+				callback(processedData);
 			}
 		}
 	}

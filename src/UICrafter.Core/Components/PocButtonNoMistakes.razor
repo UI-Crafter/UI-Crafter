@@ -98,10 +98,10 @@
     private bool isDisabled = false;
 
     [Parameter]
-    public PocButtonModel Model { get; set; }
+    public PocButtonModel? Model { get; set; }
 
     [CascadingParameter]
-    public StupidStore StupidStore { get; set; }
+    public StupidStore? StupidStore { get; set; }
 
     private async Task CallApi()
     {

@@ -1,8 +1,5 @@
-using System;
-using System.Collections.Generic;
-using Google.Protobuf.WellKnownTypes;
+namespace UICrafter.Core.Utility;
 using Newtonsoft.Json.Linq;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 public class JsonProcessor
 {
@@ -11,7 +8,7 @@ public class JsonProcessor
 	/// </summary>
 	/// <param name="json">The JSON string to process.</param>
 	/// <returns>A dictionary containing field names and their corresponding values.</returns>
-	public Dictionary<string, object> ProcessJson(string json)
+	public static Dictionary<string, object> ProcessJson(string json)
 	{
 		var result = new Dictionary<string, object>();
 		var token = JToken.Parse(json);
@@ -19,7 +16,7 @@ public class JsonProcessor
 		return result;
 	}
 
-	private void ProcessToken(JToken token, Dictionary<string, object> result, string parentName = "")
+	private static void ProcessToken(JToken token, Dictionary<string, object> result, string parentName = "")
 	{
 		if (token is JObject obj)
 		{
@@ -33,7 +30,7 @@ public class JsonProcessor
 			var items = new List<object>();
 			foreach (var item in array)
 			{
-				if (item.Type == JTokenType.Object || item.Type == JTokenType.Array)
+				if (item.Type is JTokenType.Object or JTokenType.Array)
 				{
 					var childResult = new Dictionary<string, object>();
 					ProcessToken(item, childResult);

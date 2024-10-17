@@ -16,10 +16,10 @@
 
 @code {
     [Parameter]
-    public PocTextBoxModel Model { get; set; }
+    public PocTextBoxModel? Model { get; set; }
 
     [CascadingParameter]
-    public StupidStore StupidStore { get; set; }
+    public StupidStore? StupidStore { get; set; }
 
     protected override void OnInitialized()
     {
@@ -110,11 +110,9 @@
     }
 
 
-        public void Dispose()
-        {
-            // Unsubscribe when component is disposed
-            StupidStore?.Unsubscribe(Model.buttonGUID, UpdateTextBox);
-        }
+    public void Dispose() =>
+        // Unsubscribe when component is disposed
+        StupidStore?.Unsubscribe(Model.buttonGUID, UpdateTextBox);
 
     private Color GetColor()
     {
