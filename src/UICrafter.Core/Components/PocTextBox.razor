@@ -16,26 +16,15 @@
 
 @code {
     [Parameter]
-    public PocTextBoxModel? Model { get; set; }
+    public required PocTextBoxModel Model { get; set; }
 
     [CascadingParameter]
-    public StupidStore? StupidStore { get; set; }
+    public required StupidStore StupidStore { get; set; }
 
     protected override void OnInitialized()
     {
-        if (Model == null)
-        {
-            throw new InvalidOperationException("Model cannot be null.");
-        }
-
-        if (StupidStore == null)
-        {
-            throw new InvalidOperationException("StupidStore cannot be null.");
-        }
-
         if (!string.IsNullOrEmpty(Model.buttonGUID))
         {
-
             StupidStore.Subscribe(Model.buttonGUID, UpdateTextBox);
         }
     }
