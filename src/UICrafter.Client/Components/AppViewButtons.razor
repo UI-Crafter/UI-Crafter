@@ -12,7 +12,7 @@
 </MudStack>
 
 @code {
-    private String AppViewName { get; set; } = default!;
+    private String AppViewName { get; set; } = String.Empty;
 
     [Parameter]
     public required List<UIComponent> UIComponents { get; set; }
@@ -36,12 +36,12 @@
 
     private void SaveAppView()
     {
-        
+        throw new NotImplementedException();
     }
 
     private void DeleteAppView()
     {
-
+        throw new NotImplementedException();
     }
 
     private void ClearAppView()
@@ -54,6 +54,6 @@
 
     private void LoadAppView()
     {
-
+        throw new NotImplementedException();
     }
 }
