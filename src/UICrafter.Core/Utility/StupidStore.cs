@@ -2,10 +2,6 @@ namespace UICrafter.Core.Utility;
 
 public class StupidStore
 {
-	// Initialize JsonProcessor
-	//private readonly JsonProcessor _jsonProcessor = new();
-
-	// Subscribers now expect callbacks that accept Dictionary<string, object>
 	private readonly Dictionary<string, List<Action<Dictionary<string, object>>>> _subscribers = [];
 
 	public void Subscribe(string buttonGUID, Action<Dictionary<string, object>> callback)

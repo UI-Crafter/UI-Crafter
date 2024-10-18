@@ -12,8 +12,6 @@ using UICrafter.Mobile.Options;
 using UICrafter.Mobile.Repository;
 using UICrafter.Mobile.Utility;
 using UICrafter.Core.AppView;
-//using Microsoft.AspNetCore.Authorization;
-//using Microsoft.AspNetCore.Components.Authorization;
 
 public static class MauiProgram
 {
@@ -60,12 +58,6 @@ public static class MauiProgram
 
 		// Repository
 		builder.Services.AddScoped<IAppViewRepository, AppViewRepository>();
-
-		//builder.Services.AddCascadingAuthenticationState();
-
-		//builder.Services.AddAuthorizationCore();
-
-		//builder.Services.AddScoped<AuthenticationStateProvider, ServerAuthenticationStateProvider>();
 
 		return builder.Build();
 	}

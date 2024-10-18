@@ -2,11 +2,6 @@
 
 <Router AppAssembly="@typeof(MauiProgram).Assembly">
     <Found Context="routeData">
-       @*  <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(Layout.MainLayout)">
-            <NotAuthorized>
-                <h1>Not authorized!</h1>
-            </NotAuthorized>
-        </AuthorizeRouteView> *@
         <RouteView RouteData="@routeData" DefaultLayout="@typeof(Layout.MainLayout)" />
         <FocusOnNavigate RouteData="@routeData" Selector="h1" />
     </Found>

@@ -7,7 +7,7 @@
 
 <MudTextField @bind-Value="Model.Description"
               Label="@Model.Name"
-              Color="@GetColor()"
+              Color="@ColorOptions.GetColor(Model)"
               Variant="Variant.Outlined"
               ReadOnly="true"
               AutoGrow="true"
@@ -35,7 +35,7 @@
 
         if (!string.IsNullOrEmpty(Model.buttonGUID))
         {
-            // Subscribe to StupidStore to receive updates for the corresponding button
+
             StupidStore.Subscribe(Model.buttonGUID, UpdateTextBox);
         }
     }
@@ -47,44 +47,40 @@
             return;
         }
 
+        if (!string.IsNullOrEmpty(Model.JsonField))
+        {
+            Model.Description = "No JsonField specified.";
+        }
+
+
+
         if( Model.JsonField == "response")
         {
             List<string> values = ExtractValues(jsonResponse);
 
-            // Join the values with spaces
             string description = string.Join(" ", values);
 
-            // Set the description in your model
             Model.Description = description;
             StateHasChanged();
             return;
         }
-
-        if (!string.IsNullOrEmpty(Model.JsonField))
+        else
         {
             string fieldName = Model.JsonField;
 
             if (jsonResponse.TryGetValue(fieldName, out var fieldValue))
             {
-                // Process fieldValue
                 string description = ConvertValueToString(fieldValue);
 
-                // Set the description in your model
                 Model.Description = description;
             }
             else
             {
-                // Field not found
                 Model.Description = $"Field '{fieldName}' not found in JSON response.";
             }
         }
-        else
-        {
-            // If JsonField is not set, handle accordingly
-            Model.Description = "No JsonField specified.";
-        }
+ 
 
-        // Update the UI
         StateHasChanged();
     }
 
@@ -92,70 +88,40 @@
     {
         if (value is List<object> list)
         {
-            // If it's a list, join the items into a string
             var itemsAsString = list.Select(item => item.ToString());
             return string.Join(" ", itemsAsString);
         }
         else if (value is Dictionary<string, object> dict)
         {
-            // If it's a nested dictionary, you may want to handle it differently
-            // For simplicity, we can serialize it to JSON string
+
             return JsonConvert.SerializeObject(dict);
         }
         else
         {
-            // For scalar values, just convert to string
             return value?.ToString() ?? string.Empty;
         }
     }
 
 
     public void Dispose() =>
-        // Unsubscribe when component is disposed
         StupidStore?.Unsubscribe(Model.buttonGUID, UpdateTextBox);
 
-    private Color GetColor()
-    {
-        return Model.Color?.ToLower() switch
-        {
-            "primary" => Color.Primary,
-            "secondary" => Color.Secondary,
-            "success" => Color.Success,
-            "error" => Color.Error,
-            "warning" => Color.Warning,
-            "info" => Color.Info,
-            _ => Color.Default
-        };
-    }
 
-    // private void UpdateTextBox(Dictionary<string, object> jsonResponse)
-    // {
-    //     List<string> values = ExtractValues(jsonResponse);
-
-    //     // Join the values with spaces
-    //     string description = string.Join(" ", values);
-
-    //     // Set the description in your model
-    //     Model.Description = description;
-    //     StateHasChanged(); // Update UI when data is received
-    // }
 
     private List<string> ExtractValues(object obj, string parentName = "", int indentLevel = 0, bool isArrayItem = false)
     {
         List<string> values = new List<string>();
-        string indent = new string(' ', indentLevel * 2); // Two spaces per indent level
+        string indent = new string(' ', indentLevel * 2);
 
         if (obj is Dictionary<string, object> dict)
         {
             foreach (var kvp in dict)
             {
-                // Pass the key (field name) to the recursive call
                 values.AddRange(ExtractValues(kvp.Value, kvp.Key, indentLevel));
             }
         }
         else if (obj is List<object> list)
         {
-            // For arrays, add the array name once
             if (!string.IsNullOrEmpty(parentName) && !isArrayItem)
             {
                 values.Add($"{indent}{parentName}:");
@@ -164,13 +130,13 @@
             for (int i = 0; i < list.Count; i++)
             {
                 var item = list[i];
-                // Indent array items one level deeper
+
                 values.AddRange(ExtractValues(item, $"{parentName}[{i}]", indentLevel + 1, isArrayItem: true));
             }
         }
         else if (obj != null)
         {
-            // Include the field name in front of the value
+
             if (!string.IsNullOrEmpty(parentName) && !isArrayItem)
             {
                 values.Add($"{indent}{parentName}: {obj}");
@@ -186,37 +152,3 @@
 
 
 }
-
-
-@* <MudTextField @bind-Value="Model.Description"
-              Label="@Model.Name"
-              Color="@GetColor()"
-              Variant="Variant.Outlined">
-</MudTextField>
-
-@code {
-    [Parameter]
-    public PocTextBoxModel Model { get; set; }
-
-    private Color GetColor()
-    {
-        return Model.Color?.ToLower() switch
-        {
-            "primary" => Color.Primary,
-            "secondary" => Color.Secondary,
-            "success" => Color.Success,
-            "error" => Color.Error,
-            "warning" => Color.Warning,
-            "info" => Color.Info,
-            _ => Color.Default
-        };
-    }
-
-    protected override async Task OnInitializedAsync()
-    {
-        //Subtitle1 to event from button
-
-    }
-
-
-} *@

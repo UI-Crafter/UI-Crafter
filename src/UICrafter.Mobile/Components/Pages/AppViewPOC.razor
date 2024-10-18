@@ -29,16 +29,19 @@
 }
 else
 {
-    <p>No components to display.</p>
+    <MudText Typo="Typo.body1">
+    No components to display.
+</MudText>
+
 }
 
 @code {
     private List<BaseModel>? models;
     private StupidStore stupidStore = new StupidStore();  // Shared store for updating TextBoxes
 
+    // Testcase with 3 buttons calling dag facts API.
     protected override void OnInitialized()
     {
-        // Initialize 3 buttons, 3 textboxes, and 3 labels
         models = new List<BaseModel>
         {
             new PocButtonModel
@@ -63,7 +66,7 @@ else
                 Name = "TextBox 1",
                 Description = "TextBox 1 will hold the JSON response from Button 1",
                 Color = "info",
-                buttonGUID = "1",  // Linking with Button 1
+                buttonGUID = "1",
                 JsonField = "facts"
             },
             
@@ -90,7 +93,7 @@ else
                 Name = "TextBox 2",
                 Description = "TextBox 2 will hold the JSON response from Button 2",
                 Color = "warning",
-                buttonGUID = "2",  // Linking with Button 2
+                buttonGUID = "2",
                 JsonField = "facts"
             },
             
@@ -100,7 +103,7 @@ else
                 Name = "TextBox for Success or Not",
                 Description = "TextBox 2 will hold the JSON response from Button 3 field success",
                 Color = "success",
-                buttonGUID = "2",  // Linking with Button 3
+                buttonGUID = "2",
                 JsonField = "success"
             },
             new PocTextBoxModel
@@ -109,7 +112,7 @@ else
                 Name = "TextBox for Success or Not",
                 Description = "TextBox 2 will hold the JSON response from Button 3 field success",
                 Color = "success",
-                buttonGUID = "2",  // Linking with Button 3
+                buttonGUID = "2",
                 JsonField = "response"
             },
 
@@ -135,7 +138,7 @@ else
                 Name = "TextBox 3",
                 Description = "TextBox 3 will hold the JSON response from Button 3",
                 Color = "success",
-                buttonGUID = "3",  // Linking with Button 3
+                buttonGUID = "3",
                 JsonField = "success"
             }
             
@@ -143,201 +146,3 @@ else
     }
 }
 
-
-
-
-@* @page "/button-test"
-@using UICrafter.Core.Components
-@using UICrafter.Core.Models
-
-<PageTitle>Dynamic Button Test</PageTitle>
-
-<h3>Dynamic Button</h3>
-<PocButtonNoMistakes @ref="buttonComponent" Model="buttonModel" OnApiResponseReceived="UpdateTextBoxWithJsonResponse" />
-
-<h3>Label Component</h3>
-<PocLabel Model="labelModel" />
-
-<h3>Text Box Component (Holds JSON Response)</h3>
-<PocTextBox Model="textBoxModel" />
-
-<h3>API Param Input Field</h3>
-<MudNumericField T="int?" @bind-Value="apiParamModel.ParamIndex" Label="API Param Index" @onchange="OnParamIndexChanged" />
-
-
-@code {
-    private PocButtonNoMistakes buttonComponent;
-
-    private PocButtonModel buttonModel = new PocButtonModel
-        {
-            Id = 1,
-            Name = "Submit",
-            Description = "A submit button",
-            Type = UItype.Button,
-            Color = "primary", // This maps to MudBlazor's primary color
-            URL = "https://dog-api.kinduff.com/api/facts?number=2"
-        };
-
-    private PocLabelModel labelModel = new PocLabelModel
-        {
-            Id = 2,
-            Name = "Dog Facts Label",
-            Description = "This label will hold the title.",
-            Color = "secondary"
-        };
-
-    private PocTextBoxModel textBoxModel = new PocTextBoxModel
-        {
-            Id = 3,
-            Name = "jsonresponse", // Ensure this name is used for JSON response box
-            Description = "", // This will be bound to the JSON response dynamically
-            Color = "success"
-        };
-
-    private PocAPIParamInputFieldModel apiParamModel = new PocAPIParamInputFieldModel
-        {
-            Id = 4,
-            Name = "API Param Index",
-            ParamIndex = 1,
-            Color = "info"
-        };
-
-    private void UpdateButtonUrl()
-    {
-        buttonModel.URL = $"https://dog-api.kinduff.com/api/facts?number={apiParamModel.ParamIndex}";
-    }
-    private async Task OnParamIndexChanged(ChangeEventArgs e)
-    {
-        UpdateButtonUrl(); // Update the button URL
-        await Task.CompletedTask;
-    }
-    // Fetch JSON and store in the text box
-    private async Task UpdateTextBoxWithJsonResponse(string jsonResponse)
-    {
-        textBoxModel.Description = jsonResponse;
-        StateHasChanged(); // Ensure UI updates
-    }
-
-    protected override async Task OnInitializedAsync()
-    {
-        // Wait for the component reference to be populated
-        await base.OnInitializedAsync();
-
-        if (buttonComponent != null)
-        {
-            await buttonComponent.CallApi(); // Trigger API call
-        }
-    }
-}
- *@
-
-@*  @page "/button-test"
-@using UICrafter.Core.Components
-@using UICrafter.Core.Models
-
-<PageTitle>Dynamic Components Test</PageTitle>
-
-<h3>Dynamic Components Rendered from List</h3>
-
-@if (models != null && models.Any())
-{
-    @foreach (var model in models)
-    {
-        @if (model is PocButtonModel)
-        {
-            <PocButtonNoMistakes Model="(PocButtonModel)model" OnApiResponseReceived="UpdateTextBoxWithJsonResponse" />
-        }
-        else if (model is PocLabelModel)
-        {
-            <PocLabel Model="(PocLabelModel)model" />
-        }
-        else if (model is PocTextBoxModel)
-        {
-            <PocTextBox Model="(PocTextBoxModel)model " />
-        }
-        else if (model is PocAPIParamInputFieldModel)
-        {
-            <MudNumericField T="int?" @bind-Value="((PocAPIParamInputFieldModel)model).ParamIndex" Label="API Param Index" @onchange="OnParamIndexChanged" />
-        }
-    }
-}
-else
-{
-    <p>No components to display.</p>
-}
-
-@code {
-    private List<BaseModel> models;
-
-    protected override void OnInitialized()
-    {
-        models = new List<BaseModel>
-        {
-            new PocButtonModel
-            {
-                Id = 1,
-                Name = "Submit",
-                Description = "A submit button",
-                Type = UItype.Button,
-                Color = "primary",
-                URL = "https://dog-api.kinduff.com/api/facts?number=2"
-            },
-            new PocLabelModel
-            {
-                Id = 2,
-                Name = "Dog Facts Label",
-                Description = "This label will hold the title.",
-                Color = "secondary"
-            },
-            new PocTextBoxModel
-            {
-                Id = 3,
-                Name = "jsonresponse",
-                Description = "", // This will be bound to the JSON response dynamically
-                Color = "success",
-            },
-            new PocTextBoxModel
-            {
-                Id = 3,
-                Name = "jsonresponse",
-                Description = "", // This will be bound to the JSON response dynamically
-                Color = "success"
-            },
-            new PocAPIParamInputFieldModel
-            {
-                Id = 4,
-                Name = "API Param Index",
-                ParamIndex = 1,
-                Color = "info"
-            }
-        };
-    }
-
-    // Fetch JSON and store in the text box
-    private async Task UpdateTextBoxWithJsonResponse(string jsonResponse)
-    {
-        var textBoxModel = models.OfType<PocTextBoxModel>().FirstOrDefault(m => m.Name == "jsonresponse");
-        if (textBoxModel != null)
-        {
-            textBoxModel.Description = jsonResponse;
-            StateHasChanged(); // Ensure UI updates
-        }
-    }
-
-    private async Task OnParamIndexChanged(ChangeEventArgs e)
-    {
-        var apiParamModel = models.OfType<PocAPIParamInputFieldModel>().FirstOrDefault();
-        if (apiParamModel != null)
-        {
-            // Update the button's URL based on the new ParamIndex
-            var buttonModel = models.OfType<PocButtonModel>().FirstOrDefault();
-            if (buttonModel != null)
-            {
-                buttonModel.URL = $"https://dog-api.kinduff.com/api/facts?number={apiParamModel.ParamIndex}";
-            }
-        }
-
-        await Task.CompletedTask;
-        StateHasChanged(); // Refresh UI
-    }
-} *@

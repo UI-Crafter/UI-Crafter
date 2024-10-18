@@ -8,91 +8,21 @@
 
 @inject HttpClient Http
 
-@* <MudButton OnClick="CallApi"
-           Color="@GetColor()"
-           Disabled="@IsDisabled()">
-    @Model.Name
-</MudButton>
-
-@if (!string.IsNullOrEmpty(Model.JSONResponse))
-{
-    <div>
-        <h4>API Response:</h4>
-        <pre>@Model.JSONResponse</pre>
-    </div>
-}
-
-@code {
-    [Parameter]
-    public PocButtonModel Model { get; set; }
-
-    [Parameter]
-    public EventCallback<string> OnApiResponseReceived { get; set; }
-
-    public async Task CallApi()
-    {
-        if (!string.IsNullOrEmpty(Model.URL))
-        {
-            try
-            {
-                // Make the API call
-                Model.JSONResponse = await Http.GetStringAsync(Model.URL);
-                await OnApiResponseReceived.InvokeAsync(Model.JSONResponse);
-                Debug.WriteLine("API call succeeded");
-            }
-            catch (Exception ex)
-            {
-                Model.JSONResponse = $"Error: {ex.Message}";
-                Debug.WriteLine($"API call failed: {ex.Message}");
-            }
-        }
-        else
-        {
-            Model.JSONResponse = "No URL specified for API call.";
-        }
-    }
-    // private void OnClick()
-    // {
-    //     // Button click logic (if any)
-    //     Debug.WriteLine($"{Model.Name} Button Clicked!");
-    // }
-
-    private Color GetColor()
-    {
-        // Map the string color from Model.Color to MudBlazor's Color enum
-        return Model.Color?.ToLower() switch
-        {
-            "primary" => Color.Primary,
-            "secondary" => Color.Secondary,
-            "success" => Color.Success,
-            "error" => Color.Error,
-            "warning" => Color.Warning,
-            "info" => Color.Info,
-            _ => Color.Default // Fallback to default if no match
-        };
-    }
-
-    private bool IsDisabled()
-    {
-        // You can add logic to disable the button if necessary
-        return Model.Id == null; // For example, disable if no ID is set
-    }
-} *@
-
 
 <MudButton OnClick="CallApi"
-           Color="@GetColor()"
+           Color="@ColorOptions.GetColor(Model)"
            Disabled=@isDisabled>
     @Model.Name
 </MudButton>
 
 @if (!string.IsNullOrEmpty(Model.JSONResponse))
 {
-    <div>
-        <h4>API Response:</h4>
-        <pre>@Model.JSONResponse</pre>
-    </div>
+    <MudPaper Elevation="3" Class="pa-4">
+        <MudText Typo="Typo.h4" GutterBottom="true">API Response:</MudText>
+        @Model.JSONResponse
+    </MudPaper>
 }
+
 
 @code {
     private bool isDisabled = false;
@@ -111,13 +41,12 @@
             var tmp = Model.Name;
             Model.Name = "Loading...";
 
-                // Simulate API call to get the response (e.g., dog facts API)
                 var response = await Http.GetStringAsync(Model.URL);
-                // check if response was successful
+                
                 if (response == null)
                 {
                     Debug.WriteLine($"Error calling API for button {Model.Name}: Response is null");
-                    //Change Button color to red
+                   
                     Model.Color = "error";
 
                     return;
@@ -126,7 +55,7 @@
                 Model.Name = tmp;
                 Model.Color = "success";
                 isDisabled = false;
-                // Notify StupidStore with the response
+              
                 StupidStore.NotifySubscribers(Model.Id.ToString(), response);
             }
             catch (Exception ex)
@@ -134,20 +63,4 @@
                 Debug.WriteLine($"Error calling API for button {Model.Name}: {ex.Message}");
             }
         }
-    
-
-
-    private Color GetColor()
-    {
-        return Model.Color?.ToLower() switch
-        {
-            "primary" => Color.Primary,
-            "secondary" => Color.Secondary,
-            "success" => Color.Success,
-            "error" => Color.Error,
-            "warning" => Color.Warning,
-            "info" => Color.Info,
-            _ => Color.Default
-        };
-    }
 }

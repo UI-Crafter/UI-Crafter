@@ -1,7 +1,8 @@
 @using MudBlazor
 @using UICrafter.Core.Models
+@using UICrafter.Core.Utility
 
-<MudText Typo="Typo.h6" Color="@GetColor()">
+<MudText Typo="Typo.h6" Color="@ColorOptions.GetColor(Model)">
     @Model.Name
 </MudText>
 
@@ -9,17 +10,4 @@
     [Parameter]
     public PocLabelModel? Model { get; set; }
 
-    private Color GetColor()
-    {
-        return Model.Color?.ToLower() switch
-        {
-            "primary" => Color.Primary,
-            "secondary" => Color.Secondary,
-            "success" => Color.Success,
-            "error" => Color.Error,
-            "warning" => Color.Warning,
-            "info" => Color.Info,
-            _ => Color.Default
-        };
-    }
 }
