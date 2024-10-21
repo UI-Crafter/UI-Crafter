@@ -1,0 +1,30 @@
+syntax = "proto3";
+option csharp_namespace = "UICrafter.Core.Models";
+
+message proto_UIComponent{
+	string Guid = 1;
+
+	oneof component{
+		proto_UIButton button = 2;
+		proto_UIInputField inputField = 3;
+		proto_UITextbox textbox = 4;
+	}
+}
+
+message proto_UIButton{
+	string Label = 1;
+	string URL = 2;
+}
+
+message proto_UIInputField{
+	string Label = 1;
+	string Value = 2;
+}
+
+message proto_UITextbox{
+	string Label = 1;
+	int32 NumberOfLines = 2;
+	string Content = 3;
+	string SourceRef = 4;
+	string JsonField = 5;
+}
