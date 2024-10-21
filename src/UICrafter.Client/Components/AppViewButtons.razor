@@ -7,6 +7,10 @@
 @using UICrafter.Core.Utility
 
 <MudStack Row="true">
+    <MudOverlay Visible="visible" DarkBackground="true" Absolute="true">
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+    </MudOverlay>
+
     <MudTextField @bind-Value="@AppView.Name" Label="App-view name" Variant="Variant.Outlined"></MudTextField>
 
     <MudButtonGroup Variant="Variant.Outlined" Class="ma-auto">
@@ -22,6 +26,7 @@
     private IAppViewRepository AppViewRepository { get; set; } = default!;
 
     private AppView AppView { get; set; } = new AppView { Name = string.Empty };
+    private bool visible;
 
     [Parameter]
     public required UIComponentList UIComponentList { get; set; }
@@ -60,27 +65,41 @@
     [Parameter]
     public required EventCallback<MudDropContainer<UIComponent>?> DropContainerChanged { get; set; }
 
+    AppView test = new AppView();
+
     private async Task SaveAppView()
     {
+        visible = true;
+
         var serializedContent = UIComponentList.ToByteString();
 
         AppView.Content = serializedContent;
 
         try
         {
-            var response = await AppViewRepository.CreateAppViewAsync(AppView);
+            if (AppView.Id == 0)
+            {
+                await AppViewRepository.CreateAppViewAsync(AppView);
+                Console.WriteLine("Called Create");
+            }
+            else
+            {
+                await AppViewRepository.UpdateAppViewAsync(AppView);
+                Console.WriteLine("Called Update");
+            }
         }
         catch (RpcException ex)
         {
             Console.WriteLine($"Error while saving AppView: {ex.Status.Detail}");
         }
 
-        await Task.Delay(1000);
-        Console.WriteLine("AppView saved.");
+        visible = false;
     }
 
     private async Task DeleteAppView()
     {
+        visible = true;
+
         try
         {
             await AppViewRepository.DeleteAppViewByIdAsync(AppView.Id);
@@ -90,8 +109,11 @@
             Console.WriteLine($"Error while deleting AppView: {ex.Status.Detail}");
         }
 
-        await Task.Delay(1000);
-        Console.WriteLine("AppView deleted.");
+        ClearAppView();
+
+        AppView = new AppView();
+
+        visible = false;
     }
 
     private void ClearAppView()
@@ -105,11 +127,17 @@
 
     private async Task LoadAppView()
     {
+        visible = true;
+
+        ClearAppView();
+
         try
         {
             AppView = await AppViewRepository.GetAppViewByIdAsync(1);
 
-            UIComponentList = UIComponentList.Parser.ParseFrom(AppView.Content);
+            var parsedContent = UIComponentList.Parser.ParseFrom(AppView.Content);
+
+            UIComponentList.UIComponents.AddRange(parsedContent.UIComponents);
 
             DropContainer?.Refresh();
         }
@@ -118,7 +146,6 @@
             Console.WriteLine($"Error while loading AppView: {ex.Status.Detail}");
         }
 
-        await Task.Delay(1000);
-        Console.WriteLine("AppView loaded.");
+        visible = false;
     }
 }
