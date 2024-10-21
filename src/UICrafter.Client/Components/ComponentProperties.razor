@@ -13,7 +13,7 @@
             }
             else if (SelectedComponent is UIInputField inputField)
             {
-                <MudTextField @bind-Value="inputField.Placeholder" Label="Input Placeholder" Variant="Variant.Outlined" MaxLength="25"></MudTextField>
+                <MudTextField @bind-Value="inputField.Label" Label="Input Placeholder" Variant="Variant.Outlined" MaxLength="25"></MudTextField>
             }
             else if (SelectedComponent is UITextBox textBox)
             {
@@ -30,6 +30,7 @@
                         }
                     }
                 </MudSelect>
+                <MudTextField @bind-Value="textBox.JsonField" Label="Json Field" Variant="Variant.Outlined"></MudTextField>
             }
             <MudButtonGroup Variant="Variant.Outlined" Class="mx-auto">
                 <MudIconButton Icon="@Icons.Material.Filled.Save" OnClick=@SaveSelectedComponent Size="Size.Large" />

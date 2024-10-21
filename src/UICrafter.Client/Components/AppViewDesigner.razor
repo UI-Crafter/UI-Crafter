@@ -13,7 +13,7 @@
             }
             else if (context is UIInputField inputField)
             {
-                <MudTextField @bind-Value="@inputField.Value" Class="mb-2" Label="@inputField.Placeholder" Variant="Variant.Outlined" @onfocus="()=>SelectComponent(inputField)"></MudTextField>
+                <MudTextField @bind-Value="@inputField.Value" Class="mb-2" Label="@inputField.Label" Variant="Variant.Outlined" @onfocus="()=>SelectComponent(inputField)"></MudTextField>
             }
             else if (context is UITextBox textBox)
             {
