@@ -15,11 +15,28 @@
     private String AppViewName { get; set; } = String.Empty;
 
     [Parameter]
-    public required List<proto_UIComponent> UIComponents { get; set; }
+    public required List<UIComponent> UIComponents { get; set; }
 
-    private MudDropContainer<proto_UIComponent>? _internalDropContainer;
+    private UIComponent? _internalSelectedComponent;
     [Parameter]
-    public required MudDropContainer<proto_UIComponent>? DropContainer
+    public required UIComponent? SelectedComponent
+    {
+        get => _internalSelectedComponent;
+        set
+        {
+            if (SelectedComponentChanged.HasDelegate && value != _internalSelectedComponent)
+            {
+                _internalSelectedComponent = value;
+                SelectedComponentChanged.InvokeAsync(value);
+            }
+        }
+    }
+    [Parameter]
+    public required EventCallback<UIComponent?> SelectedComponentChanged { get; set; }
+
+    private MudDropContainer<UIComponent>? _internalDropContainer;
+    [Parameter]
+    public required MudDropContainer<UIComponent>? DropContainer
     {
         get => _internalDropContainer;
         set
@@ -32,7 +49,7 @@
         }
     }
     [Parameter]
-    public required EventCallback<MudDropContainer<proto_UIComponent>?> DropContainerChanged { get; set; }
+    public required EventCallback<MudDropContainer<UIComponent>?> DropContainerChanged { get; set; }
 
     private void SaveAppView()
     {
@@ -49,6 +66,7 @@
         if (UIComponents.Count == 0) return;
 
         UIComponents.Clear();
+        SelectedComponent = null;
         DropContainer?.Refresh();
     }
 

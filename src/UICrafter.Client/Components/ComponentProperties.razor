@@ -6,16 +6,16 @@
     <MudStack Class="rounded mud-background-gray pa-4 my-2 ">
         @if (SelectedComponent is not null)
         {
-            @if (SelectedComponent.ComponentCase == proto_UIComponent.ComponentOneofCase.Button)
+            @if (SelectedComponent.ComponentCase == UIComponent.ComponentOneofCase.Button)
             {
                 <MudTextField @bind-Value="SelectedComponent.Button.Label" Label="Button Label" Variant="Variant.Outlined" MaxLength="25"></MudTextField>
                 <MudTextField @bind-Value="SelectedComponent.Button.URL" Label="Button URL" Variant="Variant.Outlined"></MudTextField>
             }
-            else if (SelectedComponent.ComponentCase == proto_UIComponent.ComponentOneofCase.InputField)
+            else if (SelectedComponent.ComponentCase == UIComponent.ComponentOneofCase.InputField)
             {
                 <MudTextField @bind-Value="SelectedComponent.InputField.Label" Label="Input Placeholder" Variant="Variant.Outlined" MaxLength="25"></MudTextField>
             }
-            else if (SelectedComponent.ComponentCase == proto_UIComponent.ComponentOneofCase.Textbox)
+            else if (SelectedComponent.ComponentCase == UIComponent.ComponentOneofCase.Textbox)
             {
                 <MudTextField @bind-Value="SelectedComponent.Textbox.Label" Label="Textbox label" Variant="Variant.Outlined"></MudTextField>
                 <MudTextField @bind-Value="SelectedComponent.Textbox.NumberOfLines" Label="Number of lines" Variant="Variant.Outlined"></MudTextField>
@@ -24,7 +24,7 @@
                     <MudSelectItem Value="Guid.Empty.ToString()">None</MudSelectItem>
                     @foreach (var component in UIComponents)
                     {
-                        if (component.ComponentCase == proto_UIComponent.ComponentOneofCase.Button)
+                        if (component.ComponentCase == UIComponent.ComponentOneofCase.Button)
                         {
                             <MudSelectItem Value="component.Guid">@component.Button.Label</MudSelectItem>
                         }
@@ -46,11 +46,11 @@
 
 @code {
     [Parameter]
-    public required List<proto_UIComponent> UIComponents { get; set; }
+    public required List<UIComponent> UIComponents { get; set; }
 
-    private proto_UIComponent? _internalSelectedComponent;
+    private UIComponent? _internalSelectedComponent;
     [Parameter]
-    public required proto_UIComponent? SelectedComponent
+    public required UIComponent? SelectedComponent
     {
         get => _internalSelectedComponent;
         set
@@ -63,11 +63,11 @@
         }
     }
     [Parameter]
-    public required EventCallback<proto_UIComponent?> SelectedComponentChanged { get; set; }
+    public required EventCallback<UIComponent?> SelectedComponentChanged { get; set; }
 
-    private MudDropContainer<proto_UIComponent>? _internalDropContainer;
+    private MudDropContainer<UIComponent>? _internalDropContainer;
     [Parameter]
-    public required MudDropContainer<proto_UIComponent>? DropContainer
+    public required MudDropContainer<UIComponent>? DropContainer
     {
         get => _internalDropContainer;
         set
@@ -80,16 +80,16 @@
         }
     }
     [Parameter]
-    public required EventCallback<MudDropContainer<proto_UIComponent>?> DropContainerChanged { get; set; }
+    public required EventCallback<MudDropContainer<UIComponent>?> DropContainerChanged { get; set; }
 
     private void DeleteSelectedComponent()
     {
         if (SelectedComponent is null) return;
 
-        if (SelectedComponent.ComponentCase == proto_UIComponent.ComponentOneofCase.Button)
+        if (SelectedComponent.ComponentCase == UIComponent.ComponentOneofCase.Button)
         {
             var textBoxesWithSourceRef = UIComponents
-            .FindAll(component => component.ComponentCase == proto_UIComponent.ComponentOneofCase.Textbox && component.Textbox.SourceRef == SelectedComponent.Guid);
+            .FindAll(component => component.ComponentCase == UIComponent.ComponentOneofCase.Textbox && component.Textbox.SourceRef == SelectedComponent.Guid);
 
             foreach (var component in textBoxesWithSourceRef)
             {

@@ -25,11 +25,11 @@
 
 @code {
     [Parameter]
-    public required List<proto_UIComponent> UIComponents { get; set; }
+    public required List<UIComponent> UIComponents { get; set; }
 
-    private proto_UIComponent? _internalSelectedComponent;
+    private UIComponent? _internalSelectedComponent;
     [Parameter]
-    public required proto_UIComponent? SelectedComponent
+    public required UIComponent? SelectedComponent
     {
         get => _internalSelectedComponent;
         set
@@ -42,11 +42,11 @@
         }
     }
     [Parameter]
-    public required EventCallback<proto_UIComponent?> SelectedComponentChanged { get; set; }
+    public required EventCallback<UIComponent?> SelectedComponentChanged { get; set; }
 
-    private MudDropContainer<proto_UIComponent>? _internalDropContainer;
+    private MudDropContainer<UIComponent>? _internalDropContainer;
     [Parameter]
-    public required MudDropContainer<proto_UIComponent>? DropContainer
+    public required MudDropContainer<UIComponent>? DropContainer
     {
         get => _internalDropContainer;
         set
@@ -59,9 +59,9 @@
         }
     }
     [Parameter]
-    public required EventCallback<MudDropContainer<proto_UIComponent>?> DropContainerChanged { get; set; }
+    public required EventCallback<MudDropContainer<UIComponent>?> DropContainerChanged { get; set; }
 
-    private void AddNewUIComponent(proto_UIComponent component)
+    private void AddNewUIComponent(UIComponent component)
     {
         UIComponents.Add(component);
         SelectedComponent = component;
@@ -71,11 +71,11 @@
     private void AddNewButton()
     {
         AddNewUIComponent(
-            new proto_UIComponent
+            new UIComponent
                 {
                     Guid = Guid.NewGuid().ToString(),
                     DropZoneID = "Drop Zone 1",
-                    Button = new proto_UIButton
+                    Button = new UIButton
                     {
                         Label = "New Button",
                         URL = string.Empty
@@ -87,11 +87,11 @@
     private void AddNewInputField()
     {
         AddNewUIComponent(
-            new proto_UIComponent
+            new UIComponent
                 {
                     Guid = Guid.NewGuid().ToString(),
                     DropZoneID = "Drop Zone 1",
-                    InputField = new proto_UIInputField
+                    InputField = new UIInputField
                     {
                         Label = "Input Field"
                     }
@@ -102,11 +102,11 @@
     private void AddNewTextbox()
     {
         AddNewUIComponent(
-            new proto_UIComponent
+            new UIComponent
                 {
                     Guid = Guid.NewGuid().ToString(),
                     DropZoneID = "Drop Zone 1",
-                    Textbox = new proto_UITextbox
+                    Textbox = new UITextbox
                     {
                         Label = "Input Field",
                         NumberOfLines = 2,

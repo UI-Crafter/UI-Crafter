@@ -1,27 +1,27 @@
 syntax = "proto3";
 option csharp_namespace = "UICrafter.Core.Models";
 
-message proto_UIComponent{
+message UIComponent{
 	string Guid = 1;
 	string DropZoneID = 2;
 	oneof component{
-		proto_UIButton button = 3;
-		proto_UIInputField inputField = 4;
-		proto_UITextbox textbox = 5;
+		UIButton button = 3;
+		UIInputField inputField = 4;
+		UITextbox textbox = 5;
 	}
 }
 
-message proto_UIButton{
+message UIButton{
 	string Label = 1;
 	string URL = 2;
 }
 
-message proto_UIInputField{
+message UIInputField{
 	string Label = 1;
 	string Value = 2;
 }
 
-message proto_UITextbox{
+message UITextbox{
 	string Label = 1;
 	int32 NumberOfLines = 2;
 	string Content = 3;

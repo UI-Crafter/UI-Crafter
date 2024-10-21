@@ -13,7 +13,7 @@
 
         <AppViewDesigner @bind-SelectedComponent="@SelectedComponent" @bind-DropContainer="@DropContainer" UIComponents="@UIComponents" />
 
-        <AppViewButtons @bind-DropContainer="@DropContainer" UIComponents="@UIComponents" />
+        <AppViewButtons @bind-SelectedComponent="@SelectedComponent" @bind-DropContainer="@DropContainer" UIComponents="@UIComponents" />
     </MudStack>
 
     <!-- Right section: Component Properties (25%) -->
@@ -22,7 +22,7 @@
 
 
 @code {
-    private proto_UIComponent? SelectedComponent { get; set; }
-    private MudDropContainer<proto_UIComponent>? DropContainer { get; set; }
-    private List<proto_UIComponent> UIComponents { get; set; } = new List<proto_UIComponent>();
+    private UIComponent? SelectedComponent { get; set; }
+    private MudDropContainer<UIComponent>? DropContainer { get; set; }
+    private List<UIComponent> UIComponents { get; set; } = new List<UIComponent>();
 }
