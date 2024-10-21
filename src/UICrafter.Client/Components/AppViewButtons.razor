@@ -60,17 +60,16 @@
 
     private async Task SaveAppView()
     {
-        // var kek = new UIComponentList { };
+        var uiComponentList = new UIComponentList();
+        uiComponentList.UIComponents.AddRange(UIComponents);
 
-        // var lel = kek.ToByteString();
-
-        // UIComponentList kok = UIComponentList.Parser.ParseFrom(lel);
+        var serializedContent = uiComponentList.ToByteString();
 
         var appView = new AppView
             {
                 UserId = "User123",
                 Name = AppViewName,
-                // Content = 
+                Content = serializedContent
             };
 
         try
