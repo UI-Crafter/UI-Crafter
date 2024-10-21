@@ -56,6 +56,7 @@ public static class MauiProgram
 		// gRPC
 		builder.Services.AddGrpcClient<AppViewService.AppViewServiceClient>();
 
+
 		// Repository
 		builder.Services.AddScoped<IAppViewRepository, AppViewRepository>();
 

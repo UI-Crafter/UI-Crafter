@@ -1,148 +1,117 @@
-@page "/button-test"
+@page "/button-test/{viewId:long}"
+@using UICrafter.Core.AppView
 @using UICrafter.Core.Components
 @using UICrafter.Core.Models
+@using UICrafter.Core.UIComponents
 @using UICrafter.Core.Utility
+@using UICrafter.Core.Repository
 
-<PageTitle>Dynamic Components Test</PageTitle>
+@inject IAppViewRepository AppViewRepository
+@inject NavigationManager NavigationManager
 
-<h3>Dynamic Components Rendered from List</h3>
+<PageTitle>@appView.Name</PageTitle>
 
-@if (models != null && models.Any())
+
+@if (componentList != null && componentList.UIComponents.Any())
 {
     <CascadingValue Value="stupidStore">
-    @foreach (var model in models)
-    {
-        @if (model is PocButtonModel buttonModel)
+        @foreach (var component in componentList.UIComponents)
         {
-            <PocButtonNoMistakes Model="buttonModel" />
+            @switch (component.ComponentCase)
+            {
+                case UIComponent.ComponentOneofCase.Button:
+                    <PocButtonNoMistakes Button="component" />
+                    break;
+                case UIComponent.ComponentOneofCase.InputField:
+                    <PocAPIParamInputField InputField="component" />
+                    break;
+                case UIComponent.ComponentOneofCase.Textbox:
+                    <PocTextBox Textbox="component" />
+                    break;
+                default:
+                    // Handle unknown components if necessary
+                    break;
+            }
         }
-        else if (model is PocLabelModel labelModel)
-        {
-            <PocLabel Model="labelModel" />
-        }
-        else if (model is PocTextBoxModel textBoxModel)
-        {
-            <PocTextBox Model="textBoxModel" />
-        }
-    }
     </CascadingValue>
 }
 else
 {
     <MudText Typo="Typo.body1">
-    No components to display.
-</MudText>
-
+        No components to display.
+    </MudText>
 }
 
+
+
 @code {
-    private List<BaseModel>? models;
+    [Parameter]
+    public long viewId { get; set; }
+    private AppView? appView;
+
+    private UIComponentList componentList = new UIComponentList();
     private StupidStore stupidStore = new StupidStore();  // Shared store for updating TextBoxes
 
-    // Testcase with 3 buttons calling dag facts API.
-    protected override void OnInitialized()
+    protected override async Task OnInitializedAsync()
     {
-        models = new List<BaseModel>
+        if (viewId == 1)
         {
-            new PocButtonModel
-            {
-                Id = 1,
-                Name = "Button 1",
-                Description = "Button 1 Description",
-                Type = UItype.Button,
-                Color = "primary",
-                URL = "https://dog-api.kinduff.com/api/facts?number=1"
-            },
-            new PocLabelModel
-            {
-                Id = 201,
-                Name = "Label 1",
-                Description = "Label for Button 1",
-                Color = "secondary"
-            },
-            new PocTextBoxModel
-            {
-                Id = 101,
-                Name = "TextBox 1",
-                Description = "TextBox 1 will hold the JSON response from Button 1",
-                Color = "info",
-                buttonGUID = "1",
-                JsonField = "facts"
-            },
-            
+            // Use a dummy/test case for componentList
+            appView = new AppView
+                {
+                    Id = 1,
+                    Name = "Test App View",
+                    // Other properties as needed
+                };
 
-            new PocButtonModel
+            // Create a dummy UIComponentList with test data
+            componentList = new UIComponentList
+                {
+                    UIComponents =
             {
-                Id = 2,
-                Name = "Button 2",
-                Description = "Button 2 Description",
-                Type = UItype.Button,
-                Color = "success",
-                URL = "https://dog-api.kinduff.com/api/facts?number=2"
-            },
-            new PocLabelModel
-            {
-                Id = 202,
-                Name = "Label 2",
-                Description = "Label for Button 2",
-                Color = "info"
-            },
-            new PocTextBoxModel
-            {
-                Id = 102,
-                Name = "TextBox 2",
-                Description = "TextBox 2 will hold the JSON response from Button 2",
-                Color = "warning",
-                buttonGUID = "2",
-                JsonField = "facts"
-            },
-            
-            new PocTextBoxModel
-            {
-                Id = 103,
-                Name = "TextBox for Success or Not",
-                Description = "TextBox 2 will hold the JSON response from Button 3 field success",
-                Color = "success",
-                buttonGUID = "2",
-                JsonField = "success"
-            },
-            new PocTextBoxModel
-            {
-                Id = 103,
-                Name = "TextBox for Success or Not",
-                Description = "TextBox 2 will hold the JSON response from Button 3 field success",
-                Color = "success",
-                buttonGUID = "2",
-                JsonField = "response"
-            },
-
-            new PocButtonModel
-            {
-                Id = 3,
-                Name = "Button 3",
-                Description = "Button 3 Description",
-                Type = UItype.Button,
-                Color = "danger",
-                URL = "https://dog-api.kinduff.com/api/facts?number=3"
-            },
-            new PocLabelModel
-            {
-                Id = 203,
-                Name = "Label 3",
-                Description = "Label for Button 3",
-                Color = "dark"
-            },
-            new PocTextBoxModel
-            {
-                Id = 103,
-                Name = "TextBox 3",
-                Description = "TextBox 3 will hold the JSON response from Button 3",
-                Color = "success",
-                buttonGUID = "3",
-                JsonField = "success"
+                new UIComponent
+                {
+                    Guid = "ButtonGUID",
+                    DropZoneID = "test-zone",
+                    Button = new UIButton
+                    {
+                        Label = "Test Button",
+                        URL = "https://dog-api.kinduff.com/api/facts?number=3"
+                    }
+                },
+                new UIComponent
+                {
+                    Guid = Guid.NewGuid().ToString(),
+                    DropZoneID = "test-zone",
+                    Textbox = new UITextbox
+                    {
+                        Label = "Test Textbox",
+                        NumberOfLines = 3,
+                        Content = "This is a test textbox.",
+                        SourceRef = "ButtonGUID",
+                        JsonField = "facts"
+                    }
+                }
+                // Add more components as needed for testing
             }
-            
-        };
+                };
+        }
+        else
+        {
+            // Fetch the appView via the gRPC call
+            appView = await AppViewRepository.GetAppViewByIdAsync(viewId);
+
+            if (appView != null && appView.Content != null)
+            {
+                // Deserialize the Content byte array into a UIComponentList
+                componentList = UIComponentList.Parser.ParseFrom(appView.Content);
+            }
+            else
+            {
+                // Handle the case where the AppView is null or Content is null
+                componentList = new UIComponentList();
+            }
+        }
     }
 }
 

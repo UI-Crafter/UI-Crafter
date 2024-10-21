@@ -1,143 +1,63 @@
 @using MudBlazor
 @using UICrafter.Core.Models
+@using UICrafter.Core.UIComponents
 @using UICrafter.Core.Utility
 @using System.Net.Http.Json
 @using Newtonsoft.Json;
 
 
-<MudTextField @bind-Value="Model.Description"
-              Label="@Model.Name"
-              Color="@ColorOptions.GetColor(Model)"
+<MudTextField @bind-Value="Textbox.Textbox.Content"
+              Label="@Textbox.Textbox.Label"
               Variant="Variant.Outlined"
               ReadOnly="true"
-              AutoGrow="true"
-              MaxLines="5">
+              MaxLines="@Textbox.Textbox.NumberOfLines">
 </MudTextField>
 
 @code {
     [Parameter]
-    public required PocTextBoxModel Model { get; set; }
+    public required UIComponent Textbox { get; set; }
 
     [CascadingParameter]
     public required StupidStore StupidStore { get; set; }
 
     protected override void OnInitialized()
     {
-        if (!string.IsNullOrEmpty(Model.buttonGUID))
+        if (!string.IsNullOrEmpty(Textbox.Textbox.SourceRef))
         {
-            StupidStore.Subscribe(Model.buttonGUID, UpdateTextBox);
+            StupidStore.Subscribe(Textbox.Textbox.SourceRef, UpdateTextboxContent);
         }
     }
 
-    private void UpdateTextBox(Dictionary<string, object> jsonResponse)
+    private void UpdateTextboxContent(Dictionary<string, object> jsonResponse)
     {
-        if (Model == null)
+        if (string.IsNullOrEmpty(Textbox.Textbox.JsonField))
         {
-            return;
-        }
-
-        if (!string.IsNullOrEmpty(Model.JsonField))
-        {
-            Model.Description = "No JsonField specified.";
-        }
-
-
-
-        if( Model.JsonField == "response")
-        {
-            List<string> values = ExtractValues(jsonResponse);
-
-            string description = string.Join(" ", values);
-
-            Model.Description = description;
-            StateHasChanged();
-            return;
+            Textbox.Textbox.Content = "No JsonField specified.";
         }
         else
         {
-            string fieldName = Model.JsonField;
-
-            if (jsonResponse.TryGetValue(fieldName, out var fieldValue))
+            if (jsonResponse.TryGetValue(Textbox.Textbox.JsonField, out var fieldValue))
             {
-                string description = ConvertValueToString(fieldValue);
-
-                Model.Description = description;
+                Textbox.Textbox.Content = ConvertValueToString(fieldValue);
             }
             else
             {
-                Model.Description = $"Field '{fieldName}' not found in JSON response.";
+                Textbox.Textbox.Content = $"Field '{Textbox.Textbox.JsonField}' not found.";
             }
         }
- 
 
-        StateHasChanged();
+        InvokeAsync(StateHasChanged);
     }
 
     private string ConvertValueToString(object value)
     {
-        if (value is List<object> list)
-        {
-            var itemsAsString = list.Select(item => item.ToString());
-            return string.Join(" ", itemsAsString);
-        }
-        else if (value is Dictionary<string, object> dict)
-        {
-
-            return JsonConvert.SerializeObject(dict);
-        }
-        else
-        {
-            return value?.ToString() ?? string.Empty;
-        }
+        // Implement conversion logic similar to your previous code
+        // For simplicity, we'll use value.ToString()
+        return value?.ToString() ?? string.Empty;
     }
 
-
-    public void Dispose() =>
-        StupidStore?.Unsubscribe(Model.buttonGUID, UpdateTextBox);
-
-
-
-    private List<string> ExtractValues(object obj, string parentName = "", int indentLevel = 0, bool isArrayItem = false)
+    public void Dispose()
     {
-        List<string> values = new List<string>();
-        string indent = new string(' ', indentLevel * 2);
-
-        if (obj is Dictionary<string, object> dict)
-        {
-            foreach (var kvp in dict)
-            {
-                values.AddRange(ExtractValues(kvp.Value, kvp.Key, indentLevel));
-            }
-        }
-        else if (obj is List<object> list)
-        {
-            if (!string.IsNullOrEmpty(parentName) && !isArrayItem)
-            {
-                values.Add($"{indent}{parentName}:");
-            }
-
-            for (int i = 0; i < list.Count; i++)
-            {
-                var item = list[i];
-
-                values.AddRange(ExtractValues(item, $"{parentName}[{i}]", indentLevel + 1, isArrayItem: true));
-            }
-        }
-        else if (obj != null)
-        {
-
-            if (!string.IsNullOrEmpty(parentName) && !isArrayItem)
-            {
-                values.Add($"{indent}{parentName}: {obj}");
-            }
-            else
-            {
-                values.Add($"{indent}- {obj}");
-            }
-        }
-
-        return values;
+        StupidStore?.Unsubscribe(Textbox.Textbox.SourceRef, UpdateTextboxContent);
     }
-
-
 }

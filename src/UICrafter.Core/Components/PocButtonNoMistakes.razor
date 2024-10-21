@@ -8,59 +8,53 @@
 
 @inject HttpClient Http
 
+@using UICrafter.Core.UIComponents
 
 <MudButton OnClick="CallApi"
-           Color="@ColorOptions.GetColor(Model)"
-           Disabled=@isDisabled>
-    @Model.Name
+           Color="@buttonColor"
+           Disabled="@isDisabled">
+    @Button.Button.Label
 </MudButton>
 
-@if (!string.IsNullOrEmpty(Model.JSONResponse))
-{
-    <MudPaper Elevation="3" Class="pa-4">
-        <MudText Typo="Typo.h4" GutterBottom="true">API Response:</MudText>
-        @Model.JSONResponse
-    </MudPaper>
-}
-
-
 @code {
-    private bool isDisabled = false;
-
     [Parameter]
-    public PocButtonModel? Model { get; set; }
+    public required UIComponent Button { get; set; }
 
     [CascadingParameter]
-    public StupidStore? StupidStore { get; set; }
+    public required StupidStore StupidStore { get; set; }
+
+    private bool isDisabled = false;
+    private Color buttonColor = Color.Primary;
 
     private async Task CallApi()
     {
         try
         {
             isDisabled = true;
-            var tmp = Model.Name;
-            Model.Name = "Loading...";
+            var originalLabel = Button.Button.Label;
+            Button.Button.Label = "Loading...";
 
-                var response = await Http.GetStringAsync(Model.URL);
-                
-                if (response == null)
-                {
-                    Debug.WriteLine($"Error calling API for button {Model.Name}: Response is null");
-                   
-                    Model.Color = "error";
+            // Assume that Button.URL is the API endpoint
+            var response = await Http.GetStringAsync(Button.Button.URL);
 
-                    return;
-                }
-                await Task.Delay(2000);
-                Model.Name = tmp;
-                Model.Color = "success";
-                isDisabled = false;
-              
-                StupidStore.NotifySubscribers(Model.Id.ToString(), response);
-            }
-            catch (Exception ex)
+            if (response == null)
             {
-                Debug.WriteLine($"Error calling API for button {Model.Name}: {ex.Message}");
+                // Handle null response
+                buttonColor = Color.Error;
+                return;
             }
+
+            await Task.Delay(2000);
+            Button.Button.Label = originalLabel;
+            buttonColor = Color.Success;
+            isDisabled = false;
+
+            // Notify subscribers
+            StupidStore.NotifySubscribers(Button.Guid, response);
         }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Error calling API for button {Button.Button.Label}: {ex.Message}");
+        }
+    }
 }

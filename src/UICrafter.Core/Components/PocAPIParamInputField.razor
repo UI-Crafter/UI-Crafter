@@ -2,22 +2,16 @@
 @using UICrafter.Core.Models
 @using UICrafter.Core.Utility
 
-<MudNumericField @bind-Value="Model.ParamIndex"
-                 Label="@Model.Name"
-                 Color="@ColorOptions.GetColor(Model)"
-                 Variant="Variant.Outlined"
-                 Min="0">
-</MudNumericField>
+@using UICrafter.Core.UIComponents
 
-@if (Model.ParamIndex.HasValue)
-{
-    <MudText Typo="Typo.body1">
-        Parameter Index: @Model.ParamIndex
-    </MudText>
-
-}
+<MudTextField @bind-Value="InputField.InputField.Value"
+              Label="@InputField.InputField.Label"
+              Variant="Variant.Outlined"
+              MaxLines="5">
+</MudTextField>
 
 @code {
     [Parameter]
-    public PocAPIParamInputFieldModel? Model { get; set; }
+    public required UIComponent InputField { get; set; }
 }
+
