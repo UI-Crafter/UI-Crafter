@@ -5,24 +5,24 @@
 
 <MudStack Row="true">
     <!-- Left section: Component Grid (15%) -->
-    <ComponentGrid @bind-SelectedComponent="@SelectedComponent" @bind-DropContainer="@DropContainer" UIComponents="@UIComponents" />
+    <ComponentGrid @bind-SelectedComponent="@SelectedComponent" @bind-DropContainer="@DropContainer" UIComponents="@UIComponentList.UIComponents" />
 
     <!-- Center section: Dropzone (60%) -->
     <MudStack Style="width: 60%;" Class="align-center">
         <MudText>App-view:</MudText>
 
-        <AppViewDesigner @bind-SelectedComponent="@SelectedComponent" @bind-DropContainer="@DropContainer" UIComponents="@UIComponents" />
+        <AppViewDesigner @bind-SelectedComponent="@SelectedComponent" @bind-DropContainer="@DropContainer" UIComponents="@UIComponentList.UIComponents" />
 
-        <AppViewButtons @bind-SelectedComponent="@SelectedComponent" @bind-DropContainer="@DropContainer" UIComponents="@UIComponents" />
+        <AppViewButtons @bind-SelectedComponent="@SelectedComponent" @bind-DropContainer="@DropContainer" UIComponentList="@UIComponentList" />
     </MudStack>
 
     <!-- Right section: Component Properties (25%) -->
-    <ComponentProperties @bind-SelectedComponent="@SelectedComponent" @bind-DropContainer="@DropContainer" UIComponents="@UIComponents" />
+    <ComponentProperties @bind-SelectedComponent="@SelectedComponent" @bind-DropContainer="@DropContainer" UIComponents="@UIComponentList.UIComponents" />
 </MudStack>
 
 
 @code {
     private UIComponent? SelectedComponent { get; set; }
     private MudDropContainer<UIComponent>? DropContainer { get; set; }
-    private List<UIComponent> UIComponents { get; set; } = new List<UIComponent>();
+    private UIComponentList UIComponentList { get; set; } = new UIComponentList();
 }
