@@ -1,4 +1,4 @@
-@using UICrafter.Core.UIComponents
+@using UICrafter.Core.Models
 
 <MudStack Style="width: 25%;">
     <MudText>Properties:</MudText>
@@ -6,31 +6,31 @@
     <MudStack Class="rounded mud-background-gray pa-4 my-2 ">
         @if (SelectedComponent is not null)
         {
-            @if (SelectedComponent is UIButton button)
+            @if (SelectedComponent.ComponentCase == proto_UIComponent.ComponentOneofCase.Button)
             {
-                <MudTextField @bind-Value="button.Label" Label="Button Label" Variant="Variant.Outlined" MaxLength="25"></MudTextField>
-                <MudTextField @bind-Value="button.URL" Label="Button URL" Variant="Variant.Outlined"></MudTextField>
+                <MudTextField @bind-Value="SelectedComponent.Button.Label" Label="Button Label" Variant="Variant.Outlined" MaxLength="25"></MudTextField>
+                <MudTextField @bind-Value="SelectedComponent.Button.URL" Label="Button URL" Variant="Variant.Outlined"></MudTextField>
             }
-            else if (SelectedComponent is UIInputField inputField)
+            else if (SelectedComponent.ComponentCase == proto_UIComponent.ComponentOneofCase.InputField)
             {
-                <MudTextField @bind-Value="inputField.Label" Label="Input Placeholder" Variant="Variant.Outlined" MaxLength="25"></MudTextField>
+                <MudTextField @bind-Value="SelectedComponent.InputField.Label" Label="Input Placeholder" Variant="Variant.Outlined" MaxLength="25"></MudTextField>
             }
-            else if (SelectedComponent is UITextBox textBox)
+            else if (SelectedComponent.ComponentCase == proto_UIComponent.ComponentOneofCase.Textbox)
             {
-                <MudTextField @bind-Value="textBox.Label" Label="Textbox label" Variant="Variant.Outlined"></MudTextField>
-                <MudTextField @bind-Value="textBox.NumberOfLines" Label="Number of lines" Variant="Variant.Outlined"></MudTextField>
-                <MudTextField @bind-Value="textBox.Content" Label="Textbox Content" Variant="Variant.Outlined" Lines="4"></MudTextField>
-                <MudSelect @bind-Value="textBox.SourceRef">
-                    <MudSelectItem Value="Guid.Empty">None</MudSelectItem>
+                <MudTextField @bind-Value="SelectedComponent.Textbox.Label" Label="Textbox label" Variant="Variant.Outlined"></MudTextField>
+                <MudTextField @bind-Value="SelectedComponent.Textbox.NumberOfLines" Label="Number of lines" Variant="Variant.Outlined"></MudTextField>
+                <MudTextField @bind-Value="SelectedComponent.Textbox.Content" Label="Textbox Content" Variant="Variant.Outlined" Lines="4"></MudTextField>
+                <MudSelect @bind-Value="SelectedComponent.Textbox.SourceRef">
+                    <MudSelectItem Value="Guid.Empty.ToString()">None</MudSelectItem>
                     @foreach (var component in UIComponents)
                     {
-                        if (component is UIButton button)
+                        if (component.ComponentCase == proto_UIComponent.ComponentOneofCase.Button)
                         {
-                            <MudSelectItem Value="button.Guid">@button.Label</MudSelectItem>
+                            <MudSelectItem Value="component.Guid">@component.Button.Label</MudSelectItem>
                         }
                     }
                 </MudSelect>
-                <MudTextField @bind-Value="textBox.JsonField" Label="Json Field" Variant="Variant.Outlined"></MudTextField>
+                <MudTextField @bind-Value="SelectedComponent.Textbox.JsonField" Label="Json Field" Variant="Variant.Outlined"></MudTextField>
             }
             <MudButtonGroup Variant="Variant.Outlined" Class="mx-auto">
                 <MudIconButton Icon="@Icons.Material.Filled.Save" OnClick=@SaveSelectedComponent Size="Size.Large" />
@@ -46,11 +46,11 @@
 
 @code {
     [Parameter]
-    public required List<UIComponent> UIComponents { get; set; }
+    public required List<proto_UIComponent> UIComponents { get; set; }
 
-    private UIComponent? _internalSelectedComponent;
+    private proto_UIComponent? _internalSelectedComponent;
     [Parameter]
-    public required UIComponent? SelectedComponent
+    public required proto_UIComponent? SelectedComponent
     {
         get => _internalSelectedComponent;
         set
@@ -63,11 +63,11 @@
         }
     }
     [Parameter]
-    public required EventCallback<UIComponent?> SelectedComponentChanged { get; set; }
+    public required EventCallback<proto_UIComponent?> SelectedComponentChanged { get; set; }
 
-    private MudDropContainer<UIComponent>? _internalDropContainer;
+    private MudDropContainer<proto_UIComponent>? _internalDropContainer;
     [Parameter]
-    public required MudDropContainer<UIComponent>? DropContainer
+    public required MudDropContainer<proto_UIComponent>? DropContainer
     {
         get => _internalDropContainer;
         set
@@ -80,21 +80,20 @@
         }
     }
     [Parameter]
-    public required EventCallback<MudDropContainer<UIComponent>?> DropContainerChanged { get; set; }
+    public required EventCallback<MudDropContainer<proto_UIComponent>?> DropContainerChanged { get; set; }
 
     private void DeleteSelectedComponent()
     {
         if (SelectedComponent is null) return;
 
-        if (SelectedComponent is UIButton button)
+        if (SelectedComponent.ComponentCase == proto_UIComponent.ComponentOneofCase.Button)
         {
             var textBoxesWithSourceRef = UIComponents
-            .FindAll(component => component is UITextBox textBox && textBox.SourceRef == button.Guid)
-            .Cast<UITextBox>();
+            .FindAll(component => component.ComponentCase == proto_UIComponent.ComponentOneofCase.Textbox && component.Textbox.SourceRef == SelectedComponent.Guid);
 
-            foreach (var textBox in textBoxesWithSourceRef)
+            foreach (var component in textBoxesWithSourceRef)
             {
-                textBox.SourceRef = Guid.Empty;
+                component.Textbox.SourceRef = Guid.Empty.ToString();
             }
         }
 

@@ -1,23 +1,23 @@
-@using UICrafter.Core.UIComponents
+@using UICrafter.Core.Models
 
 <MudContainer MaxWidth="MaxWidth.Small">
-    <MudDropContainer T="UIComponent" @ref="DropContainer" Items="UIComponents" ItemsSelector="@((item,dropzone) => item.DropZoneID == dropzone)" ItemDropped="ComponentUpdated" Class="d-flex flex-wrap flex-grow-1">
+    <MudDropContainer T="proto_UIComponent" @ref="DropContainer" Items="UIComponents" ItemsSelector="@((item,dropzone) => item.DropZoneID == dropzone)" ItemDropped="ComponentUpdated" Class="d-flex flex-wrap flex-grow-1">
         <ChildContent>
-            <MudDropZone T="UIComponent" Identifier="Drop Zone 1" AllowReorder="true" Class="rounded mud-background-gray pa-2 flex-grow-1 overflow-auto" Style="height: 45rem;">
+            <MudDropZone T="proto_UIComponent" Identifier="Drop Zone 1" AllowReorder="true" Class="rounded mud-background-gray pa-2 flex-grow-1 overflow-auto" Style="height: 45rem;">
             </MudDropZone>
         </ChildContent>
         <ItemRenderer>
-            @if (context is UIButton button)
+            @if (context.ComponentCase == proto_UIComponent.ComponentOneofCase.Button)
             {
-                <MudButton Class="mb-2" Variant="Variant.Filled" @onfocus="()=>SelectComponent(button)">@button.Label</MudButton>
+                <MudButton Class="mb-2" Variant="Variant.Filled" @onfocus="()=>SelectComponent(context)">@context.Button.Label</MudButton>
             }
-            else if (context is UIInputField inputField)
+            else if (context.ComponentCase == proto_UIComponent.ComponentOneofCase.InputField)
             {
-                <MudTextField @bind-Value="@inputField.Value" Class="mb-2" Label="@inputField.Label" Variant="Variant.Outlined" @onfocus="()=>SelectComponent(inputField)"></MudTextField>
+                <MudTextField @bind-Value="@context.InputField.Value" Class="mb-2" Label="@context.InputField.Label" Variant="Variant.Outlined" @onfocus="()=>SelectComponent(context)"></MudTextField>
             }
-            else if (context is UITextBox textBox)
+            else if (context.ComponentCase == proto_UIComponent.ComponentOneofCase.Textbox)
             {
-                <MudTextField @bind-Value="@textBox.Content" Label="@textBox.Label" ReadOnly="true" ShrinkLabel="true" Lines=@textBox.NumberOfLines Variant="Variant.Outlined" @onfocus="()=>SelectComponent(textBox)" />
+                <MudTextField @bind-Value="@context.Textbox.Content" Label="@context.Textbox.Label" ReadOnly="true" ShrinkLabel="true" Lines=@context.Textbox.NumberOfLines Variant="Variant.Outlined" @onfocus="()=>SelectComponent(context)" />
             }
             else
             {
@@ -29,11 +29,11 @@
 
 @code {
     [Parameter]
-    public required List<UIComponent> UIComponents { get; set; }
+    public required List<proto_UIComponent> UIComponents { get; set; }
 
-    private UIComponent? _internalSelectedComponent;
+    private proto_UIComponent? _internalSelectedComponent;
     [Parameter]
-    public required UIComponent? SelectedComponent
+    public required proto_UIComponent? SelectedComponent
     {
         get => _internalSelectedComponent;
         set
@@ -46,11 +46,11 @@
         }
     }
     [Parameter]
-    public required EventCallback<UIComponent?> SelectedComponentChanged { get; set; }
+    public required EventCallback<proto_UIComponent?> SelectedComponentChanged { get; set; }
 
-    private MudDropContainer<UIComponent>? _internalDropContainer;
+    private MudDropContainer<proto_UIComponent>? _internalDropContainer;
     [Parameter]
-    public required MudDropContainer<UIComponent>? DropContainer
+    public required MudDropContainer<proto_UIComponent>? DropContainer
     {
         get => _internalDropContainer;
         set
@@ -63,11 +63,11 @@
         }
     }
     [Parameter]
-    public required EventCallback<MudDropContainer<UIComponent>?> DropContainerChanged { get; set; }
+    public required EventCallback<MudDropContainer<proto_UIComponent>?> DropContainerChanged { get; set; }
 
-    private void SelectComponent(UIComponent component) => SelectedComponent = component;
+    private void SelectComponent(proto_UIComponent component) => SelectedComponent = component;
 
-    private void ComponentUpdated(MudItemDropInfo<UIComponent> component)
+    private void ComponentUpdated(MudItemDropInfo<proto_UIComponent> component)
     {
         if (component is null || component.Item is null) return;
 

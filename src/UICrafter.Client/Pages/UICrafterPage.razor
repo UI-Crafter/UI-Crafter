@@ -1,5 +1,5 @@
 @using UICrafter.Client.Components
-@using UICrafter.Core.UIComponents
+@using UICrafter.Core.Models
 
 @page "/uicrafter"
 
@@ -22,7 +22,7 @@
 
 
 @code {
-    private UIComponent? SelectedComponent { get; set; }
-    private MudDropContainer<UIComponent>? DropContainer { get; set; }
-    private List<UIComponent> UIComponents { get; set; } = new List<UIComponent>();
+    private proto_UIComponent? SelectedComponent { get; set; }
+    private MudDropContainer<proto_UIComponent>? DropContainer { get; set; }
+    private List<proto_UIComponent> UIComponents { get; set; } = new List<proto_UIComponent>();
 }

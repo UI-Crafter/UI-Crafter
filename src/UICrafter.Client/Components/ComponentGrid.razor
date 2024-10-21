@@ -1,4 +1,4 @@
-@using UICrafter.Core.UIComponents
+@using UICrafter.Core.Models
 
 <MudStack Style="15%">
     <MudText Class="">Components:</MudText>
@@ -25,11 +25,11 @@
 
 @code {
     [Parameter]
-    public required List<UIComponent> UIComponents { get; set; }
+    public required List<proto_UIComponent> UIComponents { get; set; }
 
-    private UIComponent? _internalSelectedComponent;
+    private proto_UIComponent? _internalSelectedComponent;
     [Parameter]
-    public required UIComponent? SelectedComponent
+    public required proto_UIComponent? SelectedComponent
     {
         get => _internalSelectedComponent;
         set
@@ -42,11 +42,11 @@
         }
     }
     [Parameter]
-    public required EventCallback<UIComponent?> SelectedComponentChanged { get; set; }
+    public required EventCallback<proto_UIComponent?> SelectedComponentChanged { get; set; }
 
-    private MudDropContainer<UIComponent>? _internalDropContainer;
+    private MudDropContainer<proto_UIComponent>? _internalDropContainer;
     [Parameter]
-    public required MudDropContainer<UIComponent>? DropContainer
+    public required MudDropContainer<proto_UIComponent>? DropContainer
     {
         get => _internalDropContainer;
         set
@@ -59,9 +59,9 @@
         }
     }
     [Parameter]
-    public required EventCallback<MudDropContainer<UIComponent>?> DropContainerChanged { get; set; }
+    public required EventCallback<MudDropContainer<proto_UIComponent>?> DropContainerChanged { get; set; }
 
-    private void AddNewUIComponent(UIComponent component)
+    private void AddNewUIComponent(proto_UIComponent component)
     {
         UIComponents.Add(component);
         SelectedComponent = component;
@@ -70,16 +70,51 @@
 
     private void AddNewButton()
     {
-        AddNewUIComponent(new UIButton { Label = "New Button", URL = "" });
+        AddNewUIComponent(
+            new proto_UIComponent
+                {
+                    Guid = Guid.NewGuid().ToString(),
+                    DropZoneID = "Drop Zone 1",
+                    Button = new proto_UIButton
+                    {
+                        Label = "New Button",
+                        URL = string.Empty
+                    }
+                }
+        );
     }
 
     private void AddNewInputField()
     {
-        AddNewUIComponent(new UIInputField { Label = "New Input Field" });
+        AddNewUIComponent(
+            new proto_UIComponent
+                {
+                    Guid = Guid.NewGuid().ToString(),
+                    DropZoneID = "Drop Zone 1",
+                    InputField = new proto_UIInputField
+                    {
+                        Label = "Input Field"
+                    }
+                }
+        );
     }
 
     private void AddNewTextbox()
     {
-        AddNewUIComponent(new UITextBox { Content = "New Textbox", Label = "New Textbox" });
+        AddNewUIComponent(
+            new proto_UIComponent
+                {
+                    Guid = Guid.NewGuid().ToString(),
+                    DropZoneID = "Drop Zone 1",
+                    Textbox = new proto_UITextbox
+                    {
+                        Label = "Input Field",
+                        NumberOfLines = 2,
+                        Content = string.Empty,
+                        SourceRef = Guid.Empty.ToString(),
+                        JsonField = string.Empty
+                    }
+                }
+        );
     }
 }

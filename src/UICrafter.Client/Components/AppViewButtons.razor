@@ -1,4 +1,4 @@
-@using UICrafter.Core.UIComponents
+@using UICrafter.Core.Models
 
 <MudStack Row="true">
     <MudTextField @bind-Value="@AppViewName" Label="App-view name" Variant="Variant.Outlined"></MudTextField>
@@ -15,11 +15,11 @@
     private String AppViewName { get; set; } = String.Empty;
 
     [Parameter]
-    public required List<UIComponent> UIComponents { get; set; }
+    public required List<proto_UIComponent> UIComponents { get; set; }
 
-    private MudDropContainer<UIComponent>? _internalDropContainer;
+    private MudDropContainer<proto_UIComponent>? _internalDropContainer;
     [Parameter]
-    public required MudDropContainer<UIComponent>? DropContainer
+    public required MudDropContainer<proto_UIComponent>? DropContainer
     {
         get => _internalDropContainer;
         set
@@ -32,7 +32,7 @@
         }
     }
     [Parameter]
-    public required EventCallback<MudDropContainer<UIComponent>?> DropContainerChanged { get; set; }
+    public required EventCallback<MudDropContainer<proto_UIComponent>?> DropContainerChanged { get; set; }
 
     private void SaveAppView()
     {

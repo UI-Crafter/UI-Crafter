@@ -3,11 +3,11 @@ option csharp_namespace = "UICrafter.Core.Models";
 
 message proto_UIComponent{
 	string Guid = 1;
-
+	string DropZoneID = 2;
 	oneof component{
-		proto_UIButton button = 2;
-		proto_UIInputField inputField = 3;
-		proto_UITextbox textbox = 4;
+		proto_UIButton button = 3;
+		proto_UIInputField inputField = 4;
+		proto_UITextbox textbox = 5;
 	}
 }
 
