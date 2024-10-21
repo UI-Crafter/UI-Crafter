@@ -1,3 +1,4 @@
+@using Google.Protobuf.Collections
 @using UICrafter.Core.UIComponents
 
 <MudContainer MaxWidth="MaxWidth.Small">
@@ -29,7 +30,7 @@
 
 @code {
     [Parameter]
-    public required List<UIComponent> UIComponents { get; set; }
+    public required RepeatedField<UIComponent> UIComponents { get; set; }
 
     private UIComponent? _internalSelectedComponent;
     [Parameter]

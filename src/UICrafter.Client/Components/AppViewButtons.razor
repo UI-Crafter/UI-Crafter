@@ -1,11 +1,17 @@
 @using Google.Protobuf
+@using Google.Protobuf.Collections
 @using Google.Protobuf.WellKnownTypes
+@using Grpc.Core
 @using UICrafter.Core.UIComponents
 @using UICrafter.Core.AppView
 @using UICrafter.Core.Utility
 
 <MudStack Row="true">
-    <MudTextField @bind-Value="@AppViewName" Label="App-view name" Variant="Variant.Outlined"></MudTextField>
+    <MudOverlay Visible="Visible" DarkBackground="true" Absolute="true">
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+    </MudOverlay>
+
+    <MudTextField @bind-Value="@AppView.Name" Label="App-view name" Variant="Variant.Outlined"></MudTextField>
 
     <MudButtonGroup Variant="Variant.Outlined" Class="ma-auto">
         <MudIconButton Icon="@Icons.Material.Filled.Save" Size="Size.Large" OnClick="@SaveAppView" />
@@ -19,10 +25,11 @@
     [Inject]
     private IAppViewRepository AppViewRepository { get; set; } = default!;
 
-    private String AppViewName { get; set; } = String.Empty;
+    private AppView AppView { get; set; } = new AppView { Name = string.Empty };
+    private bool Visible { get; set; } = false;
 
     [Parameter]
-    public required List<UIComponent> UIComponents { get; set; }
+    public required UIComponentList UIComponentList { get; set; }
 
     private UIComponent? _internalSelectedComponent;
     [Parameter]
@@ -58,52 +65,87 @@
     [Parameter]
     public required EventCallback<MudDropContainer<UIComponent>?> DropContainerChanged { get; set; }
 
+    AppView test = new AppView();
+
     private async Task SaveAppView()
     {
-        // var kek = new UIComponentList { };
+        Visible = true;
 
-        // var lel = kek.ToByteString();
+        var serializedContent = UIComponentList.ToByteString();
 
-        // UIComponentList kok = UIComponentList.Parser.ParseFrom(lel);
-
-        var appView = new AppView
-            {
-                UserId = "User123",
-                Name = AppViewName,
-                // Content = 
-            };
+        AppView.Content = serializedContent;
 
         try
         {
-            var response = await AppViewRepository.CreateAppViewAsync(appView);
+            if (AppView.Id == 0)
+            {
+                await AppViewRepository.CreateAppViewAsync(AppView);
+                Console.WriteLine("Called Create");
+            }
+            else
+            {
+                await AppViewRepository.UpdateAppViewAsync(AppView);
+                Console.WriteLine("Called Update");
+            }
         }
-        catch (Exception)
+        catch (RpcException ex)
         {
-            
+            Console.WriteLine($"Error while saving AppView: {ex.Status.Detail}");
         }
 
-        await Task.Delay(1000);
-        Console.WriteLine("AppView saved.");
+        Visible = false;
     }
 
     private async Task DeleteAppView()
     {
-        await Task.Delay(1000);
-        Console.WriteLine("AppView deleted.");
+        Visible = true;
+
+        try
+        {
+            await AppViewRepository.DeleteAppViewByIdAsync(AppView.Id);
+        }
+        catch (RpcException ex)
+        {
+            Console.WriteLine($"Error while deleting AppView: {ex.Status.Detail}");
+        }
+
+        ClearAppView();
+
+        AppView = new AppView();
+
+        Visible = false;
     }
 
     private void ClearAppView()
     {
-        if (UIComponents.Count == 0) return;
+        if (UIComponentList.UIComponents.Count == 0) return;
 
-        UIComponents.Clear();
+        UIComponentList.UIComponents.Clear();
         SelectedComponent = null;
         DropContainer?.Refresh();
     }
 
     private async Task LoadAppView()
     {
-        await Task.Delay(1000);
-        Console.WriteLine("AppView loaded.");
+        Visible = true;
+
+        ClearAppView();
+
+        try
+        {
+            AppView = await AppViewRepository.GetAppViewByIdAsync(1);
+
+            var parsedContent = UIComponentList.Parser.ParseFrom(AppView.Content);
+
+            UIComponentList.UIComponents.AddRange(parsedContent.UIComponents);
+
+            DropContainer?.Refresh();
+        }
+        catch (RpcException ex)
+        {
+            Console.WriteLine($"Error while loading AppView: {ex.Status.Detail}");
+        }
+
+        Visible = false;
     }
 }

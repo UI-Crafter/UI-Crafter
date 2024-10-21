@@ -1,3 +1,4 @@
+@using Google.Protobuf.Collections
 @using UICrafter.Core.UIComponents
 
 <MudStack Style="width: 25%;">
@@ -43,7 +44,7 @@
 
 @code {
     [Parameter]
-    public required List<UIComponent> UIComponents { get; set; }
+    public required RepeatedField<UIComponent> UIComponents { get; set; }
 
     private UIComponent? _internalSelectedComponent;
     [Parameter]
@@ -86,7 +87,8 @@
         if (SelectedComponent.ComponentCase == UIComponent.ComponentOneofCase.Button)
         {
             var textBoxesWithSourceRef = UIComponents
-            .FindAll(component => component.ComponentCase == UIComponent.ComponentOneofCase.Textbox && component.Textbox.SourceRef == SelectedComponent.Guid);
+                .Where(component => component.ComponentCase == UIComponent.ComponentOneofCase.Textbox && component.Textbox.SourceRef == SelectedComponent.Guid)
+                .ToList();
 
             foreach (var component in textBoxesWithSourceRef)
             {
