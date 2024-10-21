@@ -1,4 +1,8 @@
-@using static UICrafter.Client.Pages.UICrafterPage
+@using Google.Protobuf
+@using Google.Protobuf.WellKnownTypes
+@using UICrafter.Core.UIComponents
+@using UICrafter.Core.AppView
+@using UICrafter.Core.Utility
 
 <MudStack Row="true">
     <MudTextField @bind-Value="@AppViewName" Label="App-view name" Variant="Variant.Outlined"></MudTextField>
@@ -12,10 +16,30 @@
 </MudStack>
 
 @code {
+    [Inject]
+    private IAppViewRepository AppViewRepository { get; set; } = default!;
+
     private String AppViewName { get; set; } = String.Empty;
 
     [Parameter]
     public required List<UIComponent> UIComponents { get; set; }
+
+    private UIComponent? _internalSelectedComponent;
+    [Parameter]
+    public required UIComponent? SelectedComponent
+    {
+        get => _internalSelectedComponent;
+        set
+        {
+            if (SelectedComponentChanged.HasDelegate && value != _internalSelectedComponent)
+            {
+                _internalSelectedComponent = value;
+                SelectedComponentChanged.InvokeAsync(value);
+            }
+        }
+    }
+    [Parameter]
+    public required EventCallback<UIComponent?> SelectedComponentChanged { get; set; }
 
     private MudDropContainer<UIComponent>? _internalDropContainer;
     [Parameter]
@@ -34,14 +58,38 @@
     [Parameter]
     public required EventCallback<MudDropContainer<UIComponent>?> DropContainerChanged { get; set; }
 
-    private void SaveAppView()
+    private async Task SaveAppView()
     {
-        throw new NotImplementedException();
+        // var kek = new UIComponentList { };
+
+        // var lel = kek.ToByteString();
+
+        // UIComponentList kok = UIComponentList.Parser.ParseFrom(lel);
+
+        var appView = new AppView
+            {
+                UserId = "User123",
+                Name = AppViewName,
+                // Content = 
+            };
+
+        try
+        {
+            var response = await AppViewRepository.CreateAppViewAsync(appView);
+        }
+        catch (Exception)
+        {
+            
+        }
+
+        await Task.Delay(1000);
+        Console.WriteLine("AppView saved.");
     }
 
-    private void DeleteAppView()
+    private async Task DeleteAppView()
     {
-        throw new NotImplementedException();
+        await Task.Delay(1000);
+        Console.WriteLine("AppView deleted.");
     }
 
     private void ClearAppView()
@@ -49,11 +97,13 @@
         if (UIComponents.Count == 0) return;
 
         UIComponents.Clear();
+        SelectedComponent = null;
         DropContainer?.Refresh();
     }
 
-    private void LoadAppView()
+    private async Task LoadAppView()
     {
-        throw new NotImplementedException();
+        await Task.Delay(1000);
+        Console.WriteLine("AppView loaded.");
     }
 }

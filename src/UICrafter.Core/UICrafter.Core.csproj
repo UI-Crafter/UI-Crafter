@@ -31,6 +31,12 @@
 
 	<ItemGroup>
 	  <None Remove="protos\UI.proto" />
+	  <None Remove="protos\UIComponents.proto" />
+	</ItemGroup>
+
+
+	<ItemGroup>
+	  <Protobuf Update="protos\UIComponents.proto" GrpcServices="$(GrpcServiceType)" />
 	</ItemGroup>
 
 </Project>
