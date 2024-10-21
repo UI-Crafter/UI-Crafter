@@ -7,7 +7,7 @@
 @using UICrafter.Core.Utility
 
 <MudStack Row="true">
-    <MudOverlay Visible="visible" DarkBackground="true" Absolute="true">
+    <MudOverlay Visible="Visible" DarkBackground="true" Absolute="true">
         <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
     </MudOverlay>
 
@@ -26,7 +26,7 @@
     private IAppViewRepository AppViewRepository { get; set; } = default!;
 
     private AppView AppView { get; set; } = new AppView { Name = string.Empty };
-    private bool visible;
+    private bool Visible { get; set; } = false;
 
     [Parameter]
     public required UIComponentList UIComponentList { get; set; }
@@ -69,7 +69,7 @@
 
     private async Task SaveAppView()
     {
-        visible = true;
+        Visible = true;
 
         var serializedContent = UIComponentList.ToByteString();
 
@@ -93,12 +93,12 @@
             Console.WriteLine($"Error while saving AppView: {ex.Status.Detail}");
         }
 
-        visible = false;
+        Visible = false;
     }
 
     private async Task DeleteAppView()
     {
-        visible = true;
+        Visible = true;
 
         try
         {
@@ -113,7 +113,7 @@
 
         AppView = new AppView();
 
-        visible = false;
+        Visible = false;
     }
 
     private void ClearAppView()
@@ -127,7 +127,7 @@
 
     private async Task LoadAppView()
     {
-        visible = true;
+        Visible = true;
 
         ClearAppView();
 
@@ -146,6 +146,6 @@
             Console.WriteLine($"Error while loading AppView: {ex.Status.Detail}");
         }
 
-        visible = false;
+        Visible = false;
     }
 }
