@@ -81,6 +81,15 @@
 
     private async Task DeleteAppView()
     {
+        try
+        {
+            await AppViewRepository.DeleteAppViewByIdAsync(AppView.Id);
+        }
+        catch (RpcException ex)
+        {
+            Console.WriteLine($"Error while deleting AppView: {ex.Status.Detail}");
+        }
+
         await Task.Delay(1000);
         Console.WriteLine("AppView deleted.");
     }
