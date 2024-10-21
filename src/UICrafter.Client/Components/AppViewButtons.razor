@@ -21,7 +21,7 @@
     [Inject]
     private IAppViewRepository AppViewRepository { get; set; } = default!;
 
-    private AppView AppView { get; set; } = new AppView { Name = "New AppView" };
+    private AppView AppView { get; set; } = new AppView { Name = string.Empty };
 
     [Parameter]
     public required UIComponentList UIComponentList { get; set; }
