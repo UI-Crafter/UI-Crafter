@@ -1,4 +1,8 @@
-@using UICrafter.Core.Models
+@using Google.Protobuf
+@using Google.Protobuf.WellKnownTypes
+@using UICrafter.Core.UIComponents
+@using UICrafter.Core.AppView
+@using UICrafter.Core.Utility
 
 <MudStack Row="true">
     <MudTextField @bind-Value="@AppViewName" Label="App-view name" Variant="Variant.Outlined"></MudTextField>
@@ -12,6 +16,9 @@
 </MudStack>
 
 @code {
+    [Inject]
+    private IAppViewRepository AppViewRepository { get; set; } = default!;
+
     private String AppViewName { get; set; } = String.Empty;
 
     [Parameter]
@@ -53,6 +60,28 @@
 
     private async Task SaveAppView()
     {
+        // var kek = new UIComponentList { };
+
+        // var lel = kek.ToByteString();
+
+        // UIComponentList kok = UIComponentList.Parser.ParseFrom(lel);
+
+        var appView = new AppView
+            {
+                UserId = "User123",
+                Name = AppViewName,
+                // Content = 
+            };
+
+        try
+        {
+            var response = await AppViewRepository.CreateAppViewAsync(appView);
+        }
+        catch (Exception)
+        {
+            
+        }
+
         await Task.Delay(1000);
         Console.WriteLine("AppView saved.");
     }

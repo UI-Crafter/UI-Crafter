@@ -1,5 +1,9 @@
 syntax = "proto3";
-option csharp_namespace = "UICrafter.Core.Models";
+option csharp_namespace = "UICrafter.Core.UIComponents";
+
+message UIComponentList{
+	repeated UIComponent UIComponents = 1;
+}
 
 message UIComponent{
 	string Guid = 1;

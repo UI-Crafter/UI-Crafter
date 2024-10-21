@@ -1,4 +1,4 @@
-@using UICrafter.Core.Models
+@using UICrafter.Core.UIComponents
 
 <MudContainer MaxWidth="MaxWidth.Small">
     <MudDropContainer T="UIComponent" @ref="DropContainer" Items="UIComponents" ItemsSelector="@((item,dropzone) => item.DropZoneID == dropzone)" ItemDropped="ComponentUpdated" Class="d-flex flex-wrap flex-grow-1">
