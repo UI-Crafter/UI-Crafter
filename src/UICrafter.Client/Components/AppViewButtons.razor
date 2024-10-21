@@ -51,14 +51,16 @@
     [Parameter]
     public required EventCallback<MudDropContainer<UIComponent>?> DropContainerChanged { get; set; }
 
-    private void SaveAppView()
+    private async Task SaveAppView()
     {
-        throw new NotImplementedException();
+        await Task.Delay(1000);
+        Console.WriteLine("AppView saved.");
     }
 
-    private void DeleteAppView()
+    private async Task DeleteAppView()
     {
-        throw new NotImplementedException();
+        await Task.Delay(1000);
+        Console.WriteLine("AppView deleted.");
     }
 
     private void ClearAppView()
@@ -70,8 +72,9 @@
         DropContainer?.Refresh();
     }
 
-    private void LoadAppView()
+    private async Task LoadAppView()
     {
-        throw new NotImplementedException();
+        await Task.Delay(1000);
+        Console.WriteLine("AppView loaded.");
     }
 }
