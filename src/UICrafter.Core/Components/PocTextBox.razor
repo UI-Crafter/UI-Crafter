@@ -10,7 +10,8 @@
               Label="@Textbox.Textbox.Label"
               Variant="Variant.Outlined"
               ReadOnly="true"
-              MaxLines="@Textbox.Textbox.NumberOfLines">
+              MaxLines="@Textbox.Textbox.NumberOfLines"
+              AutoGrow="true">
 </MudTextField>
 
 @code {
@@ -36,28 +37,116 @@
         }
         else
         {
-            if (jsonResponse.TryGetValue(Textbox.Textbox.JsonField, out var fieldValue))
+
+            if (Textbox.Textbox.JsonField == "response")
             {
-                Textbox.Textbox.Content = ConvertValueToString(fieldValue);
+                List<string> values = ExtractValues(jsonResponse);
+
+                string description = string.Join(" ", values);
+
+                Textbox.Textbox.Content = description;
+                StateHasChanged();
+                return;
             }
             else
             {
-                Textbox.Textbox.Content = $"Field '{Textbox.Textbox.JsonField}' not found.";
+                string fieldName = Textbox.Textbox.JsonField;
+
+                if (jsonResponse.TryGetValue(fieldName, out var fieldValue))
+                {
+                    string description = ConvertValueToString(fieldValue);
+
+                    Textbox.Textbox.Content = description;
+                }
+                else
+                {
+                    Textbox.Textbox.Content = $"Field '{fieldName}' not found in JSON response.";
+                }
             }
+
+
+            // if (jsonResponse.TryGetValue(Textbox.Textbox.JsonField, out var fieldValue))
+            // {
+            //     Textbox.Textbox.Content = ConvertValueToString(fieldValue);
+            // }
+            // else
+            // {
+            //     Textbox.Textbox.Content = $"Field '{Textbox.Textbox.JsonField}' not found.";
+            // }
         }
 
         InvokeAsync(StateHasChanged);
     }
 
-    private string ConvertValueToString(object value)
-    {
-        // Implement conversion logic similar to your previous code
-        // For simplicity, we'll use value.ToString()
-        return value?.ToString() ?? string.Empty;
-    }
+    // private string ConvertValueToString(object value)
+    // {
+    //     // Implement conversion logic similar to your previous code
+    //     // For simplicity, we'll use value.ToString()
+    //     return value?.ToString() ?? string.Empty;
+    // }
 
     public void Dispose()
     {
         StupidStore?.Unsubscribe(Textbox.Textbox.SourceRef, UpdateTextboxContent);
+    }
+
+    private string ConvertValueToString(object value)
+    {
+        if (value is List<object> list)
+        {
+            var itemsAsString = list.Select(item => item.ToString());
+            return string.Join(" ", itemsAsString);
+        }
+        else if (value is Dictionary<string, object> dict)
+        {
+
+            return JsonConvert.SerializeObject(dict);
+        }
+        else
+        {
+            return value?.ToString() ?? string.Empty;
+        }
+    }
+
+    private List<string> ExtractValues(object obj, string parentName = "", int indentLevel = 0, bool isArrayItem = false)
+    {
+        List<string> values = new List<string>();
+        string indent = new string(' ', indentLevel * 2);
+
+        if (obj is Dictionary<string, object> dict)
+        {
+            foreach (var kvp in dict)
+            {
+                values.AddRange(ExtractValues(kvp.Value, kvp.Key, indentLevel));
+            }
+        }
+        else if (obj is List<object> list)
+        {
+            if (!string.IsNullOrEmpty(parentName) && !isArrayItem)
+            {
+                values.Add($"{indent}{parentName}:");
+            }
+
+            for (int i = 0; i < list.Count; i++)
+            {
+                var item = list[i];
+
+                values.AddRange(ExtractValues(item, $"{parentName}[{i}]", indentLevel + 1, isArrayItem: true));
+            }
+        }
+        else if (obj != null)
+        {
+
+            if (!string.IsNullOrEmpty(parentName) && !isArrayItem)
+            {
+                values.Add($"{indent}{parentName}: {obj}");
+            }
+            else
+            {
+                values.Add($"{indent}- {obj}");
+            }
+        }
+
+        return values;
     }
 }

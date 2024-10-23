@@ -1,8 +1,9 @@
+@page "/app-views"
 @using System.Diagnostics
 @using UICrafter.Core.AppView
 @using UICrafter.Core.Models
-@using UICrafter.Core.Repository
 @using MudBlazor
+@using UICrafter.Core.Repository
 
 @inject IAppViewRepository AppViewRepository
 @inject NavigationManager NavigationManager
@@ -13,12 +14,25 @@
 {
     <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
 }
+else if (!appViews.Any())
+{
+    <MudText Typo="Typo.subtitle1">No AppViews found. Here are some mock items:</MudText>
+
+    <MudList T="string">
+        <MudListItem OnClick="OnMockItemClicked">
+            <MudText>Mock Item 1</MudText>
+        </MudListItem>
+        <MudListItem OnClick="OnMockItemClicked">
+            <MudText>Mock Item 2</MudText>
+        </MudListItem>
+    </MudList>
+}
 else
 {
     <MudList T="AppView">
         @foreach (var view in appViews)
         {
-            <MudListItem Click="() => OnViewClicked(view.Id)">
+            <MudListItem @onclick="() => OnViewClicked(view.Id)">
                 <MudText>@view.Name</MudText>
             </MudListItem>
         }
@@ -35,30 +49,35 @@ else
     {
         try
         {
+            // Simulate getting data from repository
             appViews = await AppViewRepository.GetAppViewsByUserIdAsync(UserId);
-
+            //Task.Delay(1000).Wait(); // Simulate loading delay
             if (appViews == null || !appViews.Any())
             {
-                Debug.WriteLine("No AppViews found, navigating to /button/1");
-                // No AppViews found, navigate to /button/1
-                NavigationManager.NavigateTo("/button-test/1");
+                Debug.WriteLine("No AppViews found, displaying mock items.");
+                // Set empty list to display mock items
+                appViews = new List<AppView>();
             }
         }
         catch (Exception ex)
         {
-            // Log the exception if necessary
             Debug.WriteLine($"Error fetching AppViews: {ex.Message}");
-
-            // Navigate to /button/1 in case of failure
-            NavigationManager.NavigateTo("/button-test/1");
+            appViews = new List<AppView>(); // Ensure mock items are shown on error
         }
     }
 
-    private async Task OnViewClicked(long viewId)
+    private void OnViewClicked(long viewId)
     {
-        var appView = await AppViewRepository.GetAppViewByIdAsync(viewId);
+        Debug.WriteLine("Clicked a real view item");
 
         // Navigate to the corresponding view
         NavigationManager.NavigateTo($"/button-test?viewId={viewId}");
+    }
+
+    private void OnMockItemClicked()
+    {
+        Debug.WriteLine("Clicked mock item");
+        // Navigate to /button-test/1 when a mock item is clicked
+        NavigationManager.NavigateTo("/button-test/1");
     }
 }
