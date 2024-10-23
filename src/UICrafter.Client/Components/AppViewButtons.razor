@@ -65,7 +65,7 @@
     [Parameter]
     public required EventCallback<MudDropContainer<UIComponent>?> DropContainerChanged { get; set; }
 
-    AppView test = new AppView();
+    AppView test = new AppView{};
 
     private async Task SaveAppView()
     {
@@ -77,16 +77,8 @@
 
         try
         {
-            if (AppView.Id == 0)
-            {
-                await AppViewRepository.CreateAppViewAsync(AppView);
-                Console.WriteLine("Called Create");
-            }
-            else
-            {
-                await AppViewRepository.UpdateAppViewAsync(AppView);
-                Console.WriteLine("Called Update");
-            }
+            test = AppView.Clone();
+            await Task.Delay(1000);
         }
         catch (RpcException ex)
         {
@@ -133,7 +125,9 @@
 
         try
         {
-            AppView = await AppViewRepository.GetAppViewByIdAsync(1);
+            AppView = test;
+
+            await Task.Delay(1000);
 
             var parsedContent = UIComponentList.Parser.ParseFrom(AppView.Content);
 
