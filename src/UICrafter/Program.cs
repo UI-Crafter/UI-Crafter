@@ -1,7 +1,11 @@
 using Google.Protobuf;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Web;
+using Microsoft.OpenApi.Models;
 using MudBlazor.Services;
 using UICrafter;
 using UICrafter.Components;
@@ -22,7 +26,21 @@ builder.Services.AddHttpClient();
 builder.Services.AddScoped<IHttpClientProvider, HttpClientProvider>();
 
 // gRPC
-builder.Services.AddGrpc();
+if (builder.Environment.IsDevelopment())
+{
+	builder.Services.AddGrpc().AddJsonTranscoding();
+	builder.Services.AddGrpcSwagger();
+	builder.Services.AddSwaggerGen(c =>
+	{
+		c.SwaggerDoc("v1",
+			new OpenApiInfo { Title = "gRPC transcoding", Version = "v1" });
+	});
+}
+else
+{
+	builder.Services.AddGrpc();
+}
+
 
 // Swagger setup
 builder.Services.AddEndpointsApiExplorer();
@@ -37,6 +55,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 
 // Auth
 builder.Services.AddMicrosoftIdentityWebAppAuthentication(builder.Configuration);
+builder.Services.Configure<OpenIdConnectOptions>(OpenIdConnectDefaults.AuthenticationScheme, OpenIdConnectConfiguration.Configure);
 builder.Services.AddScoped<AuthenticationStateProvider, PersistingAuthenticationStateProvider>();
 builder.Services.AddAuthorization();
 builder.Services.AddCascadingAuthenticationState();
@@ -56,6 +75,10 @@ if (app.Environment.IsDevelopment())
 	app.UseWebAssemblyDebugging();
 	app.UseSwagger();
 	app.UseSwaggerUI();
+	app.UseSwaggerUI(c =>
+	{
+		c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+	});
 }
 else
 {
@@ -76,6 +99,8 @@ app.MapRazorComponents<App>()
 	.AddInteractiveWebAssemblyRenderMode()
 	.AddAdditionalAssemblies(typeof(UICrafter.Client._Imports).Assembly);
 
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapGet("api/prototest", () =>
 {
@@ -90,6 +115,9 @@ app.MapGet("api/prototest", () =>
 
 	return base64Person;
 }).RequireAuthorization();
+
+app.MapGet("auth/login", (string? returnUrl) => TypedResults.Challenge(new AuthenticationProperties { RedirectUri = returnUrl }))
+			.AllowAnonymous();
 
 app.MapGrpcService<AppViewServicegRPC>().EnableGrpcWeb();
 

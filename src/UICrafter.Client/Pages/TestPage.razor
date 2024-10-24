@@ -3,11 +3,11 @@
 
 <TestComponent/>
 
-<ProtobuffersTestComponent/>
+@* <ProtobuffersTestComponent/> *@
 
 
 @code {
-    [Inject] IAppViewRepository AppViewRepository { get; set; }
+    [Inject] IAppViewRepository AppViewRepository { get; set; } = default!;
 
     private IList<AppView>? _appViews;
 
