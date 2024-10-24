@@ -26,20 +26,22 @@ builder.Services.AddHttpClient();
 builder.Services.AddScoped<IHttpClientProvider, HttpClientProvider>();
 
 // gRPC
-if (builder.Environment.IsDevelopment())
-{
-	builder.Services.AddGrpc().AddJsonTranscoding();
-	builder.Services.AddGrpcSwagger();
-	builder.Services.AddSwaggerGen(c =>
-	{
-		c.SwaggerDoc("v1",
-			new OpenApiInfo { Title = "gRPC transcoding", Version = "v1" });
-	});
-}
-else
-{
-	builder.Services.AddGrpc();
-}
+//if (builder.Environment.IsDevelopment())
+//{
+//	builder.Services.AddGrpc().AddJsonTranscoding();
+//	builder.Services.AddGrpcSwagger();
+//	builder.Services.AddSwaggerGen(c =>
+//	{
+//		c.SwaggerDoc("v1",
+//			new OpenApiInfo { Title = "gRPC transcoding", Version = "v1" });
+//	});
+//}
+//else
+//{
+//	builder.Services.AddGrpc();
+//}
+
+builder.Services.AddGrpc();
 
 
 // Swagger setup

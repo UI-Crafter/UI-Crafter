@@ -31,7 +31,7 @@ public class AppViewRepository : IAppViewRepository
 				CreatedAtUTC = Timestamp.FromDateTime(view.CreatedAtUTC),
 				UpdatedAtUTC = Timestamp.FromDateTime(view.UpdatedAtUTC),
 			})
-			.ToListAsync());
+			.ToList());
 
 	// Get list of AppViews by UserId and return gRPC models
 	public async Task<IList<AppView>> GetAppViewsByUserIdAsync(string userId)
