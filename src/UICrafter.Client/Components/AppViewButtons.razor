@@ -103,15 +103,15 @@
         try
         {
             await AppViewRepository.DeleteAppViewByIdAsync(AppView.Id);
+
+            ClearAppView();
+
+            AppView = new AppView();
         }
         catch (RpcException ex)
         {
             Console.WriteLine($"Error while deleting AppView: {ex.Status.Detail}");
         }
-
-        ClearAppView();
-
-        AppView = new AppView();
 
         Visible = false;
     }
