@@ -12,6 +12,7 @@ using UICrafter.Components;
 using UICrafter.Core.Models;
 using UICrafter.Core.Repository;
 using UICrafter.Core.Utility;
+using UICrafter.EntityConfigurations;
 using UICrafter.Repository;
 using UICrafter.Services;
 using UICrafter.Utility;
@@ -50,6 +51,7 @@ builder.Services.AddSwaggerGen();
 
 // Repository
 builder.Services.AddScoped<IAppViewRepository, AppViewRepository>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 // Database setup
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
