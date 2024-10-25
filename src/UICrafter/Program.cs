@@ -27,22 +27,20 @@ builder.Services.AddHttpClient();
 builder.Services.AddScoped<IHttpClientProvider, HttpClientProvider>();
 
 // gRPC
-//if (builder.Environment.IsDevelopment())
-//{
-//	builder.Services.AddGrpc().AddJsonTranscoding();
-//	builder.Services.AddGrpcSwagger();
-//	builder.Services.AddSwaggerGen(c =>
-//	{
-//		c.SwaggerDoc("v1",
-//			new OpenApiInfo { Title = "gRPC transcoding", Version = "v1" });
-//	});
-//}
-//else
-//{
-//	builder.Services.AddGrpc();
-//}
+if (builder.Environment.IsDevelopment())
+{
+	builder.Services.AddGrpc().AddJsonTranscoding();
+	builder.Services.AddGrpcSwagger().AddSwaggerGen(c => c.SwaggerDoc("v1", new OpenApiInfo { Title = "gRPC transcoding", Version = "v1" }));
+}
+else
+{
+	builder.Services.AddGrpc();
+}
 
-builder.Services.AddGrpc();
+//builder.Services.AddGrpc().AddJsonTranscoding();
+
+//builder.Services.AddGrpcSwagger().AddSwaggerGen(c => c.SwaggerDoc("v1", new OpenApiInfo { Title = "gRPC transcoding", Version = "v1" }));
+
 
 
 // Swagger setup
@@ -73,9 +71,12 @@ builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
 
+
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
+
 	app.UseWebAssemblyDebugging();
 	app.UseSwagger();
 	app.UseSwaggerUI();
