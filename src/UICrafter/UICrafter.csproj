@@ -1,10 +1,19 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>c4af65d0-3e77-47d1-a7dc-034e60d92493</UserSecretsId>
+		<NoWarn>BL0007</NoWarn>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="wwwroot\css\**" />
+    <Content Remove="wwwroot\css\**" />
+    <EmbeddedResource Remove="wwwroot\css\**" />
+    <None Remove="wwwroot\css\**" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Grpc.AspNetCore" Version="2.66.0" />
@@ -14,8 +23,7 @@
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.10" PrivateAssets="All" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.AzureAppConfiguration" Version="8.0.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+    <PackageReference Include="Microsoft.Identity.Web" Version="3.2.2" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.8" />
     <PackageReference Include="Riok.Mapperly" Version="4.0.0" />
     <ProjectReference Include="..\UICrafter.Client\UICrafter.Client.csproj" />
@@ -23,16 +31,6 @@
     <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="6.8.1" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.8.1" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.8.1" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="wwwroot\css\" />
-  </ItemGroup>
-
-
-  <ItemGroup>
-    <None Include="..\UICrafter.Mobile\Components\Pages\MyMudButton.razor" Link="MyMudButton.razor" />
-    <None Include="..\UICrafter.Mobile\Components\Pages\PocButton.razor" Link="PocButton.razor" />
   </ItemGroup>
 
 </Project>

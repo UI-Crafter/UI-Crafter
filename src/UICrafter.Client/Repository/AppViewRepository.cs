@@ -13,9 +13,9 @@ public class AppViewRepository : IAppViewRepository
 	public AppViewRepository(AppViewServiceClient appViewServiceClient) => _appViewServiceClient = appViewServiceClient;
 
 
-	public async Task<IList<AppView>> GetAppViewsByUserIdAsync(string userId)
+	public async Task<IList<AppView>> GetAppViewsByUserIdAsync(Guid userId)
 	{
-		var response = await _appViewServiceClient.ListAppViewsAsync(new ListAppViewsRequest { UserId = userId });
+		var response = await _appViewServiceClient.ListAppViewsAsync(new ListAppViewsRequest { UserId = userId.ToString() });
 
 		return response.AppViews;
 	}

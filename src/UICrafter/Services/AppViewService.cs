@@ -15,7 +15,7 @@ public class AppViewServicegRPC : AppViewService.AppViewServiceBase
 	{
 		return new ListAppViewsResponse
 		{
-			AppViews = { await _appViewRepository.GetAppViewsByUserIdAsync(request.UserId) }
+			AppViews = { await _appViewRepository.GetAppViewsByUserIdAsync(Guid.Parse(request.UserId)) }
 		};
 	}
 

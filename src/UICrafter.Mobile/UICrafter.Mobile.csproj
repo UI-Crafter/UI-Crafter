@@ -40,6 +40,7 @@
 
 		<GrpcServiceType>Client</GrpcServiceType>
 		<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+		<NoWarn>BL0007</NoWarn>
 	</PropertyGroup>
 
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net8.0-android|AnyCPU'">
