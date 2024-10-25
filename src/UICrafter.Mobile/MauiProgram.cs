@@ -12,6 +12,10 @@ using UICrafter.Mobile.Options;
 using UICrafter.Mobile.Repository;
 using UICrafter.Mobile.Utility;
 using UICrafter.Core.AppView;
+using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.Extensions.DependencyInjection.Extensions;
+using System.Reflection;
+using UICrafter.Mobile.Extensions;
 
 public static class MauiProgram
 {
@@ -26,12 +30,12 @@ public static class MauiProgram
 		builder.Services.AddMudServices();
 
 		var configBuilder = new ConfigurationBuilder()
-			.AddJsonFile("appsettings.json");
+			.AddEmbeddedResource("UICrafter.Mobile.appsettings.json");
 
 #if DEBUG
 		builder.Services.AddBlazorWebViewDeveloperTools();
 		builder.Logging.AddDebug();
-		configBuilder.AddJsonFile("appsettings.Development.json");
+		configBuilder.AddEmbeddedResource("UICrafter.Mobile.appsettings.Development.json");
 #endif
 		var config = configBuilder.Build();
 
@@ -49,6 +53,11 @@ public static class MauiProgram
 		builder.Services.AddSingleton(new HttpClient { BaseAddress = new Uri(section.GetValue<string>("BaseUrl")!) });
 
 		builder.Services.AddTransient<IHttpClientProvider, HttpClientProvider>();
+
+		// Auth
+		builder.Services.AddAuthorizationCore();
+		builder.Services.TryAddScoped<AuthenticationStateProvider, CustomAuthStateProvider>();
+		builder.Services.AddCascadingAuthenticationState();
 
 		// gRPC
 		builder.Services.AddGrpcClient<AppViewService.AppViewServiceClient>();

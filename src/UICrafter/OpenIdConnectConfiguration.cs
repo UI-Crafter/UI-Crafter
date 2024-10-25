@@ -53,7 +53,7 @@ public static class OpenIdConnectConfiguration
 			return Task.CompletedTask;
 		};
 
-		options.Events.OnTokenValidated = context =>
+		options.Events.OnTokenValidated = async context =>
 		{
 			var user = context.Principal;
 
@@ -68,9 +68,7 @@ public static class OpenIdConnectConfiguration
 
 			var userRepository = context.HttpContext.RequestServices.GetRequiredService<IUserRepository>();
 
-			userRepository.UpsertUserEntity(userEntity);
-
-			return Task.CompletedTask;
+			await userRepository.UpsertUserEntity(userEntity);
 		};
 
 		options.Prompt = "login";
