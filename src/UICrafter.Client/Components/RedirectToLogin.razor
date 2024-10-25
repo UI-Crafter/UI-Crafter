@@ -1,0 +1,13 @@
+@inject NavigationManager NavigationManager
+
+@code {
+    protected override void OnInitialized()
+    {
+        //NavigationManager.NavigateTo("https://uicrafters.b2clogin.com/uicrafters.onmicrosoft.com/oauth2/v2.0/authorize?p=B2C_1_microsoft&client_id=45698317-ca1e-4595-a069-3dad3bce31a6&nonce=defaultNonce&redirect_uri=https%3A%2F%2Flocalhost%2Fsignin-oidc&scope=openid&response_type=code&prompt=login", forceLoad: true);
+        try
+        {
+            NavigationManager.NavigateTo($"/signin-oidc?returnUrl={Uri.EscapeDataString(NavigationManager.Uri)}", forceLoad: true);
+        }
+        catch {}
+    }
+}
