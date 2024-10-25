@@ -11,9 +11,9 @@
         <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
     </MudOverlay>
 
-    <MudTextField @bind-Value="@AppView.Name" Label="App-view name" Variant="Variant.Outlined"></MudTextField>
+    <MudTextField @bind-Value="@AppView.Name" Label="App-view name" Variant="Variant.Outlined" Class="ma-5"></MudTextField>
 
-    <MudButtonGroup Variant="Variant.Outlined" Class="ma-auto">
+    <MudButtonGroup Variant="Variant.Outlined" Class="ma-5">
         <MudIconButton Icon="@Icons.Material.Filled.Save" Size="Size.Large" OnClick="@SaveAppView" />
         <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Large" OnClick="@DeleteAppView" />
         <MudIconButton Icon="@Icons.Material.Filled.Clear" Size="Size.Large" OnClick="@ClearAppView" />
