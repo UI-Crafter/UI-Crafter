@@ -3,7 +3,7 @@
 @using UICrafter.Core.UIComponents
 @using UICrafter.Core.Utility
 @using System.Net.Http.Json
-@using Newtonsoft.Json;
+@using System.Text.Json;
 
 
 <MudTextField @bind-Value="Textbox.Textbox.Content"
@@ -99,8 +99,9 @@
         }
         else if (value is Dictionary<string, object> dict)
         {
+            return JsonSerializer.Serialize(dict);
 
-            return JsonConvert.SerializeObject(dict);
+            //return JsonConvert.SerializeObject(dict);
         }
         else
         {

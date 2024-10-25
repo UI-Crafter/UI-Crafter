@@ -41,7 +41,7 @@ else
 
 @code {
     [Parameter]
-    public string UserId { get; set; } = "1"; // Pass in UserId as a parameter
+    public Guid UserId { get; set; } = Guid.Empty;
 
     private IList<AppView> appViews;
 
