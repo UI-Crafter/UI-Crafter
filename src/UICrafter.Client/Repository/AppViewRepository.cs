@@ -2,6 +2,7 @@ namespace UICrafter.Client.Repository;
 
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Google.Protobuf.WellKnownTypes;
 using UICrafter.Core.AppView;
 using UICrafter.Core.Repository;
 using static UICrafter.Core.AppView.AppViewService;
@@ -13,9 +14,9 @@ public class AppViewRepository : IAppViewRepository
 	public AppViewRepository(AppViewServiceClient appViewServiceClient) => _appViewServiceClient = appViewServiceClient;
 
 
-	public async Task<IList<AppView>> GetAppViewsByUserIdAsync(Guid userId)
+	public async Task<IList<AppView>> GetAppViewsByUserIdAsync()
 	{
-		var response = await _appViewServiceClient.ListAppViewsAsync(new ListAppViewsRequest { UserId = userId.ToString() });
+		var response = await _appViewServiceClient.ListAppViewsAsync(new Empty());
 
 		return response.AppViews;
 	}

@@ -1,6 +1,3 @@
-@inject AuthenticationStateProvider AuthenticationStateProvider
-@inject PersistentComponentState ApplicationState
-
 @if (isLoggedIn)
 {
     <div style=@($"--mud-palette-lines-inputs: {avatarColor}")>
@@ -39,6 +36,7 @@ else
     [Parameter] public EventCallback<ThemeMode> ThemeModeChanged { get; set; }
 
     [Inject] private NavigationManager NavigationManager { get; set; } = default!;
+    [Inject] private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
 
     private bool isLoggedIn = false;
     private string? userInitials = null;

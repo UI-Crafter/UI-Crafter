@@ -113,7 +113,9 @@ public class CustomAuthStateProvider : AuthenticationStateProvider
 	{
 		var claimsData = JsonSerializer.Deserialize<List<Dictionary<string, string>>>(json);
 		if (claimsData == null)
+		{
 			return new ClaimsPrincipal(new ClaimsIdentity());
+		}
 
 		var claims = claimsData.Select(c => new Claim(c["Type"], c["Value"])).ToList();
 		var identity = new ClaimsIdentity(claims, "Custom", "name", ClaimTypes.Role);

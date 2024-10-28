@@ -6,13 +6,13 @@ public class StupidStore
 
 	public void Subscribe(string buttonGUID, Action<Dictionary<string, object>> callback)
 	{
-		if (!_subscribers.TryGetValue(buttonGUID, out var value))
+		if (_subscribers.TryGetValue(buttonGUID, out var value))
 		{
-			value = [];
-			_subscribers[buttonGUID] = value;
+			value.Add(callback);
 		}
 
-		value.Add(callback);
+		value = [];
+		_subscribers[buttonGUID] = value;
 	}
 
 	public void Unsubscribe(string buttonGUID, Action<Dictionary<string, object>> callback)

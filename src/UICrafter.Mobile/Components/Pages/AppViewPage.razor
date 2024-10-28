@@ -1,4 +1,4 @@
-@page "/button-test/{viewId:long}"
+@page "/appview/{viewId?:long}"
 
 @inject IAppViewRepository AppViewRepository
 @inject NavigationManager NavigationManager
@@ -6,7 +6,11 @@
 <PageTitle>@appView.Name</PageTitle>
 
 
-@if (componentList != null && componentList.UIComponents.Any())
+<div style=@(viewId.HasValue ? null : "display: none;")>
+    <LoadMetadataComponent />
+</div>
+
+@if (viewId.HasValue && componentList != null && componentList.UIComponents.Any())
 {
     <CascadingValue Value="stupidStore">
         @foreach (var component in componentList.UIComponents)
@@ -36,18 +40,21 @@ else
     </MudText>
 }
 
-
-
 @code {
     [Parameter]
-    public long viewId { get; set; }
+    public long? viewId { get; set; }
     private AppView? appView;
 
     private UIComponentList componentList = new UIComponentList();
     private StupidStore stupidStore = new StupidStore();  // Shared store for updating TextBoxes
 
-    protected override async Task OnInitializedAsync()
+    protected override async Task OnParametersSetAsync()
     {
+        if (!viewId.HasValue)
+        {
+            return; 
+        }
+
         if (viewId == 1)
         {
             // Use a dummy/test case for componentList
@@ -119,7 +126,7 @@ else
         else
         {
             // Fetch the appView via the gRPC call
-            appView = await AppViewRepository.GetAppViewByIdAsync(viewId);
+            appView = await AppViewRepository.GetAppViewByIdAsync(viewId.Value);
 
             if (appView != null && appView.Content != null)
             {

@@ -1,18 +1,34 @@
 @page "/testpage"
-@using UICrafter.Core.AppView
+@attribute [Authorize]
 
-<TestComponent/>
+<PageTitle>User Claims</PageTitle>
 
-@* <ProtobuffersTestComponent/> *@
+<h1>User Claims</h1>
 
+@if (claims.Any())
+{
+    <ul>
+        @foreach (var claim in claims)
+        {
+            <li><b>@claim.Type:</b> @claim.Value</li>
+        }
+    </ul>
+}
 
 @code {
-    [Inject] IAppViewRepository AppViewRepository { get; set; } = default!;
+    private IEnumerable<Claim> claims = [];
 
-    private IList<AppView>? _appViews;
+    [CascadingParameter]
+    private Task<AuthenticationState>? AuthState { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
-        //_appViews = await AppViewRepository.GetAppViewsByUserIdAsync("s");
+        if (AuthState == null)
+        {
+            return;
+        }
+
+        var authState = await AuthState;
+        claims = authState.User.Claims;
     }
 }

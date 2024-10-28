@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MudBlazor.Services;
-using Serilog;
 using UICrafter.Client;
 using UICrafter.Client.Repository;
 using UICrafter.Client.Utility;

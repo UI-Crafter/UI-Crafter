@@ -12,6 +12,7 @@ message AppView {
   google.protobuf.Timestamp CreatedAtUTC = 4;
   google.protobuf.Timestamp UpdatedAtUTC = 5;
   bytes Content = 6;
+  bool IsPublic = 7;
 }
 
 // Request and response messages for CRUD operations
@@ -29,10 +30,6 @@ message UpdateAppViewRequest {
 
 message DeleteAppViewRequest {
   int64 id = 1;
-}
-
-message ListAppViewsRequest {
-  string user_id = 1; // UserId is now required
 }
 
 message ListAppViewsResponse {
@@ -72,9 +69,9 @@ service AppViewService {
   }
 
   // List all AppViews for a user (user_id is required)
-  rpc ListAppViews(ListAppViewsRequest) returns (ListAppViewsResponse) {
+  rpc ListAppViews(google.protobuf.Empty) returns (ListAppViewsResponse) {
     option (google.api.http) = {
-      get: "/v1/users/{user_id}/app_views"
+      get: "/v1/app_views"
     };
   }
 }

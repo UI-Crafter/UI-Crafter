@@ -11,11 +11,11 @@ public class AppViewServicegRPC : AppViewService.AppViewServiceBase
 
 	public AppViewServicegRPC(IAppViewRepository appViewRepository) => _appViewRepository = appViewRepository;
 
-	public override async Task<ListAppViewsResponse> ListAppViews(ListAppViewsRequest request, ServerCallContext context)
+	public override async Task<ListAppViewsResponse> ListAppViews(Empty request, ServerCallContext context)
 	{
 		return new ListAppViewsResponse
 		{
-			AppViews = { await _appViewRepository.GetAppViewsByUserIdAsync(Guid.Parse(request.UserId)) }
+			AppViews = { await _appViewRepository.GetAppViewsByUserIdAsync() }
 		};
 	}
 

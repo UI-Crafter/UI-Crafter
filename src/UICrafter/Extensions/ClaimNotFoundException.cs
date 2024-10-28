@@ -1,4 +1,4 @@
-﻿namespace UICrafter.Extensions;
+namespace UICrafter.Extensions;
 
 public class ClaimNotFoundException : Exception
 {

@@ -35,10 +35,12 @@ public class AppViewRepository : IAppViewRepository
 			.ToList());
 
 	// Get list of AppViews by UserId and return gRPC models
-	public async Task<IList<AppView>> GetAppViewsByUserIdAsync(Guid userId)
+	public async Task<IList<AppView>> GetAppViewsByUserIdAsync()
 	{
+		throw new NotImplementedException();
+		// Fix me
 		var user = _httpContextAccessor.HttpContext?.User;
-		return await _listAppViewsQuery(_dbContext, userId);
+		//return await _listAppViewsQuery(_dbContext, userId);
 	}
 
 	// Get AppView by Id and return gRPC model

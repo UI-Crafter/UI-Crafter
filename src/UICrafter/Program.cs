@@ -5,14 +5,12 @@ using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Identity.Web;
 using Microsoft.IdentityModel.Tokens;
 using MudBlazor.Services;
 using UICrafter;
 using UICrafter.API;
 using UICrafter.Components;
-using UICrafter.Core.Models;
 using UICrafter.Core.Repository;
 using UICrafter.Core.Utility;
 using UICrafter.EntityConfigurations;
@@ -21,6 +19,7 @@ using UICrafter.Services;
 using UICrafter.Utility;
 using Microsoft.OpenApi.Models;
 using UICrafter.Core.DependencyInjection;
+using UICrafter.Core.AppView;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -145,7 +144,7 @@ app.UseAuthorization();
 app.MapGet("api/prototest", () =>
 {
 	// Create a new Person object
-	var person = new Person { Email = "muppet@muppet.dk", Name = "Muppet" };
+	var person = new AppView { Name = "Muppet" };
 
 	// Serialize the person object to a binary byte array
 	var serializedPerson = person.ToByteArray();
