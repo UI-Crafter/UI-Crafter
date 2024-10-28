@@ -83,6 +83,7 @@ else
         InvokeAsync(StateHasChanged);
     }
 
+    // Inspired from https://www.programmingalgorithms.com/algorithm/fnv-hash/
     private static string StringToColorFNV1a(string input)
     {
         const uint fnvPrime = 16777619;

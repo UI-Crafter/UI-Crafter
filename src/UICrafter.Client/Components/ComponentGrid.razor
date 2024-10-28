@@ -1,7 +1,4 @@
-@using Google.Protobuf.Collections
-@using UICrafter.Core.UIComponents
-
-<MudStack Style="15%">
+<MudStack Style="width: 15%">
     <MudText Class="">Components:</MudText>
 
     <MudContainer Class="rounded mud-background-gray pa-4">
@@ -62,7 +59,7 @@
     [Parameter]
     public required EventCallback<MudDropContainer<UIComponent>?> DropContainerChanged { get; set; }
 
-    private void AddNewComponent<T>(T component) where T : new()
+    private void AddNewComponent<T>(T component)
     {
         var newComponent = new UIComponent
             {

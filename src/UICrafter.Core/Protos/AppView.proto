@@ -2,7 +2,8 @@ syntax = "proto3";
 option csharp_namespace = "UICrafter.Core.AppView";
 
 import "google/protobuf/timestamp.proto";
-import "google/protobuf/Empty.proto";
+import "google/protobuf/empty.proto";
+import "protos/annotations.proto";
 
 message AppView {
   int64 Id = 1;
@@ -41,17 +42,39 @@ message ListAppViewsResponse {
 // CRUD service definition for AppView
 service AppViewService {
   // Create a new AppView
-  rpc CreateAppView(CreateAppViewRequest) returns (AppView);
+  rpc CreateAppView(CreateAppViewRequest) returns (AppView) {
+    option (google.api.http) = {
+      post: "/v1/app_views"
+      body: "app_view"
+    };
+  }
 
   // Get an AppView by ID
-  rpc GetAppView(GetAppViewRequest) returns (AppView);
+  rpc GetAppView(GetAppViewRequest) returns (AppView) {
+    option (google.api.http) = {
+      get: "/v1/app_views/{id}"
+    };
+  }
 
   // Update an existing AppView
-  rpc UpdateAppView(UpdateAppViewRequest) returns (AppView);
+  rpc UpdateAppView(UpdateAppViewRequest) returns (AppView) {
+    option (google.api.http) = {
+      put: "/v1/app_views/{app_view.Id}"
+      body: "app_view"
+    };
+  }
 
   // Delete an AppView by ID
-  rpc DeleteAppView(DeleteAppViewRequest) returns (google.protobuf.Empty);
+  rpc DeleteAppView(DeleteAppViewRequest) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/v1/app_views/{id}"
+    };
+  }
 
   // List all AppViews for a user (user_id is required)
-  rpc ListAppViews(ListAppViewsRequest) returns (ListAppViewsResponse);
+  rpc ListAppViews(ListAppViewsRequest) returns (ListAppViewsResponse) {
+    option (google.api.http) = {
+      get: "/v1/users/{user_id}/app_views"
+    };
+  }
 }

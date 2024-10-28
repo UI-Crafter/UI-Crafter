@@ -1,19 +1,12 @@
-@using Google.Protobuf
-@using Google.Protobuf.Collections
-@using Google.Protobuf.WellKnownTypes
-@using Grpc.Core
-@using UICrafter.Core.UIComponents
-@using UICrafter.Core.AppView
-@using UICrafter.Core.Utility
 
 <MudStack Row="true">
     <MudOverlay Visible="Visible" DarkBackground="true" Absolute="true">
         <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
     </MudOverlay>
 
-    <MudTextField @bind-Value="@AppView.Name" Label="App-view name" Variant="Variant.Outlined"></MudTextField>
+    <MudTextField @bind-Value="@AppView.Name" Label="App-view name" Variant="Variant.Outlined" Class="ma-5"></MudTextField>
 
-    <MudButtonGroup Variant="Variant.Outlined" Class="ma-auto">
+    <MudButtonGroup Variant="Variant.Outlined" Class="ma-5">
         <MudIconButton Icon="@Icons.Material.Filled.Save" Size="Size.Large" OnClick="@SaveAppView" />
         <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Large" OnClick="@DeleteAppView" />
         <MudIconButton Icon="@Icons.Material.Filled.Clear" Size="Size.Large" OnClick="@ClearAppView" />
@@ -80,17 +73,17 @@
             if (AppView.Id == 0)
             {
                 await AppViewRepository.CreateAppViewAsync(AppView);
-                Console.WriteLine("Called Create");
+                Log.Debug("Called Create");
             }
             else
             {
                 await AppViewRepository.UpdateAppViewAsync(AppView);
-                Console.WriteLine("Called Update");
+                Log.Debug("Called Update");
             }
         }
-        catch (RpcException ex)
+        catch (Exception ex)
         {
-            Console.WriteLine($"Error while saving AppView: {ex.Status.Detail}");
+            Log.Debug("Error while saving AppView: {message}", ex.Message);
         }
 
         Visible = false;
@@ -102,16 +95,19 @@
 
         try
         {
-            await AppViewRepository.DeleteAppViewByIdAsync(AppView.Id);
+            if (AppView.Id != 0)
+            {
+                await AppViewRepository.DeleteAppViewByIdAsync(AppView.Id);
+
+                ClearAppView();
+
+                AppView = new AppView();
+            }
         }
-        catch (RpcException ex)
+        catch (Exception ex)
         {
-            Console.WriteLine($"Error while deleting AppView: {ex.Status.Detail}");
+            Log.Debug("Error while deleting AppView: {message}", ex.Message);
         }
-
-        ClearAppView();
-
-        AppView = new AppView();
 
         Visible = false;
     }
@@ -141,9 +137,9 @@
 
             DropContainer?.Refresh();
         }
-        catch (RpcException ex)
+        catch (Exception ex)
         {
-            Console.WriteLine($"Error while loading AppView: {ex.Status.Detail}");
+            Log.Debug("Error while loading AppView: {message}", ex.Message);
         }
 
         Visible = false;
