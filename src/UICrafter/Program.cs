@@ -20,6 +20,7 @@ using UICrafter.Utility;
 using Microsoft.OpenApi.Models;
 using UICrafter.Core.DependencyInjection;
 using UICrafter.Core.AppView;
+using UICrafter.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -61,13 +62,10 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 	.AddInMemoryTokenCaches();
 builder.Services.Configure<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme, options =>
 {
+	var jwtSettings = builder.Configuration.GetSection("JwtSettings").Get<JwtBearerAuthenticationOptions>()!;
 	options.TokenValidationParameters = new TokenValidationParameters
 	{
-		ValidAudiences =
-		[
-			"3469f319-54f9-42d5-b2af-4d24c06994dc", // Mobile App Registration Client ID
-            "45698317-ca1e-4595-a069-3dad3bce31a6"  // Backend App Registration Client ID
-        ],
+		ValidAudiences = jwtSettings.ValidAudiences,
 	};
 
 	// Prevents redirect to login for API
@@ -113,7 +111,6 @@ var app = builder.Build();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-
 	app.UseWebAssemblyDebugging();
 	app.UseSwagger();
 	app.UseSwaggerUI();

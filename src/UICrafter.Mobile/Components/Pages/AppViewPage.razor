@@ -126,7 +126,7 @@ else
         else
         {
             // Fetch the appView via the gRPC call
-            appView = await AppViewRepository.GetAppViewByIdAsync(viewId.Value);
+            appView = await AppViewRepository.GetAppViewById(viewId.Value);
 
             if (appView != null && appView.Content != null)
             {

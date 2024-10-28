@@ -40,7 +40,7 @@ else
         try
         {
             // Simulate getting data from repository
-            AppViews = await AppViewRepository.GetAppViewsByUserIdAsync() ?? AppViews;
+            AppViews = await AppViewRepository.GetAppViews() ?? AppViews;
             // await Task.Delay(1); // Simulate delay
         }
         catch (Exception ex)

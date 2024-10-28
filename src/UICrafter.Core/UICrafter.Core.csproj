@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Google.Protobuf" Version="3.28.2" />
+    <PackageReference Include="Google.Protobuf" Version="3.28.3" />
     <PackageReference Include="Grpc.Net.Client" Version="2.66.0" />
     <PackageReference Include="Grpc.Net.Client.Web" Version="2.66.0" />
     <PackageReference Include="Grpc.Tools" Version="2.67.0" PrivateAssets="All">
@@ -20,7 +20,7 @@
     <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="8.0.10" />
     <PackageReference Include="Microsoft.Extensions.Options" Version="8.0.2" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="8.0.0" />
-    <PackageReference Include="MudBlazor" Version="7.9.0" />
+    <PackageReference Include="MudBlazor" Version="7.14.0" />
 		<PackageReference Include="Serilog" Version="4.1.0" />
 		<PackageReference Include="Serilog.Extensions.Logging" Version="8.0.0" />
 		<PackageReference Include="Serilog.Settings.Configuration" Version="8.0.4" />
