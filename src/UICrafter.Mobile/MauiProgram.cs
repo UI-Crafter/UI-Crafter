@@ -1,21 +1,20 @@
 namespace UICrafter.Mobile;
 
+using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using MudBlazor.Services;
+using UICrafter.Core.AppView;
+using UICrafter.Core.DependencyInjection;
 using UICrafter.Core.Repository;
 using UICrafter.Core.Utility;
-using UICrafter.Core.DependencyInjection;
 using UICrafter.Mobile.DependencyInjection;
+using UICrafter.Mobile.Extensions;
 using UICrafter.Mobile.Options;
 using UICrafter.Mobile.Repository;
 using UICrafter.Mobile.Utility;
-using UICrafter.Core.AppView;
-using Microsoft.AspNetCore.Components.Authorization;
-using Microsoft.Extensions.DependencyInjection.Extensions;
-using System.Reflection;
-using UICrafter.Mobile.Extensions;
 
 public static class MauiProgram
 {

@@ -85,8 +85,7 @@
 
 	<ItemGroup>
 		<EmbeddedResource Include="appsettings.Development.json" />
-		<EmbeddedResource Include="appsettings.json">
-		</EmbeddedResource>
+		<EmbeddedResource Include="appsettings.json"/>
 	</ItemGroup>
 
 </Project>

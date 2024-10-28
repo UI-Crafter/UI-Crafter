@@ -1,6 +1,5 @@
 using Google.Protobuf;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Authorization;
@@ -9,7 +8,6 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Identity.Web;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
 using MudBlazor.Services;
 using UICrafter;
 using UICrafter.API;
@@ -99,7 +97,7 @@ builder.Services.Configure<JwtBearerOptions>(JwtBearerDefaults.AuthenticationSch
 });
 builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
 	.AddMicrosoftIdentityWebApp(builder.Configuration);
-builder.Services.Configure<OpenIdConnectOptions>(OpenIdConnectDefaults.AuthenticationScheme, OpenIdConnectConfiguration.Configure);
+builder.Services.Configure<OpenIdConnectOptions>(OpenIdConnectDefaults.AuthenticationScheme, options => OpenIdConnectConfiguration.Configure(options, builder.Configuration));
 builder.Services.AddScoped<AuthenticationStateProvider, PersistingAuthenticationStateProvider>();
 
 builder.Services.AddAuthorizationBuilder()

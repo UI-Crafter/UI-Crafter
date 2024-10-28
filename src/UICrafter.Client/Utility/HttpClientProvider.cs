@@ -2,7 +2,6 @@ namespace UICrafter.Client.Utility;
 
 using System.Net.Http;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Components.Authorization;
 using UICrafter.Core.Utility;
 
 public class HttpClientProvider : IHttpClientProvider

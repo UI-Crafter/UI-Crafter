@@ -1,18 +1,16 @@
 namespace UICrafter;
 
-using System.Text.Json;
 using System.Text;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
-using UICrafter.Models;
-using Microsoft.Identity.Web;
 using UICrafter.Extensions;
+using UICrafter.Models;
 using UICrafter.Repository;
 
 public static class OpenIdConnectConfiguration
 {
-	public static void Configure(OpenIdConnectOptions options)
+	public static void Configure(OpenIdConnectOptions options, IConfiguration configuration)
 	{
 		options.Events.OnRemoteSignOut = async context =>
 		{
@@ -31,7 +29,7 @@ public static class OpenIdConnectConfiguration
 
 			await context.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
-			var logoutUri = $"https://uicrafters.b2clogin.com/uicrafters.onmicrosoft.com/b2c_1_login-register/oauth2/v2.0/logout?post_logout_redirect_uri={Uri.EscapeDataString(redirectUri)}";
+			var logoutUri = $"{configuration["AzureAd:CustomLogoutUri"]}?post_logout_redirect_uri={Uri.EscapeDataString(redirectUri)}";
 
 			context.Response.Redirect(logoutUri);
 			context.HandleResponse();
