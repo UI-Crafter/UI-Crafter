@@ -62,7 +62,7 @@
     [Parameter]
     public required EventCallback<MudDropContainer<UIComponent>?> DropContainerChanged { get; set; }
 
-    private void AddNewComponent<T>(T component) where T : new()
+    private void AddNewComponent<T>(T component)
     {
         var newComponent = new UIComponent
             {
