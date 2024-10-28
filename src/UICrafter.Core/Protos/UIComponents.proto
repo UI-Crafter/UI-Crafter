@@ -1,0 +1,34 @@
+syntax = "proto3";
+option csharp_namespace = "UICrafter.Core.UIComponents";
+
+message UIComponentList{
+	repeated UIComponent UIComponents = 1;
+}
+
+message UIComponent{
+	string Guid = 1;
+	string DropZoneID = 2;
+	oneof component{
+		UIButton button = 3;
+		UIInputField inputField = 4;
+		UITextbox textbox = 5;
+	}
+}
+
+message UIButton{
+	string Label = 1;
+	string URL = 2;
+}
+
+message UIInputField{
+	string Label = 1;
+	string Value = 2;
+}
+
+message UITextbox{
+	string Label = 1;
+	int32 NumberOfLines = 2;
+	string Content = 3;
+	string SourceRef = 4;
+	string JsonField = 5;
+}

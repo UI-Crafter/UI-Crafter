@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using MudBlazor.Services;
+using Serilog;
 using UICrafter.Client;
 using UICrafter.Client.Repository;
 using UICrafter.Client.Utility;
@@ -25,5 +26,10 @@ builder.Services.AddGrpcClient<AppViewService.AppViewServiceClient>();
 
 // Repository
 builder.Services.AddScoped<IAppViewRepository, AppViewRepository>();
+
+// Serilog setup
+Log.Logger = new LoggerConfiguration()
+	.WriteTo.Console()
+	.CreateLogger();
 
 await builder.Build().RunAsync();
