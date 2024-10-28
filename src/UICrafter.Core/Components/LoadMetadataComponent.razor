@@ -1,28 +1,23 @@
 @page "/app-views"
-@using System.Diagnostics
-@using UICrafter.Core.AppView
-@using UICrafter.Core.Models
-@using MudBlazor
-@using UICrafter.Core.Repository
 
 @inject IAppViewRepository AppViewRepository
 @inject NavigationManager NavigationManager
 
 <MudText Typo="Typo.h4">App Views</MudText>
 
-@if (appViews == null)
+@if (AppViews == null)
 {
     <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
 }
-else if (!appViews.Any())
+else if (!AppViews.Any())
 {
     <MudText Typo="Typo.subtitle1">No AppViews found. Here are some mock items:</MudText>
 
     <MudList T="string">
-        <MudListItem OnClick="OnMockItemClicked">
+        <MudListItem Href="/button-test/1">
             <MudText>Mock Item 1</MudText>
         </MudListItem>
-        <MudListItem OnClick="OnMockItemClicked">
+        <MudListItem Href="/button-test/1">
             <MudText>Mock Item 2</MudText>
         </MudListItem>
     </MudList>
@@ -30,9 +25,9 @@ else if (!appViews.Any())
 else
 {
     <MudList T="AppView">
-        @foreach (var view in appViews)
+        @foreach (var view in AppViews)
         {
-            <MudListItem @onclick="() => OnViewClicked(view.Id)">
+            <MudListItem Href=@($"/button-test?viewId={view.Id}")>
                 <MudText>@view.Name</MudText>
             </MudListItem>
         }
@@ -42,40 +37,25 @@ else
 @code {
     [Parameter]
     public Guid UserId { get; set; } = Guid.Empty;
-    private IList<AppView> appViews;
+    private IList<AppView> AppViews { get; set; } = new List<AppView>();
 
     protected override async Task OnInitializedAsync()
     {
         try
         {
             // Simulate getting data from repository
-            appViews = await AppViewRepository.GetAppViewsByUserIdAsync(UserId);
-            //Task.Delay(1000).Wait(); // Simulate loading delay
-            if (appViews == null || !appViews.Any())
-            {
-                Debug.WriteLine("No AppViews found, displaying mock items.");
-                // Set empty list to display mock items
-                appViews = new List<AppView>();
-            }
+            AppViews = await AppViewRepository.GetAppViewsByUserIdAsync(UserId) ?? AppViews;
+            // await Task.Delay(1); // Simulate delay
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"Error fetching AppViews: {ex.Message}");
-            appViews = new List<AppView>(); // Ensure mock items are shown on error
+            Log.Error($"Error fetching AppViews: {ex.Message}");
         }
-    }
-
-    private void OnViewClicked(long viewId)
-    {
-        Debug.WriteLine("Clicked a real view item");
-
-        // Navigate to the corresponding view
-        NavigationManager.NavigateTo($"/button-test?viewId={viewId}");
     }
 
     private void OnMockItemClicked()
     {
-        Debug.WriteLine("Clicked mock item");
+        Log.Debug("Clicked mock item");
         // Navigate to /button-test/1 when a mock item is clicked
         NavigationManager.NavigateTo("/button-test/1");
     }

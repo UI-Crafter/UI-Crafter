@@ -45,7 +45,7 @@ else
 
             if (appViews == null || !appViews.Any())
             {
-                Debug.WriteLine("No AppViews found, navigating to /button/1");
+                Log.Debug("No AppViews found, navigating to /button/1");
                 // No AppViews found, navigate to /button/1
                 NavigationManager.NavigateTo("/button-test/1");
             }
@@ -53,7 +53,7 @@ else
         catch (Exception ex)
         {
             // Log the exception if necessary
-            Debug.WriteLine($"Error fetching AppViews: {ex.Message}");
+            Log.Debug($"Error fetching AppViews: {ex.Message}");
 
             // Navigate to /button/1 in case of failure
             NavigationManager.NavigateTo("/button-test/1");

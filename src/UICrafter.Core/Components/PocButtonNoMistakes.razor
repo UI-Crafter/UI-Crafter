@@ -1,14 +1,4 @@
-@using MudBlazor
-@using UICrafter.Core.Models
-@using System.Diagnostics
-@using Microsoft.AspNetCore.Components
-@using System.Net.Http
-@using System.Net.Http.Json
-@using UICrafter.Core.Utility
-
-@inject HttpClient Http
-
-@using UICrafter.Core.UIComponents
+@inject IHttpClientProvider HttpClientProvider
 
 <MudButton OnClick="CallApi"
            Color="@buttonColor"
@@ -28,6 +18,7 @@
 
     private async Task CallApi()
     {
+        var httpclient = HttpClientProvider.GetDefaultHttpClient();
         try
         {
             isDisabled = true;
@@ -35,7 +26,7 @@
             Button.Button.Label = "Loading...";
 
             // Assume that Button.URL is the API endpoint
-            var response = await Http.GetStringAsync(Button.Button.URL);
+            var response = await httpclient.GetStringAsync(Button.Button.URL);
 
             if (response == null)
             {
@@ -54,7 +45,7 @@
         }
         catch (Exception ex)
         {
-            Debug.WriteLine($"Error calling API for button {Button.Button.Label}: {ex.Message}");
+            Log.Debug($"Error calling API for button {Button.Button.Label}: {ex.Message}");
         }
     }
 }

@@ -27,8 +27,6 @@ public static class MauiProgram
 
 		builder.Services.AddMauiBlazorWebView();
 		builder.Services.AddMudServices();
-		builder.Services.AddScoped(sp =>
-			new HttpClient());
 
 
 		var configBuilder = new ConfigurationBuilder()

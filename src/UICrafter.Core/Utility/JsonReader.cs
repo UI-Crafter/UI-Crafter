@@ -1,5 +1,6 @@
 namespace UICrafter.Core.Utility;
-using Newtonsoft.Json.Linq;
+
+using System.Text.Json.Nodes;
 
 public class JsonProcessor
 {
@@ -11,41 +12,41 @@ public class JsonProcessor
 	public static Dictionary<string, object> ProcessJson(string json)
 	{
 		var result = new Dictionary<string, object>();
-		var token = JToken.Parse(json);
-		ProcessToken(token, result);
+		var node = JsonNode.Parse(json)!;
+		ProcessNode(node, result);
 		return result;
 	}
 
-	private static void ProcessToken(JToken token, Dictionary<string, object> result, string parentName = "")
+	private static void ProcessNode(JsonNode node, Dictionary<string, object> result, string parentName = "")
 	{
-		if (token is JObject obj)
+		if (node is JsonObject obj)
 		{
-			foreach (var property in obj.Properties())
+			foreach (var property in obj)
 			{
-				ProcessToken(property.Value, result, property.Name);
+				ProcessNode(property.Value!, result, property.Key);
 			}
 		}
-		else if (token is JArray array)
+		else if (node is JsonArray array)
 		{
 			var items = new List<object>();
 			foreach (var item in array)
 			{
-				if (item.Type is JTokenType.Object or JTokenType.Array)
+				if (item is JsonObject or JsonArray)
 				{
 					var childResult = new Dictionary<string, object>();
-					ProcessToken(item, childResult);
+					ProcessNode(item, childResult);
 					items.Add(childResult);
 				}
 				else
 				{
-					items.Add(((JValue)item).Value);
+					items.Add(item.GetValue<object>());
 				}
 			}
 			result[parentName] = items;
 		}
-		else if (token is JValue value)
+		else if (node is JsonValue value)
 		{
-			result[parentName] = value.Value;
+			result[parentName] = value.GetValue<object>();
 		}
 	}
 }
