@@ -5,10 +5,13 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+using UICrafter.Extensions;
+using UICrafter.Models;
+using UICrafter.Repository;
 
 public static class OpenIdConnectConfiguration
 {
-	public static void Configure(OpenIdConnectOptions options)
+	public static void Configure(OpenIdConnectOptions options, IConfiguration configuration)
 	{
 		options.Events.OnRemoteSignOut = async context =>
 		{
@@ -27,7 +30,7 @@ public static class OpenIdConnectConfiguration
 
 			await context.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
 
-			var logoutUri = $"https://uicrafters.b2clogin.com/uicrafters.onmicrosoft.com/b2c_1_login-register/oauth2/v2.0/logout?post_logout_redirect_uri={Uri.EscapeDataString(redirectUri)}";
+			var logoutUri = $"{configuration["AzureAd:CustomLogoutUri"]}?post_logout_redirect_uri={Uri.EscapeDataString(redirectUri)}";
 
 			context.Response.Redirect(logoutUri);
 			context.HandleResponse();
@@ -37,7 +40,7 @@ public static class OpenIdConnectConfiguration
 
 		options.Events.OnRedirectToIdentityProvider = async context => Console.WriteLine("OnRedirectToIdentityProvider");
 
-		options.Events.OnRemoteFailure = async context =>
+		options.Events.OnRemoteFailure = context =>
 		{
 			var message = context.Failure?.Message;
 
@@ -46,34 +49,26 @@ public static class OpenIdConnectConfiguration
 			var redirectUrl = $"/auth/errorpage?errorDetails={errorBase64}";
 			context.Response.Redirect(redirectUrl);
 			context.HandleResponse();
+			return Task.CompletedTask;
 		};
 
-		//options.Events.OnAuthenticationFailed = async context =>
-		//{
-		//	// Create an object with the error details
-		//	var errorDetails = new
-		//	{
-		//		error = context.Exception.Message,
-		//		error_description = context.ProtocolMessage.ErrorDescription,
-		//		error_code = context.ProtocolMessage.Error,
-		//		correlation_id = context.ProtocolMessage,
-		//		trace_id = Guid.NewGuid().ToString(), // Example trace ID, change as needed
-		//		timestamp = DateTime.UtcNow.ToString("o")
-		//	};
+		options.Events.OnTokenValidated = async context =>
+		{
+			var user = context.Principal;
 
-		//	// Serialize the error object to JSON
-		//	var errorJson = JsonSerializer.Serialize(errorDetails);
+			ArgumentNullException.ThrowIfNull(user);
 
-		//	// Convert the JSON string to a byte array and encode it as base64
-		//	var errorBase64 = Convert.ToBase64String(Encoding.UTF8.GetBytes(errorJson));
+			var userEntity = new UserEntity
+			{
+				Id = user.GetAzureId(),
+				Name = user.GetName(),
+				Email = user.GetEmail(),
+			};
 
-		//	// Redirect to the error page with the base64 encoded query parameter
-		//	var redirectUrl = $"/authentication-error?errorDetails={errorBase64}";
-		//	context.Response.Redirect(redirectUrl);
-		//	context.HandleResponse();
-		//};
+			var userRepository = context.HttpContext.RequestServices.GetRequiredService<IUserRepository>();
 
-		options.Events.OnTokenValidated = async context => Console.WriteLine("OnTokenValidated");
+			await userRepository.UpsertUserEntity(userEntity);
+		};
 
 		options.Prompt = "login";
 	}

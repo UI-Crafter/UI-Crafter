@@ -8,7 +8,7 @@ using UICrafter.Core.AppView;
 public class AppViewEntity
 {
 	public int Id { get; set; }
-	public required string UserId { get; set; }
+	public Guid UserId { get; set; }
 	public required string Name { get; set; }
 	public required byte[] Content { get; set; }
 	public DateTime CreatedAtUTC { get; set; }

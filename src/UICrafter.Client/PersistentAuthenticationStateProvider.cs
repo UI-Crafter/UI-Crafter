@@ -1,9 +1,10 @@
 namespace UICrafter.Client;
 
 using System.Security.Claims;
-using System.Text.Json;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
+
+// Taken from https://github.com/dotnet/blazor-samples/blob/main/8.0/BlazorWebAppOidc/BlazorWebAppOidc.Client/PersistentAuthenticationStateProvider.cs
 
 // This is a client-side AuthenticationStateProvider that determines the user's authentication state by
 // looking for data persisted in the page when it was rendered on the server. This authentication state will
