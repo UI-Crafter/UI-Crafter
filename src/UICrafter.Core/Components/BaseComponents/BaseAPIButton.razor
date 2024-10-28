@@ -1,6 +1,8 @@
-<MudButton Class="mb-2" Variant="Variant.Filled" @attributes="Attributes">
-    @ChildContent
-</MudButton>
+<MudContainer Class="d-flex justify-center pa-1">
+    <MudButton Class="mb-2" Variant="Variant.Filled" @attributes="Attributes">
+        @ChildContent
+    </MudButton>
+</MudContainer>
 
 @code {
     [Parameter(CaptureUnmatchedValues = true)]
