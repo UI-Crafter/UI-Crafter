@@ -31,6 +31,44 @@ if (builder.Environment.IsDevelopment())
 {
 	builder.Services.AddGrpc().AddJsonTranscoding();
 	builder.Services.AddGrpcSwagger().AddSwaggerGen(c => c.SwaggerDoc("v1", new OpenApiInfo { Title = "gRPC transcoding", Version = "v1" }));
+	//builder.Services.AddGrpcSwagger().AddSwaggerGen(c =>
+	//{
+	//	c.SwaggerDoc("v1", new OpenApiInfo { Title = "My API", Version = "v1" });
+
+	//	// Add OAuth2 definition
+	//	c.AddSecurityDefinition("oauth2", new OpenApiSecurityScheme
+	//	{
+	//		Type = SecuritySchemeType.OAuth2,
+	//		Flows = new OpenApiOAuthFlows
+	//		{
+	//			AuthorizationCode = new OpenApiOAuthFlow
+	//			{
+	//				AuthorizationUrl = new Uri($"https://{builder.Configuration["AzureAd:Domain"]}/{builder.Configuration["AzureAd:TenantId"]}/{builder.Configuration["AzureAd:SignUpSignInPolicyId"]}/oauth2/v2.0/authorize"),
+	//				TokenUrl = new Uri($"https://{builder.Configuration["AzureAd:Domain"]}/{builder.Configuration["AzureAd:TenantId"]}/{builder.Configuration["AzureAd:SignUpSignInPolicyId"]}/oauth2/v2.0/token"),
+	//				Scopes = new Dictionary<string, string>
+	//			{
+	//					{ "openid", "45698317-ca1e-4595-a069-3dad3bce31a6" }
+	//			}
+	//			}
+	//		}
+	//	});
+
+	//	// Apply security globally to all operations
+	//	c.AddSecurityRequirement(new OpenApiSecurityRequirement
+	//{
+	//	{
+	//		new OpenApiSecurityScheme
+	//		{
+	//			Reference = new OpenApiReference
+	//			{
+	//				Type = ReferenceType.SecurityScheme,
+	//				Id = "oauth2"
+	//			}
+	//		},
+	//		new[] {"openid"}
+	//	}
+	//});
+	//});
 }
 else
 {
@@ -45,7 +83,9 @@ else
 
 // Swagger setup
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+//builder.Services.AddSwaggerGen();
+
+
 
 // Repository
 builder.Services.AddScoped<IAppViewRepository, AppViewRepository>();
@@ -84,6 +124,20 @@ if (app.Environment.IsDevelopment())
 	{
 		c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
 	});
+	//app.UseSwaggerUI(c =>
+	//{
+	//	c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+
+	//	// Enable OAuth2 authentication in Swagger UI
+	//	c.OAuthClientId(builder.Configuration["AzureAd:ClientId"]);
+	//	c.OAuthUsePkce(); // PKCE is recommended for security
+	//	c.OAuthScopes("openid");
+	//	c.OAuthAdditionalQueryStringParams(new Dictionary<string, string>
+	//{
+	//	{ "p", builder.Configuration["AzureAd:SignUpSignInPolicyId"] }
+	//});
+	//});
+
 }
 else
 {
