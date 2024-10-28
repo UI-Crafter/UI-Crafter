@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using MudBlazor.Services;
+using Serilog;
 using UICrafter.Core.AppView;
 using UICrafter.Core.DependencyInjection;
 using UICrafter.Core.Repository;
@@ -24,6 +25,8 @@ public static class MauiProgram
 		builder
 			.UseMauiApp<App>()
 			.ConfigureFonts(fonts => fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular"));
+
+		builder.Logging.AddSeriloggerSetup(builder.Configuration);
 
 		builder.Services.AddMauiBlazorWebView();
 		builder.Services.AddMudServices();
@@ -44,7 +47,6 @@ public static class MauiProgram
 
 		var section = config.GetRequiredSection("ApiSettings");
 
-
 		// Add Options and configure ApiSettings
 		builder.Services.AddOptions<ApiSettings>().Bind(config.GetRequiredSection("ApiSettings")).ValidateDataAnnotations().ValidateOnStart();
 
@@ -61,7 +63,6 @@ public static class MauiProgram
 
 		// gRPC
 		builder.Services.AddGrpcClient<AppViewService.AppViewServiceClient>();
-
 
 		// Repository
 		builder.Services.AddScoped<IAppViewRepository, AppViewRepository>();

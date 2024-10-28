@@ -20,8 +20,11 @@ using UICrafter.Repository;
 using UICrafter.Services;
 using UICrafter.Utility;
 using Microsoft.OpenApi.Models;
+using UICrafter.Core.DependencyInjection;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Logging.AddSeriloggerSetup(builder.Configuration);
 
 // Add MudBlazor services
 builder.Services.AddMudServices();
@@ -107,8 +110,6 @@ builder.Services.AddRazorComponents()
 builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
-
-
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

@@ -12,6 +12,8 @@ using UICrafter.Core.Utility;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 
+builder.Logging.AddSeriloggerSetup(builder.Configuration);
+
 // Auth setup
 builder.Services.AddAuthorizationCore();
 builder.Services.AddCascadingAuthenticationState();
@@ -26,10 +28,5 @@ builder.Services.AddGrpcClient<AppViewService.AppViewServiceClient>();
 
 // Repository
 builder.Services.AddScoped<IAppViewRepository, AppViewRepository>();
-
-// Serilog setup
-Log.Logger = new LoggerConfiguration()
-	.WriteTo.Console()
-	.CreateLogger();
 
 await builder.Build().RunAsync();
