@@ -1,7 +1,9 @@
+@using Microsoft.AspNetCore.Authorization
 @using UICrafter.Client.Components
 @using UICrafter.Core.UIComponents
 
 @page "/uicrafter"
+@attribute [Authorize]
 
 <MudStack Row="true">
     <!-- Left section: Component Grid (15%) -->
