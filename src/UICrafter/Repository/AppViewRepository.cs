@@ -1,10 +1,10 @@
 namespace UICrafter.Repository;
 
-using Google.Protobuf.WellKnownTypes;
 using Microsoft.EntityFrameworkCore;
 using UICrafter.Core.AppView;
 using UICrafter.Core.Repository;
 using UICrafter.EntityConfigurations;
+using UICrafter.Extensions;
 using UICrafter.Models;
 
 public class AppViewRepository : IAppViewRepository
@@ -19,44 +19,48 @@ public class AppViewRepository : IAppViewRepository
 		_httpContextAccessor = httpContextAccessor;
 	}
 
-	private static readonly Func<ApplicationDbContext, Guid, Task<List<AppView>>> _listAppViewsQuery =
-	EF.CompileAsyncQuery((ApplicationDbContext dbContext, Guid userId) =>
-		dbContext.AppViews
-			.Where(x => x.UserId == userId)
-			.AsNoTracking()
-			.Select(view => new AppView
-			{
-				Id = view.Id,
-				UserId = view.UserId.ToString(),
-				Name = view.Name,
-				CreatedAtUTC = Timestamp.FromDateTime(view.CreatedAtUTC),
-				UpdatedAtUTC = Timestamp.FromDateTime(view.UpdatedAtUTC),
-			})
-			.ToList());
-
-	// Get list of AppViews by UserId and return gRPC models
 	public async Task<IList<AppView>> GetAppViewsByUserIdAsync()
 	{
-		throw new NotImplementedException();
-		// Fix me
-		var user = _httpContextAccessor.HttpContext?.User;
-		//return await _listAppViewsQuery(_dbContext, userId);
+		var userId = _httpContextAccessor.HttpContext!.User.GetAzureId();
+		return await _dbContext
+			.AppViews
+			.AsNoTracking()
+			.Where(x => x.UserId == userId)
+			.Select(x => new AppView
+			{
+				Id = x.Id,
+				UserId = x.UserId.ToString(),
+				Name = x.Name,
+				CreatedAt = x.CreatedAtUTC,
+				UpdatedAt = x.UpdatedAtUTC,
+				IsPublic = x.IsPublic,
+			})
+			.ToListAsync();
 	}
 
-	// Get AppView by Id and return gRPC model
 	public async Task<AppView> GetAppViewByIdAsync(long id)
 	{
+		var user = _httpContextAccessor.HttpContext!.User;
 		var entity = await _dbContext.AppViews
 			.AsNoTracking()
-			.FirstAsync(x => x.Id == id);
+			.Where(x => x.Id == id && (x.IsPublic || x.UserId == user.GetAzureId()))
+			.FirstAsync();
 
 		return _appViewMapper.ToGrpcAppView(entity);
 	}
 
-	// Create a new AppView and return the gRPC model
 	public async Task<AppView> CreateAppViewAsync(AppView view)
 	{
 		var entity = _appViewMapper.ToAppViewEntity(view);
+
+		var userId = _httpContextAccessor.HttpContext?.User.GetAzureId();
+		if (!userId.HasValue)
+		{
+			throw new UnauthorizedAccessException("User is not authenticated.");
+		}
+
+		entity.Id = 0;
+		entity.UserId = userId.Value;
 		entity.CreatedAtUTC = DateTime.UtcNow;
 		entity.UpdatedAtUTC = DateTime.UtcNow;
 
@@ -66,26 +70,28 @@ public class AppViewRepository : IAppViewRepository
 		return _appViewMapper.ToGrpcAppView(entity);
 	}
 
-	// Update an existing AppView and return the gRPC model
 	public async Task<AppView> UpdateAppViewAsync(AppView view)
 	{
+		var userId = _httpContextAccessor.HttpContext!.User.GetAzureId();
 		var entity = await _dbContext.AppViews
-			.FirstAsync(x => x.Id == view.Id);
+			.Where(x => x.Id == view.Id && x.UserId == userId) // Are you the owner check
+			.FirstAsync();
 
 		entity.Name = view.Name;
-		entity.Content = view.Content.ToByteArray();
+		entity.Content = view.ContentByteArray;
 		entity.UpdatedAtUTC = DateTime.UtcNow;
+		entity.IsPublic = view.IsPublic;
 
 		await _dbContext.SaveChangesAsync();
 
 		return _appViewMapper.ToGrpcAppView(entity);
 	}
 
-	// Delete AppView by Id and return a boolean for success
 	public async Task DeleteAppViewByIdAsync(long id)
 	{
+		var userId = _httpContextAccessor.HttpContext!.User.GetAzureId();
 		await _dbContext.AppViews
-			.Where(x => x.Id == id)
+			.Where(x => x.Id == id && x.UserId == userId)
 			.ExecuteDeleteAsync();
 	}
 }

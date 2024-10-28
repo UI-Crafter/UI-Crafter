@@ -30,6 +30,9 @@ public class AppViewEntityConfiguration : IEntityTypeConfiguration<AppViewEntity
 		builder.Property(e => e.UpdatedAtUTC)
 			.IsRequired();
 
+		builder.Property(e => e.IsPublic)
+			.HasDefaultValue(false);
+
 		builder.HasIndex(e => e.UserId)
 			.HasDatabaseName("IX_AppViewEntity_UserId");
 	}
