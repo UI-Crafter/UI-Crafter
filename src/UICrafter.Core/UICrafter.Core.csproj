@@ -21,22 +21,13 @@
     <PackageReference Include="Microsoft.Extensions.Options" Version="8.0.2" />
     <PackageReference Include="Microsoft.Extensions.Options.ConfigurationExtensions" Version="8.0.0" />
     <PackageReference Include="MudBlazor" Version="7.9.0" />
+		<PackageReference Include="Serilog" Version="4.1.0" />
+		<PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
   </ItemGroup>
 
 
 	<ItemGroup>
 		<Protobuf Include="protos\**\*.proto" GrpcServices="$(GrpcServiceType)" />
-	</ItemGroup>
-
-
-	<ItemGroup>
-	  <None Remove="protos\UI.proto" />
-	  <None Remove="protos\UIComponents.proto" />
-	</ItemGroup>
-
-
-	<ItemGroup>
-	  <Protobuf Update="protos\UIComponents.proto" GrpcServices="$(GrpcServiceType)" />
 	</ItemGroup>
 
 </Project>

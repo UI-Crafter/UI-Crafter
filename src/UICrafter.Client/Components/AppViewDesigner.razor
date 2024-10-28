@@ -1,6 +1,3 @@
-@using Google.Protobuf.Collections
-@using UICrafter.Core.UIComponents
-
 <MudContainer MaxWidth="MaxWidth.Small">
     <MudDropContainer T="UIComponent" @ref="DropContainer" Items="UIComponents" ItemsSelector="@((item,dropzone) => item.DropZoneID == dropzone)" ItemDropped="ComponentUpdated" Class="d-flex flex-grow-1">
         <ChildContent>

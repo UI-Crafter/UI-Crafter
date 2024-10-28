@@ -1,10 +1,3 @@
-@using Google.Protobuf
-@using Google.Protobuf.Collections
-@using Google.Protobuf.WellKnownTypes
-@using Grpc.Core
-@using UICrafter.Core.UIComponents
-@using UICrafter.Core.AppView
-@using UICrafter.Core.Utility
 
 <MudStack Row="true">
     <MudOverlay Visible="Visible" DarkBackground="true" Absolute="true">
@@ -80,17 +73,17 @@
             if (AppView.Id == 0)
             {
                 await AppViewRepository.CreateAppViewAsync(AppView);
-                Console.WriteLine("Called Create");
+                Log.Debug("Called Create");
             }
             else
             {
                 await AppViewRepository.UpdateAppViewAsync(AppView);
-                Console.WriteLine("Called Update");
+                Log.Debug("Called Update");
             }
         }
-        catch (RpcException ex)
+        catch (Exception ex)
         {
-            Console.WriteLine($"Error while saving AppView: {ex.Status.Detail}");
+            Log.Debug("Error while saving AppView: {message}", ex.Message);
         }
 
         Visible = false;
@@ -111,9 +104,9 @@
                 AppView = new AppView();
             }
         }
-        catch (RpcException ex)
+        catch (Exception ex)
         {
-            Console.WriteLine($"Error while deleting AppView: {ex.Status.Detail}");
+            Log.Debug("Error while deleting AppView: {message}", ex.Message);
         }
 
         Visible = false;
@@ -144,9 +137,9 @@
 
             DropContainer?.Refresh();
         }
-        catch (RpcException ex)
+        catch (Exception ex)
         {
-            Console.WriteLine($"Error while loading AppView: {ex.Status.Detail}");
+            Log.Debug("Error while loading AppView: {message}", ex.Message);
         }
 
         Visible = false;
