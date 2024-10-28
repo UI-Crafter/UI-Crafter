@@ -1,0 +1,85 @@
+@using static UICrafter.Client.Pages.UICrafterPage
+
+<MudStack Style="15%">
+    <MudText Class="">Components:</MudText>
+
+    <MudContainer Class="rounded mud-background-gray pa-4">
+        <MudGrid>
+            <MudItem sm="12" lg="4" Class="d-flex flex-column justify-start align-center">
+                <MudIconButton Icon="@Icons.Material.Filled.SmartButton" Variant="Variant.Outlined" OnClick=@AddNewButton Size="Size.Large" />
+                <MudText>Button</MudText>
+            </MudItem>
+
+            <MudItem sm="12" lg="4" Class="d-flex flex-column justify-start align-center">
+                <MudIconButton Icon="@Icons.Material.Filled.TextFields" Variant="Variant.Outlined" OnClick=@AddNewTextbox Size="Size.Large" />
+                <MudText>Textbox</MudText>
+            </MudItem>
+
+            <MudItem sm="12" lg="4" Class="d-flex flex-column justify-start align-center">
+                <MudIconButton Icon="@Icons.Material.Filled.Input" Variant="Variant.Outlined" OnClick=@AddNewInputField Size="Size.Large" />
+                <MudText>Input</MudText>
+            </MudItem>
+        </MudGrid>
+    </MudContainer>
+</MudStack>
+
+@code {
+    [Parameter]
+    public required List<UIComponent> UIComponents { get; set; }
+
+    private UIComponent? _internalSelectedComponent;
+    [Parameter]
+    public required UIComponent? SelectedComponent
+    {
+        get => _internalSelectedComponent;
+        set
+        {
+            if (SelectedComponentChanged.HasDelegate && value != _internalSelectedComponent)
+            {
+                _internalSelectedComponent = value;
+                SelectedComponentChanged.InvokeAsync(value);
+            }
+        }
+    }
+    [Parameter]
+    public required EventCallback<UIComponent?> SelectedComponentChanged { get; set; }
+
+    private MudDropContainer<UIComponent>? _internalDropContainer;
+    [Parameter]
+    public required MudDropContainer<UIComponent>? DropContainer
+    {
+        get => _internalDropContainer;
+        set
+        {
+            if (DropContainerChanged.HasDelegate && value != _internalDropContainer)
+            {
+                _internalDropContainer = value;
+                DropContainerChanged.InvokeAsync(value);
+            }
+        }
+    }
+    [Parameter]
+    public required EventCallback<MudDropContainer<UIComponent>?> DropContainerChanged { get; set; }
+
+    private void AddNewUIComponent(UIComponent component)
+    {
+        UIComponents.Add(component);
+        SelectedComponent = component;
+        DropContainer?.Refresh();
+    }
+
+    private void AddNewButton()
+    {
+        AddNewUIComponent(new UIButton { Label = "New Button", URL = "" });
+    }
+
+    private void AddNewInputField()
+    {
+        AddNewUIComponent(new UIInputField { Placeholder = "New Input Field" });
+    }
+
+    private void AddNewTextbox()
+    {
+        AddNewUIComponent(new UITextBox { Content = "New Textbox", Label = "New Textbox" });
+    }
+}

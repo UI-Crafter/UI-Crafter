@@ -1,7 +1,7 @@
 namespace UICrafter.EntityConfigurations;
 
-using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using UICrafter.Models;
 
 public class UserEntityConfiguration : IEntityTypeConfiguration<UserEntity>
