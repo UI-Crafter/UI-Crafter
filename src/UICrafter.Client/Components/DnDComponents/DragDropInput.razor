@@ -1,0 +1,11 @@
+<BaseInput @bind-Value="@UIComponent.InputField.Value" Label="@UIComponent.InputField.Label" @onfocus="OnFocus"/>
+
+@code {
+    [Parameter]
+    public required UIComponent UIComponent { get; set; }
+
+    [Parameter]
+    public EventCallback<UIComponent> OnSelect { get; set; }
+
+    private void OnFocus() => OnSelect.InvokeAsync(UIComponent);
+}
