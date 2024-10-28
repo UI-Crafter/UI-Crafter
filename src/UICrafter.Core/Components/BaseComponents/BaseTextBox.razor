@@ -1,12 +1,8 @@
-<MudTextField T="string" ReadOnly="true" ShrinkLabel="true" Variant="Variant.Outlined" Label="@Label" Lines="@Lines" @attributes="Attributes" />
+<MudTextField T="string" ReadOnly="true" ShrinkLabel="true" Variant="Variant.Outlined" Label="@Label" Lines="@Lines" @bind-Value="@Content" @onfocus="OnFocus"/>
 
 @code {
-    [Parameter]
-    public string? Label { get; set; }
-
-    [Parameter]
-    public int Lines { get; set; }
-
-    [Parameter(CaptureUnmatchedValues = true)]
-    public Dictionary<string, object> Attributes { get; set; } = new();
+    protected string Label { get; set; } = string.Empty;
+    protected int Lines { get; set; }
+    protected string Content { get; set; } = string.Empty;
+    protected EventCallback<FocusEventArgs> OnFocus { get; set; }
 }

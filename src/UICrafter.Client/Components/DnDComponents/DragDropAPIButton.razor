@@ -1,6 +1,9 @@
-<BaseAPIButton @onfocus="OnFocus">
-    @UIComponent.Button.Label
-</BaseAPIButton>
+@inherits BaseAPIButton
+
+@{
+    base.BuildRenderTree(__builder);
+}
+
 
 @code {
     [Parameter]
@@ -9,5 +12,9 @@
     [Parameter]
     public EventCallback<UIComponent> OnSelect { get; set; }
 
-    private void OnFocus() => OnSelect.InvokeAsync(UIComponent);
+    protected override void OnInitialized()
+    {
+        ButtonText = UIComponent.Button.Label;
+        OnFocus = EventCallback.Factory.Create<FocusEventArgs>(this, () => OnSelect.InvokeAsync(UIComponent));
+    }
 }
