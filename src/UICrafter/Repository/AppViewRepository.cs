@@ -19,7 +19,7 @@ public class AppViewRepository : IAppViewRepository
 		_httpContextAccessor = httpContextAccessor;
 	}
 
-	public async Task<IList<AppView>> GetAppViewsByUserIdAsync()
+	public async Task<IList<AppView>> GetAppViews()
 	{
 		var userId = _httpContextAccessor.HttpContext!.User.GetAzureId();
 		return await _dbContext
@@ -38,7 +38,7 @@ public class AppViewRepository : IAppViewRepository
 			.ToListAsync();
 	}
 
-	public async Task<AppView> GetAppViewByIdAsync(long id)
+	public async Task<AppView> GetAppViewById(long id)
 	{
 		var user = _httpContextAccessor.HttpContext!.User;
 		var entity = await _dbContext.AppViews
@@ -49,7 +49,7 @@ public class AppViewRepository : IAppViewRepository
 		return _appViewMapper.ToGrpcAppView(entity);
 	}
 
-	public async Task<AppView> CreateAppViewAsync(AppView view)
+	public async Task<AppView> CreateAppView(AppView view)
 	{
 		var entity = _appViewMapper.ToAppViewEntity(view);
 
@@ -70,7 +70,7 @@ public class AppViewRepository : IAppViewRepository
 		return _appViewMapper.ToGrpcAppView(entity);
 	}
 
-	public async Task<AppView> UpdateAppViewAsync(AppView view)
+	public async Task<AppView> UpdateAppView(AppView view)
 	{
 		var userId = _httpContextAccessor.HttpContext!.User.GetAzureId();
 		var entity = await _dbContext.AppViews
@@ -87,7 +87,7 @@ public class AppViewRepository : IAppViewRepository
 		return _appViewMapper.ToGrpcAppView(entity);
 	}
 
-	public async Task DeleteAppViewByIdAsync(long id)
+	public async Task DeleteAppViewById(long id)
 	{
 		var userId = _httpContextAccessor.HttpContext!.User.GetAzureId();
 		await _dbContext.AppViews
