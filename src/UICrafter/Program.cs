@@ -19,6 +19,7 @@ using UICrafter.EntityConfigurations;
 using UICrafter.Repository;
 using UICrafter.Services;
 using UICrafter.Utility;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
