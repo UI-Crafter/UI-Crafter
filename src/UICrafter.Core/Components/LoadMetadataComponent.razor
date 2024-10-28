@@ -42,7 +42,6 @@ else
 @code {
     [Parameter]
     public Guid UserId { get; set; } = Guid.Empty;
-
     private IList<AppView> appViews;
 
     protected override async Task OnInitializedAsync()
