@@ -1,0 +1,137 @@
+@page "/button-test/{viewId:long}"
+
+@inject IAppViewRepository AppViewRepository
+@inject NavigationManager NavigationManager
+
+<PageTitle>@appView.Name</PageTitle>
+
+
+@if (componentList != null && componentList.UIComponents.Any())
+{
+    <CascadingValue Value="stupidStore">
+        @foreach (var component in componentList.UIComponents)
+        {
+            @switch (component.ComponentCase)
+            {
+                case UIComponent.ComponentOneofCase.Button:
+                    <PocButtonNoMistakes Button="component" />
+                    break;
+                case UIComponent.ComponentOneofCase.InputField:
+                    <PocAPIParamInputField InputField="component" />
+                    break;
+                case UIComponent.ComponentOneofCase.Textbox:
+                    <PocTextBox Textbox="component" />
+                    break;
+                default:
+                    // Handle unknown components if necessary
+                    break;
+            }
+        }
+    </CascadingValue>
+}
+else
+{
+    <MudText Typo="Typo.body1">
+        No components to display.
+    </MudText>
+}
+
+
+
+@code {
+    [Parameter]
+    public long viewId { get; set; }
+    private AppView? appView;
+
+    private UIComponentList componentList = new UIComponentList();
+    private StupidStore stupidStore = new StupidStore();  // Shared store for updating TextBoxes
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (viewId == 1)
+        {
+            // Use a dummy/test case for componentList
+            appView = new AppView
+                {
+                    Id = 1,
+                    Name = "Test App View",
+                    // Other properties as needed
+                };
+
+            // Create a dummy UIComponentList with test data
+            componentList = new UIComponentList
+                {
+                    UIComponents =
+            {
+                new UIComponent
+                {
+                    Guid = "ButtonGUID",
+                    DropZoneID = "test-zone",
+                    Button = new UIButton
+                    {
+                        Label = "Test Button",
+                        URL = "https://dog-api.kinduff.com/api/facts?number=3"
+                    }
+                },
+                new UIComponent
+                {
+                    Guid = Guid.NewGuid().ToString(),
+                    DropZoneID = "test-zone",
+                    Textbox = new UITextbox
+                    {
+                        Label = "facts",
+                        NumberOfLines = 3,
+                        Content = "This is a test textbox.",
+                        SourceRef = "ButtonGUID",
+                        JsonField = "facts"
+                    }
+                },
+                new UIComponent
+                {
+                    Guid = Guid.NewGuid().ToString(),
+                    DropZoneID = "test-zone",
+                    Textbox = new UITextbox
+                    {
+                        Label = "Formattet full response",
+                        NumberOfLines = 3,
+                        Content = "This is a test textbox.",
+                        SourceRef = "ButtonGUID",
+                        JsonField = "response"
+                    }
+                },
+                new UIComponent
+                {
+                    Guid = Guid.NewGuid().ToString(),
+                    DropZoneID = "test-zone",
+                    Textbox = new UITextbox
+                    {
+                        Label = "success",
+                        NumberOfLines = 3,
+                        Content = "This is a test textbox.",
+                        SourceRef = "ButtonGUID",
+                        JsonField = "success"
+                    }
+                }
+                // Add more components as needed for testing
+            }
+                };
+        }
+        else
+        {
+            // Fetch the appView via the gRPC call
+            appView = await AppViewRepository.GetAppViewByIdAsync(viewId);
+
+            if (appView != null && appView.Content != null)
+            {
+                // Deserialize the Content byte array into a UIComponentList
+                componentList = UIComponentList.Parser.ParseFrom(appView.Content);
+            }
+            else
+            {
+                // Handle the case where the AppView is null or Content is null
+                componentList = new UIComponentList();
+            }
+        }
+    }
+}
+

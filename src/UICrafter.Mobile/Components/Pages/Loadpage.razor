@@ -1,0 +1,73 @@
+@page "/app-views"
+
+@using System.Diagnostics
+@using UICrafter.Core.AppView
+@using UICrafter.Core.Models
+@using UICrafter.Core.Repository
+@using MudBlazor
+
+@inject IAppViewRepository AppViewRepository
+@inject NavigationManager NavigationManager
+
+<LoadMetadataComponent />
+
+
+@* <PageTitle>App Views</PageTitle>
+
+<MudText Typo="Typo.h4">App Views</MudText>
+
+@if (appViews == null)
+{
+    <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+}
+else
+{
+    <MudList T="AppView">
+        @foreach (var view in appViews)
+        {
+            <MudListItem Click="() => OnViewClicked(view.Id)">
+                <MudText>@view.Name</MudText>
+            </MudListItem>
+        }
+    </MudList>
+
+}
+
+@code {
+    private IList<AppView> appViews;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var userId = "your_user_id";
+        try
+        {
+            appViews = await AppViewRepository.GetAppViewsByUserIdAsync(userId);
+
+            if (appViews == null || !appViews.Any())
+            {
+                Log.Debug("No AppViews found, navigating to /button/1");
+                // No AppViews found, navigate to /button/1
+                NavigationManager.NavigateTo("/button-test/1");
+            }
+        }
+        catch (Exception ex)
+        {
+            // Log the exception if necessary
+            Log.Debug($"Error fetching AppViews: {ex.Message}");
+
+            // Navigate to /button/1 in case of failure
+            NavigationManager.NavigateTo("/button-test/1");
+        }
+    }
+
+
+    private async Task OnViewClicked(long viewId)
+    {
+        var appView = await AppViewRepository.GetAppViewByIdAsync(viewId);
+
+
+        NavigationManager.NavigateTo($"/button-test?viewId={viewId}");
+
+    }
+} *@
+

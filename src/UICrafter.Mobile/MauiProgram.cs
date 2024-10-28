@@ -28,6 +28,7 @@ public static class MauiProgram
 		builder.Services.AddMauiBlazorWebView();
 		builder.Services.AddMudServices();
 
+
 		var configBuilder = new ConfigurationBuilder()
 			.AddEmbeddedResource("UICrafter.Mobile.appsettings.json");
 
@@ -60,6 +61,7 @@ public static class MauiProgram
 
 		// gRPC
 		builder.Services.AddGrpcClient<AppViewService.AppViewServiceClient>();
+
 
 		// Repository
 		builder.Services.AddScoped<IAppViewRepository, AppViewRepository>();

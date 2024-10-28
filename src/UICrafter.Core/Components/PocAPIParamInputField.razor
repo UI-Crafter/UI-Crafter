@@ -1,0 +1,11 @@
+<MudTextField @bind-Value="InputField.InputField.Value"
+              Label="@InputField.InputField.Label"
+              Variant="Variant.Outlined"
+              MaxLines="5">
+</MudTextField>
+
+@code {
+    [Parameter]
+    public required UIComponent InputField { get; set; }
+}
+
