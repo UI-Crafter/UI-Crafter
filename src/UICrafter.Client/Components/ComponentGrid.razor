@@ -1,6 +1,4 @@
-@using static UICrafter.Client.Pages.UICrafterPage
-
-<MudStack Style="15%">
+<MudStack Style="width: 15%">
     <MudText Class="">Components:</MudText>
 
     <MudContainer Class="rounded mud-background-gray pa-4">
@@ -25,7 +23,7 @@
 
 @code {
     [Parameter]
-    public required List<UIComponent> UIComponents { get; set; }
+    public required RepeatedField<UIComponent> UIComponents { get; set; }
 
     private UIComponent? _internalSelectedComponent;
     [Parameter]
@@ -61,25 +59,35 @@
     [Parameter]
     public required EventCallback<MudDropContainer<UIComponent>?> DropContainerChanged { get; set; }
 
-    private void AddNewUIComponent(UIComponent component)
+    private void AddNewComponent<T>(T component)
     {
-        UIComponents.Add(component);
-        SelectedComponent = component;
+        var newComponent = new UIComponent
+            {
+                Guid = Guid.NewGuid().ToString(),
+                DropZoneID = "Drop Zone 1",
+            };
+
+        if (component is UIButton button)
+        {
+            newComponent.Button = button;
+        }
+        else if (component is UIInputField inputField)
+        {
+            newComponent.InputField = inputField;
+        }
+        else if (component is UITextbox textbox)
+        {
+            newComponent.Textbox = textbox;
+        }
+
+        UIComponents.Add(newComponent);
+        SelectedComponent = newComponent;
         DropContainer?.Refresh();
     }
 
-    private void AddNewButton()
-    {
-        AddNewUIComponent(new UIButton { Label = "New Button", URL = "" });
-    }
+    private void AddNewButton() => AddNewComponent(new UIButton { Label = "New Button", URL = string.Empty });
 
-    private void AddNewInputField()
-    {
-        AddNewUIComponent(new UIInputField { Placeholder = "New Input Field" });
-    }
+    private void AddNewInputField() => AddNewComponent(new UIInputField { Label = "Input Field", Value = string.Empty });
 
-    private void AddNewTextbox()
-    {
-        AddNewUIComponent(new UITextBox { Content = "New Textbox", Label = "New Textbox" });
-    }
+    private void AddNewTextbox() => AddNewComponent(new UITextbox { Label = "New Textbox", NumberOfLines = 2, Content = string.Empty, SourceRef = Guid.Empty.ToString(), JsonField = string.Empty });
 }

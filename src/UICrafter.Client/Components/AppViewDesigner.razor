@@ -1,23 +1,21 @@
-@using static UICrafter.Client.Pages.UICrafterPage
-
 <MudContainer MaxWidth="MaxWidth.Small">
-    <MudDropContainer T="UIComponent" @ref="DropContainer" Items="UIComponents" ItemsSelector="@((item,dropzone) => item.DropZoneID == dropzone)" ItemDropped="ComponentUpdated" Class="d-flex flex-wrap flex-grow-1">
+    <MudDropContainer T="UIComponent" @ref="DropContainer" Items="UIComponents" ItemsSelector="@((item,dropzone) => item.DropZoneID == dropzone)" ItemDropped="ComponentUpdated" Class="d-flex flex-grow-1">
         <ChildContent>
-            <MudDropZone T="UIComponent" Identifier="Drop Zone 1" AllowReorder="true" Class="rounded mud-background-gray pa-2 flex-grow-1 overflow-auto" Style="height: 45rem;">
+            <MudDropZone T="UIComponent" Identifier="Drop Zone 1" AllowReorder="true" Class="rounded mud-background-gray pa-2 flex-grow-1 overflow-auto" Style="height: 70vh">
             </MudDropZone>
         </ChildContent>
         <ItemRenderer>
-            @if (context is UIButton button)
+            @if (context.ComponentCase == UIComponent.ComponentOneofCase.Button)
             {
-                <MudButton Class="mb-2" Variant="Variant.Filled" @onfocus="()=>SelectComponent(button)">@button.Label</MudButton>
+                <MudButton Class="mb-2" Variant="Variant.Filled" @onfocus="()=>SelectComponent(context)">@context.Button.Label</MudButton>
             }
-            else if (context is UIInputField inputField)
+            else if (context.ComponentCase == UIComponent.ComponentOneofCase.InputField)
             {
-                <MudTextField @bind-Value="@inputField.Value" Class="mb-2" Label="@inputField.Placeholder" Variant="Variant.Outlined" @onfocus="()=>SelectComponent(inputField)"></MudTextField>
+                <MudTextField @bind-Value="@context.InputField.Value" Class="mb-2" Label="@context.InputField.Label" Variant="Variant.Outlined" @onfocus="()=>SelectComponent(context)"></MudTextField>
             }
-            else if (context is UITextBox textBox)
+            else if (context.ComponentCase == UIComponent.ComponentOneofCase.Textbox)
             {
-                <MudTextField @bind-Value="@textBox.Content" Label="@textBox.Label" ReadOnly="true" ShrinkLabel="true" Lines=@textBox.NumberOfLines Variant="Variant.Outlined" @onfocus="()=>SelectComponent(textBox)" />
+                <MudTextField @bind-Value="@context.Textbox.Content" Label="@context.Textbox.Label" ReadOnly="true" ShrinkLabel="true" Lines=@context.Textbox.NumberOfLines Variant="Variant.Outlined" @onfocus="()=>SelectComponent(context)" />
             }
             else
             {
@@ -29,7 +27,7 @@
 
 @code {
     [Parameter]
-    public required List<UIComponent> UIComponents { get; set; }
+    public required RepeatedField<UIComponent> UIComponents { get; set; }
 
     private UIComponent? _internalSelectedComponent;
     [Parameter]

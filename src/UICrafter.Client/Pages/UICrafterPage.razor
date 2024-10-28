@@ -1,53 +1,26 @@
-@using UICrafter.Client.Components
-
 @page "/uicrafter"
+@attribute [Authorize]
 
 <MudStack Row="true">
     <!-- Left section: Component Grid (15%) -->
-    <ComponentGrid @bind-SelectedComponent="@SelectedComponent" @bind-DropContainer="@DropContainer" UIComponents="@UIComponents" />
+    <ComponentGrid @bind-SelectedComponent="@SelectedComponent" @bind-DropContainer="@DropContainer" UIComponents="@UIComponentList.UIComponents" />
 
     <!-- Center section: Dropzone (60%) -->
     <MudStack Style="width: 60%;" Class="align-center">
         <MudText>App-view:</MudText>
 
-        <AppViewDesigner @bind-SelectedComponent="@SelectedComponent" @bind-DropContainer="@DropContainer" UIComponents="@UIComponents" />
+        <AppViewDesigner @bind-SelectedComponent="@SelectedComponent" @bind-DropContainer="@DropContainer" UIComponents="@UIComponentList.UIComponents" />
 
-        <AppViewButtons @bind-DropContainer="@DropContainer" UIComponents="@UIComponents" />
+        <AppViewButtons @bind-SelectedComponent="@SelectedComponent" @bind-DropContainer="@DropContainer" UIComponentList="@UIComponentList" />
     </MudStack>
 
     <!-- Right section: Component Properties (25%) -->
-    <ComponentProperties @bind-SelectedComponent="@SelectedComponent" @bind-DropContainer="@DropContainer" UIComponents="@UIComponents" />
+    <ComponentProperties @bind-SelectedComponent="@SelectedComponent" @bind-DropContainer="@DropContainer" UIComponents="@UIComponentList.UIComponents" />
 </MudStack>
 
 
 @code {
     private UIComponent? SelectedComponent { get; set; }
     private MudDropContainer<UIComponent>? DropContainer { get; set; }
-    private List<UIComponent> UIComponents { get; set; } = new List<UIComponent>();
-
-    public abstract class UIComponent
-    {
-        public Guid Guid = Guid.NewGuid();
-        public string DropZoneID { get; set; } = "Drop Zone 1";
-    }
-
-    public class UIButton : UIComponent
-    {
-        public string Label { get; set; } = String.Empty;
-        public string URL { get; set; } = String.Empty;
-    }
-
-    public class UIInputField : UIComponent
-    {
-        public string Placeholder { get; set; } = String.Empty;
-        public string Value { get; set; } = String.Empty;
-    }
-
-    public class UITextBox : UIComponent
-    {
-        public string Label { get; set; } = String.Empty;
-        public int NumberOfLines { get; set; } = 2;
-        public string Content { get; set; } = String.Empty;
-        public Guid SourceRef { get; set; } = Guid.Empty;
-    }
+    private UIComponentList UIComponentList { get; set; } = new UIComponentList();
 }

@@ -1,9 +1,12 @@
-@using static UICrafter.Client.Pages.UICrafterPage
 
 <MudStack Row="true">
-    <MudTextField @bind-Value="@AppViewName" Label="App-view name" Variant="Variant.Outlined"></MudTextField>
+    <MudOverlay Visible="Visible" DarkBackground="true" Absolute="true">
+        <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+    </MudOverlay>
 
-    <MudButtonGroup Variant="Variant.Outlined" Class="ma-auto">
+    <MudTextField @bind-Value="@AppView.Name" Label="App-view name" Variant="Variant.Outlined" Class="ma-5"></MudTextField>
+
+    <MudButtonGroup Variant="Variant.Outlined" Class="ma-5">
         <MudIconButton Icon="@Icons.Material.Filled.Save" Size="Size.Large" OnClick="@SaveAppView" />
         <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Large" OnClick="@DeleteAppView" />
         <MudIconButton Icon="@Icons.Material.Filled.Clear" Size="Size.Large" OnClick="@ClearAppView" />
@@ -12,10 +15,31 @@
 </MudStack>
 
 @code {
-    private String AppViewName { get; set; } = String.Empty;
+    [Inject]
+    private IAppViewRepository AppViewRepository { get; set; } = default!;
+
+    private AppView AppView { get; set; } = new AppView { Name = string.Empty };
+    private bool Visible { get; set; } = false;
 
     [Parameter]
-    public required List<UIComponent> UIComponents { get; set; }
+    public required UIComponentList UIComponentList { get; set; }
+
+    private UIComponent? _internalSelectedComponent;
+    [Parameter]
+    public required UIComponent? SelectedComponent
+    {
+        get => _internalSelectedComponent;
+        set
+        {
+            if (SelectedComponentChanged.HasDelegate && value != _internalSelectedComponent)
+            {
+                _internalSelectedComponent = value;
+                SelectedComponentChanged.InvokeAsync(value);
+            }
+        }
+    }
+    [Parameter]
+    public required EventCallback<UIComponent?> SelectedComponentChanged { get; set; }
 
     private MudDropContainer<UIComponent>? _internalDropContainer;
     [Parameter]
@@ -34,26 +58,90 @@
     [Parameter]
     public required EventCallback<MudDropContainer<UIComponent>?> DropContainerChanged { get; set; }
 
-    private void SaveAppView()
+    AppView test = new AppView();
+
+    private async Task SaveAppView()
     {
-        throw new NotImplementedException();
+        Visible = true;
+
+        var serializedContent = UIComponentList.ToByteString();
+
+        AppView.Content = serializedContent;
+
+        try
+        {
+            if (AppView.Id == 0)
+            {
+                await AppViewRepository.CreateAppViewAsync(AppView);
+                Log.Debug("Called Create");
+            }
+            else
+            {
+                await AppViewRepository.UpdateAppViewAsync(AppView);
+                Log.Debug("Called Update");
+            }
+        }
+        catch (Exception ex)
+        {
+            Log.Debug("Error while saving AppView: {message}", ex.Message);
+        }
+
+        Visible = false;
     }
 
-    private void DeleteAppView()
+    private async Task DeleteAppView()
     {
-        throw new NotImplementedException();
+        Visible = true;
+
+        try
+        {
+            if (AppView.Id != 0)
+            {
+                await AppViewRepository.DeleteAppViewByIdAsync(AppView.Id);
+
+                ClearAppView();
+
+                AppView = new AppView();
+            }
+        }
+        catch (Exception ex)
+        {
+            Log.Debug("Error while deleting AppView: {message}", ex.Message);
+        }
+
+        Visible = false;
     }
 
     private void ClearAppView()
     {
-        if (UIComponents.Count == 0) return;
+        if (UIComponentList.UIComponents.Count == 0) return;
 
-        UIComponents.Clear();
+        UIComponentList.UIComponents.Clear();
+        SelectedComponent = null;
         DropContainer?.Refresh();
     }
 
-    private void LoadAppView()
+    private async Task LoadAppView()
     {
-        throw new NotImplementedException();
+        Visible = true;
+
+        ClearAppView();
+
+        try
+        {
+            AppView = await AppViewRepository.GetAppViewByIdAsync(1);
+
+            var parsedContent = UIComponentList.Parser.ParseFrom(AppView.Content);
+
+            UIComponentList.UIComponents.AddRange(parsedContent.UIComponents);
+
+            DropContainer?.Refresh();
+        }
+        catch (Exception ex)
+        {
+            Log.Debug("Error while loading AppView: {message}", ex.Message);
+        }
+
+        Visible = false;
     }
 }
