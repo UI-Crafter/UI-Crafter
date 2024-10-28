@@ -19,6 +19,7 @@ using UICrafter.EntityConfigurations;
 using UICrafter.Repository;
 using UICrafter.Services;
 using UICrafter.Utility;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,27 +31,18 @@ builder.Services.AddHttpClient();
 builder.Services.AddScoped<IHttpClientProvider, HttpClientProvider>();
 
 // gRPC
-//if (builder.Environment.IsDevelopment())
-//{
-//	builder.Services.AddGrpc().AddJsonTranscoding();
-//	builder.Services.AddGrpcSwagger();
-//	builder.Services.AddSwaggerGen(c =>
-//	{
-//		c.SwaggerDoc("v1",
-//			new OpenApiInfo { Title = "gRPC transcoding", Version = "v1" });
-//	});
-//}
-//else
-//{
-//	builder.Services.AddGrpc();
-//}
-
-builder.Services.AddGrpc();
-
+if (builder.Environment.IsDevelopment())
+{
+	builder.Services.AddGrpc().AddJsonTranscoding();
+	builder.Services.AddGrpcSwagger().AddSwaggerGen(c => c.SwaggerDoc("v1", new OpenApiInfo { Title = "gRPC transcoding", Version = "v1" }));
+}
+else
+{
+	builder.Services.AddGrpc();
+}
 
 // Swagger setup
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 
 // Repository
 builder.Services.AddScoped<IAppViewRepository, AppViewRepository>();
@@ -116,16 +108,16 @@ builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
 
+
+
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
+
 	app.UseWebAssemblyDebugging();
 	app.UseSwagger();
 	app.UseSwaggerUI();
-	app.UseSwaggerUI(c =>
-	{
-		c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
-	});
+	app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1"));
 }
 else
 {
