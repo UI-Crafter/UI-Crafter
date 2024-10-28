@@ -1,0 +1,11 @@
+<MudButton Class="mb-2" Variant="Variant.Filled" @attributes="Attributes">
+    @ChildContent
+</MudButton>
+
+@code {
+    [Parameter(CaptureUnmatchedValues = true)]
+    public Dictionary<string, object> Attributes { get; set; } = new();
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+}

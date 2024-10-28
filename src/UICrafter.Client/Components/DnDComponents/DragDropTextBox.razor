@@ -1,0 +1,11 @@
+<BaseTextBox @bind-Value="@UIComponent.Textbox.Content" Label="@UIComponent.Textbox.Label" Lines="UIComponent.Textbox.NumberOfLines" @onfocus="OnFocus" />
+
+@code {
+    [Parameter]
+    public required UIComponent UIComponent { get; set; }
+
+    [Parameter]
+    public EventCallback<UIComponent> OnSelect { get; set; }
+
+    private void OnFocus() => OnSelect.InvokeAsync(UIComponent);
+}

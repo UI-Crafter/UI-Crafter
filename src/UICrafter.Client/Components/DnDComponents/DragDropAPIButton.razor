@@ -1,0 +1,13 @@
+<BaseAPIButton @onfocus="OnFocus">
+    @UIComponent.Button.Label
+</BaseAPIButton>
+
+@code {
+    [Parameter]
+    public required UIComponent UIComponent { get; set; }
+
+    [Parameter]
+    public EventCallback<UIComponent> OnSelect { get; set; }
+
+    private void OnFocus() => OnSelect.InvokeAsync(UIComponent);
+}

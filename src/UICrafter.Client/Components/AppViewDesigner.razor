@@ -1,3 +1,5 @@
+@using UICrafter.Client.Components.DnDComponents
+
 <MudContainer MaxWidth="MaxWidth.Small">
     <MudDropContainer T="UIComponent" @ref="DropContainer" Items="UIComponents" ItemsSelector="@((item,dropzone) => item.DropZoneID == dropzone)" ItemDropped="ComponentUpdated" Class="d-flex flex-grow-1">
         <ChildContent>
@@ -7,15 +9,15 @@
         <ItemRenderer>
             @if (context.ComponentCase == UIComponent.ComponentOneofCase.Button)
             {
-                <MudButton Class="mb-2" Variant="Variant.Filled" @onfocus="()=>SelectComponent(context)">@context.Button.Label</MudButton>
+                <DragDropAPIButton UIComponent="context" OnSelect="SelectComponent" />
             }
             else if (context.ComponentCase == UIComponent.ComponentOneofCase.InputField)
             {
-                <MudTextField @bind-Value="@context.InputField.Value" Class="mb-2" Label="@context.InputField.Label" Variant="Variant.Outlined" @onfocus="()=>SelectComponent(context)"></MudTextField>
+                <DragDropInput UIComponent="context" OnSelect="SelectComponent" />
             }
             else if (context.ComponentCase == UIComponent.ComponentOneofCase.Textbox)
             {
-                <MudTextField @bind-Value="@context.Textbox.Content" Label="@context.Textbox.Label" ReadOnly="true" ShrinkLabel="true" Lines=@context.Textbox.NumberOfLines Variant="Variant.Outlined" @onfocus="()=>SelectComponent(context)" />
+                <DragDropTextBox UIComponent="context" OnSelect="SelectComponent"/>
             }
             else
             {
