@@ -1,9 +1,7 @@
-<MudTextField T="string" Class="mb-2" Variant="Variant.Outlined" Label="@Label" @attributes="Attributes" />
+<MudTextField T="string" Class="mb-2" Variant="Variant.Outlined" Label="@Label" @bind-Value="@Value" @onfocus="OnFocus" />
 
 @code {
-    [Parameter]
-    public string? Label { get; set; }
-
-    [Parameter(CaptureUnmatchedValues = true)]
-    public Dictionary<string, object> Attributes { get; set; } = new();
+    protected string Label { get; set; } = string.Empty;
+    protected string Value { get; set; } = string.Empty;
+    protected EventCallback<FocusEventArgs> OnFocus { get; set; }
 }

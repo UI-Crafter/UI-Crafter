@@ -1,4 +1,9 @@
-<BaseTextBox @bind-Value="@UIComponent.Textbox.Content" Label="@UIComponent.Textbox.Label" Lines="UIComponent.Textbox.NumberOfLines" @onfocus="OnFocus" />
+@inherits BaseTextBox
+
+@{
+    base.BuildRenderTree(__builder);
+}
+
 
 @code {
     [Parameter]
@@ -7,5 +12,11 @@
     [Parameter]
     public EventCallback<UIComponent> OnSelect { get; set; }
 
-    private void OnFocus() => OnSelect.InvokeAsync(UIComponent);
+    protected override void OnInitialized()
+    {
+        Label = UIComponent.Textbox.Label;
+        Lines = UIComponent.Textbox.NumberOfLines;
+        Content = UIComponent.Textbox.Content;
+        OnFocus = EventCallback.Factory.Create<FocusEventArgs>(this, () => OnSelect.InvokeAsync(UIComponent));
+    }
 }
