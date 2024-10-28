@@ -1,6 +1,48 @@
-﻿<Router AppAssembly="typeof(Program).Assembly">
+@* <Router AppAssembly="typeof(Program).Assembly">
     <Found Context="routeData">
-        <RouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)" />
+        <AuthorizeView>
+            <Authorized>
+                <RouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)" />
+            </Authorized>
+            <NotAuthorized>
+                <RedirectToLogin />
+            </NotAuthorized>
+        </AuthorizeView>
         <FocusOnNavigate RouteData="routeData" Selector="h1" />
     </Found>
 </Router>
+ *@
+
+
+
+<Router AppAssembly="typeof(Program).Assembly">
+    <Found Context="routeData">
+        <CascadingValue Value="_theme">
+            <AuthorizeRouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)">
+            </AuthorizeRouteView>
+            <FocusOnNavigate RouteData="routeData" Selector="h1" />
+        </CascadingValue>
+    </Found>
+</Router>
+
+
+@code {
+    [Inject] private PersistentComponentState ApplicationState { get; set; } = default!;
+
+    [Parameter] public Theme? Theme { get; set; }
+    private Theme _theme = new();
+
+    protected override void OnInitialized()
+    {
+        ApplicationState.TryTakeFromJson<Theme>("ThemeInfo", out var stateTheme);
+        _theme = stateTheme ?? Theme ?? _theme;
+
+        ApplicationState.RegisterOnPersisting(() => OnPersisting());
+    }
+
+    private Task OnPersisting()
+    {
+        ApplicationState.PersistAsJson("ThemeInfo", _theme);
+        return Task.CompletedTask;
+    }
+}

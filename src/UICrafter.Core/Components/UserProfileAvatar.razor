@@ -1,0 +1,118 @@
+@using System.Security.Claims
+@using System.Text.Json
+@using UICrafter.Core.Models
+
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject PersistentComponentState ApplicationState
+
+@if (isLoggedIn)
+{
+    <div style=@($"--mud-palette-lines-inputs: {avatarColor}")>
+        <MudAvatar Size="Size.Medium" Class="cursor-pointer" Variant="Variant.Filled" @onclick="ToggleOpen">
+            @userInitials
+        </MudAvatar>
+        <MudPopover Open="_open" OverflowBehavior="OverflowBehavior.FlipAlways" AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight" Paper="false">
+            <MudPaper Outlined="true" Class="px-1 py-2 d-flex flex-column" Style=@($"--mud-palette-lines-inputs: {avatarColor}")>
+                <MudList T="string">
+                    <MudListItem Text="@ModeButtonText" Icon="@ModeButtonIcon" @onclick="ModeToggle" />
+                    <MudListItem Text="Sign Out" Icon="@Icons.Material.Filled.Logout" Href="signout-oidc" />
+                </MudList>
+            </MudPaper>
+        </MudPopover>
+    </div>
+}
+else
+{
+    <MudButton StartIcon="@Icons.Material.Filled.Login" Variant="Variant.Outlined" Href=@($"/auth/login?returnUrl={Uri.EscapeDataString(NavigationManager.Uri)}")>Login</MudButton>
+    <div>
+        <MudIconButton Icon="@Icons.Material.Filled.MoreVert" OnClick="ToggleOpen" />
+        <MudPopover Open="_open" OverflowBehavior="OverflowBehavior.FlipAlways" AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight" Paper="false">
+            <MudPaper Outlined="true" Class="px-1 py-2 d-flex flex-column" Style=@($"--mud-palette-lines-inputs: {avatarColor}")>
+                <MudList T="string">
+                    <MudListItem Text="@ModeButtonText" Icon="@ModeButtonIcon" @onclick="ModeToggle" />
+                </MudList>
+            </MudPaper>
+        </MudPopover>
+    </div>
+}
+
+@code {
+    [Parameter] public ThemeMode ThemeMode { get; set; }
+    [Parameter] public EventCallback<ThemeMode> ThemeModeChanged { get; set; }
+
+    [Inject] private NavigationManager NavigationManager { get; set; } = default!;
+
+    private bool isLoggedIn = false;
+    private string? userInitials = null;
+    private string avatarColor = string.Empty;
+    private bool _open = false;
+
+    private void ToggleOpen() => _open = !_open;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity != null && user.Identity.IsAuthenticated)
+        {
+            isLoggedIn = true;
+
+            var givenName = user.FindFirst(ClaimTypes.GivenName)?.Value;
+            var surname = user.FindFirst(ClaimTypes.Surname)?.Value;
+
+            if (!string.IsNullOrWhiteSpace(givenName) && !string.IsNullOrWhiteSpace(surname))
+            {
+                userInitials = $"{givenName[0]}{surname[0]}";
+            }
+
+            var userName = user.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? user.Identity.Name ?? "User";
+            avatarColor = StringToColorFNV1a(userName);
+        }
+        else
+        {
+            isLoggedIn = false;
+            userInitials = null;
+        }
+    }
+
+    private void ModeToggle()
+    {
+        var newThemeMode = (ThemeMode)((((long)ThemeMode) + 1) % 3);
+        ThemeModeChanged.TryInvokeAsync(newThemeMode);
+        InvokeAsync(StateHasChanged);
+    }
+
+    // Inspired from https://www.programmingalgorithms.com/algorithm/fnv-hash/
+    private static string StringToColorFNV1a(string input)
+    {
+        const uint fnvPrime = 16777619;
+        const uint fnvOffsetBasis = 2166136261;
+        uint hash = fnvOffsetBasis;
+        foreach (char c in input)
+        {
+            hash ^= c;
+            hash *= fnvPrime;
+        }
+        int r = (int)((hash >> 16) & 0xFF);
+        int g = (int)((hash >> 8) & 0xFF);
+        int b = (int)(hash & 0xFF);
+        return $"#{r:X2}{g:X2}{b:X2}";
+    }
+
+    private string ModeButtonIcon => ThemeMode switch
+    {
+        ThemeMode.LightMode => Icons.Material.Outlined.LightMode,
+        ThemeMode.DarkMode => Icons.Material.Outlined.DarkMode,
+        ThemeMode.Automatic => Icons.Material.Rounded.AutoMode,
+        _ => Icons.Material.Outlined.LightMode
+    };
+
+    private string ModeButtonText => ThemeMode switch
+    {
+        ThemeMode.LightMode => "Light Mode",
+        ThemeMode.DarkMode => "Dark Mode",
+        ThemeMode.Automatic => "Auto Mode",
+        _ => string.Empty
+    };
+}

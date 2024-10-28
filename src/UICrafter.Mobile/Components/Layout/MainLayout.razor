@@ -17,6 +17,15 @@
 
     <main>
         <div class="top-row px-4">
+            <AuthorizeView>
+                <Authorized>
+                    Hello, @context.User.Identity.Name
+                    <a href="#" @onclick="Logout">Log out</a>
+                </Authorized>
+                <NotAuthorized>
+                    <a href="#" @onclick="Login">Log in</a>
+                </NotAuthorized>
+            </AuthorizeView>
             <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
         </div>
 
@@ -25,3 +34,20 @@
         </article>
     </main>
 </div>
+
+
+@code {
+    [Inject] private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
+
+    public async Task Login()
+    {
+        await ((CustomAuthStateProvider)AuthenticationStateProvider)
+            .LogInAsync();
+    }
+
+    public async Task Logout()
+    {
+        ((CustomAuthStateProvider)AuthenticationStateProvider)
+           .Logout();
+    }
+}

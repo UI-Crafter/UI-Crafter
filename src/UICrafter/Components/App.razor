@@ -1,3 +1,5 @@
+@using System.Text.Json
+@using UICrafter.Core.Models
 <!DOCTYPE html>
 <html lang="en">
 
@@ -13,9 +15,46 @@
 </head>
 
 <body>
-    <Routes @rendermode="InteractiveAuto" />
+    @if (HasTheme)
+    {
+        <Routes @rendermode="InteractiveServer" Theme="theme" />
+    }
+    else
+    {
+        <ThemeCookieSetup/>
+    }
     <script src="_framework/blazor.web.js"></script>
     <script src="_content/MudBlazor/MudBlazor.min.js"></script>
+    <script src="js/utility.js"></script>
 </body>
 
 </html>
+
+
+
+@code {
+    [Inject] private PersistentComponentState ApplicationState { get; set; } = default!;
+    [Inject] private IHttpContextAccessor HttpContextAccessor { get; set; } = default!;
+    [Inject] private NavigationManager NavigationManager { get; set; } = default!;
+
+    private Theme theme = new();
+    private bool HasTheme = false;
+
+    protected override void OnInitialized()
+    {
+        var cookies = HttpContextAccessor.HttpContext?.Request.Cookies;
+        if (cookies != null && cookies.TryGetValue("ThemeInfo", out var base64EncodedTheme))
+        {
+            HasTheme = true;
+            var decodedJson = System.Text.Encoding.UTF8.GetString(Convert.FromBase64String(base64EncodedTheme));
+            theme = JsonSerializer.Deserialize<Theme>(decodedJson) ?? theme;
+            ApplicationState.RegisterOnPersisting(() => OnPersisting());
+        }
+    }
+
+    private Task OnPersisting()
+    {
+        ApplicationState.PersistAsJson("ThemeInfo", theme);
+        return Task.CompletedTask;
+    }
+}

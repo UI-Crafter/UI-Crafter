@@ -16,7 +16,7 @@ public static class GrpcClientDI
 	public static IServiceCollection AddGrpcClient<TGrpcClient>(this IServiceCollection services) where TGrpcClient : ClientBase
 	{
 		// Register gRPC client using the BaseUrl from ApiSettings
-		services.AddScoped<TGrpcClient>(sp =>
+		services.AddScoped(sp =>
 		{
 			var httpClient = sp.GetRequiredService<HttpClient>();
 			var channel = GrpcChannel.ForAddress(httpClient.BaseAddress!, new GrpcChannelOptions

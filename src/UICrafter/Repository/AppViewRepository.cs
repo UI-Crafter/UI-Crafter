@@ -4,24 +4,30 @@ using Google.Protobuf.WellKnownTypes;
 using Microsoft.EntityFrameworkCore;
 using UICrafter.Core.AppView;
 using UICrafter.Core.Repository;
+using UICrafter.EntityConfigurations;
 using UICrafter.Models;
 
 public class AppViewRepository : IAppViewRepository
 {
 	private readonly ApplicationDbContext _dbContext;
+	private readonly IHttpContextAccessor _httpContextAccessor;
 	private readonly AppViewMapper _appViewMapper = new();
 
-	public AppViewRepository(ApplicationDbContext dbContext) => _dbContext = dbContext;
+	public AppViewRepository(ApplicationDbContext dbContext, IHttpContextAccessor httpContextAccessor)
+	{
+		_dbContext = dbContext;
+		_httpContextAccessor = httpContextAccessor;
+	}
 
-	private static readonly Func<ApplicationDbContext, string, Task<List<AppView>>> _listAppViewsQuery =
-	EF.CompileAsyncQuery((ApplicationDbContext dbContext, string userId) =>
+	private static readonly Func<ApplicationDbContext, Guid, Task<List<AppView>>> _listAppViewsQuery =
+	EF.CompileAsyncQuery((ApplicationDbContext dbContext, Guid userId) =>
 		dbContext.AppViews
 			.Where(x => x.UserId == userId)
 			.AsNoTracking()
 			.Select(view => new AppView
 			{
 				Id = view.Id,
-				UserId = view.UserId,
+				UserId = view.UserId.ToString(),
 				Name = view.Name,
 				CreatedAtUTC = Timestamp.FromDateTime(view.CreatedAtUTC),
 				UpdatedAtUTC = Timestamp.FromDateTime(view.UpdatedAtUTC),
@@ -29,7 +35,11 @@ public class AppViewRepository : IAppViewRepository
 			.ToList());
 
 	// Get list of AppViews by UserId and return gRPC models
-	public async Task<IList<AppView>> GetAppViewsByUserIdAsync(string userId) => await _listAppViewsQuery(_dbContext, userId);
+	public async Task<IList<AppView>> GetAppViewsByUserIdAsync(Guid userId)
+	{
+		var user = _httpContextAccessor.HttpContext?.User;
+		return await _listAppViewsQuery(_dbContext, userId);
+	}
 
 	// Get AppView by Id and return gRPC model
 	public async Task<AppView> GetAppViewByIdAsync(long id)

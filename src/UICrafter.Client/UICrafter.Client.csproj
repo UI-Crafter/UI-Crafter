@@ -7,15 +7,27 @@
     <NoDefaultLaunchSettingsFile>true</NoDefaultLaunchSettingsFile>
     <StaticWebAssetProjectMode>Default</StaticWebAssetProjectMode>
 		<GrpcServiceType>Client</GrpcServiceType>
+		<NoWarn>BL0007</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.10" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Authentication" Version="8.0.10" />
     <PackageReference Include="MudBlazor" Version="7.9.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\UICrafter.Core\UICrafter.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="Pages\AuthenticationError.razor">
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Components\" />
   </ItemGroup>
 
 </Project>

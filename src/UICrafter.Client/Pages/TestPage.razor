@@ -3,16 +3,16 @@
 
 <TestComponent/>
 
-<ProtobuffersTestComponent/>
+@* <ProtobuffersTestComponent/> *@
 
 
 @code {
-    [Inject] IAppViewRepository AppViewRepository { get; set; }
+    [Inject] IAppViewRepository AppViewRepository { get; set; } = default!;
 
     private IList<AppView>? _appViews;
 
     protected override async Task OnInitializedAsync()
     {
-        _appViews = await AppViewRepository.GetAppViewsByUserIdAsync("s");
+        //_appViews = await AppViewRepository.GetAppViewsByUserIdAsync("s");
     }
 }

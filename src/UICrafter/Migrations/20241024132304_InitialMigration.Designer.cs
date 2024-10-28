@@ -5,14 +5,14 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using UICrafter;
+using UICrafter.EntityConfigurations;
 
 #nullable disable
 
 namespace UICrafter.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241014153102_InitialMigration")]
+    [Migration("20241024132304_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -48,10 +48,8 @@ namespace UICrafter.Migrations
                     b.Property<DateTime>("UpdatedAtUTC")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("character varying(100)");
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
@@ -59,6 +57,27 @@ namespace UICrafter.Migrations
                         .HasDatabaseName("IX_AppViewEntity_UserId");
 
                     b.ToTable("AppViews");
+                });
+
+            modelBuilder.Entity("UICrafter.Models.UserEntity", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Users");
                 });
 #pragma warning restore 612, 618
         }
