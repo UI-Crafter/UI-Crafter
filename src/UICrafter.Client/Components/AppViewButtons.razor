@@ -128,7 +128,11 @@
 
         try
         {
-            AppView = await AppViewRepository.GetAppViewById(1);
+            var test = await AppViewRepository.GetAppViews();
+
+            var id = test.FirstOrDefault()?.Id ?? 0;
+
+            AppView = await AppViewRepository.GetAppViewById(id);
 
             var parsedContent = UIComponentList.Parser.ParseFrom(AppView.Content);
 
