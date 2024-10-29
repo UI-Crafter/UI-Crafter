@@ -1,0 +1,22 @@
+@inherits BaseTextBox
+
+@{
+    base.BuildRenderTree(__builder);
+}
+
+
+@code {
+    [Parameter]
+    public required UIComponent UIComponent { get; set; }
+
+    [Parameter]
+    public EventCallback<UIComponent> OnSelect { get; set; }
+
+    protected override void OnInitialized()
+    {
+        Label = UIComponent.Textbox.Label;
+        Lines = UIComponent.Textbox.NumberOfLines;
+        Content = UIComponent.Textbox.Content;
+        OnFocus = EventCallback.Factory.Create<FocusEventArgs>(this, () => OnSelect.InvokeAsync(UIComponent));
+    }
+}

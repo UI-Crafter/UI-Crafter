@@ -1,0 +1,11 @@
+<MudContainer Class="d-flex justify-center pa-1">
+    <MudButton Class="mb-2" Variant="Variant.Filled" OnClick="OnClick" @onfocus="OnFocus">
+        @ButtonText
+    </MudButton>
+</MudContainer>
+
+@code {
+    protected string ButtonText { get; set; } = string.Empty;
+    protected EventCallback<MouseEventArgs> OnClick { get; set; }
+    protected EventCallback<FocusEventArgs> OnFocus { get; set; }
+}

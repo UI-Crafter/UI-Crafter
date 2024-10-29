@@ -2,11 +2,11 @@
 @attribute [Authorize]
 
 <MudStack Row="true">
-    <!-- Left section: Component Grid (15%) -->
+    <!-- Left section: Component Grid (20%) -->
     <ComponentGrid @bind-SelectedComponent="@SelectedComponent" @bind-DropContainer="@DropContainer" UIComponents="@UIComponentList.UIComponents" />
 
-    <!-- Center section: Dropzone (60%) -->
-    <MudStack Style="width: 60%;" Class="align-center">
+    <!-- Center section: Dropzone (55%) -->
+    <MudStack Style="width: 55%;" Class="align-center">
         <MudText>App-view:</MudText>
 
         <AppViewDesigner @bind-SelectedComponent="@SelectedComponent" @bind-DropContainer="@DropContainer" UIComponents="@UIComponentList.UIComponents" />

@@ -1,0 +1,20 @@
+@inherits BaseAPIButton
+
+@{
+    base.BuildRenderTree(__builder);
+}
+
+
+@code {
+    [Parameter]
+    public required UIComponent UIComponent { get; set; }
+
+    [Parameter]
+    public EventCallback<UIComponent> OnSelect { get; set; }
+
+    protected override void OnInitialized()
+    {
+        ButtonText = UIComponent.Button.Label;
+        OnFocus = EventCallback.Factory.Create<FocusEventArgs>(this, () => OnSelect.InvokeAsync(UIComponent));
+    }
+}

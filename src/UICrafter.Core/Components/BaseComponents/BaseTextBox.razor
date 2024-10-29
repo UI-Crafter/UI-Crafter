@@ -1,0 +1,8 @@
+<MudTextField T="string" ReadOnly="true" ShrinkLabel="true" Variant="Variant.Outlined" Label="@Label" Lines="@Lines" @bind-Value="@Content" @onfocus="OnFocus"/>
+
+@code {
+    protected string Label { get; set; } = string.Empty;
+    protected int Lines { get; set; }
+    protected string Content { get; set; } = string.Empty;
+    protected EventCallback<FocusEventArgs> OnFocus { get; set; }
+}
