@@ -5,11 +5,19 @@
 
     <MudTextField @bind-Value="@AppView.Name" Label="App-view name" Variant="Variant.Outlined" Class="ma-5"></MudTextField>
 
-    <MudButtonGroup Variant="Variant.Outlined" Class="ma-5">
-        <MudIconButton Icon="@Icons.Material.Filled.Save" Size="Size.Large" OnClick="@SaveAppView" />
-        <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Large" OnClick="@DeleteAppView" />
-        <MudIconButton Icon="@Icons.Material.Filled.Clear" Size="Size.Large" OnClick="@ClearAppView" />
-        <MudIconButton Icon="@Icons.Material.Filled.Download" Size="Size.Large" OnClick="@LoadAppView" />
+    <MudButtonGroup Variant="Variant.Outlined" Class="ma-5 uicrafter-tooltip-buttongroup">
+        <MudTooltip Text="Save" Arrow="true" Placement="Placement.Bottom" >
+            <MudIconButton Icon="@Icons.Material.Filled.Save" Size="Size.Large" OnClick="@SaveAppView" />
+        </MudTooltip>
+        <MudTooltip Text="Delete" Arrow="true" Placement="Placement.Bottom" >
+            <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Large" OnClick="@DeleteAppView" />
+        </MudTooltip>
+        <MudTooltip Text="Clear" Arrow="true" Placement="Placement.Bottom" >
+            <MudIconButton Icon="@Icons.Material.Filled.Clear" Size="Size.Large" OnClick="@ClearAppView" />
+        </MudTooltip>
+        <MudTooltip Text="Load" Arrow="true" Placement="Placement.Bottom" >
+            <MudIconButton Icon="@Icons.Material.Filled.Download" Size="Size.Large" OnClick="@LoadAppView" />
+        </MudTooltip>
     </MudButtonGroup>
 </MudStack>
 
@@ -71,7 +79,7 @@
         {
             if (AppView.Id == 0)
             {
-                await AppViewRepository.CreateAppView(AppView);
+                AppView = await AppViewRepository.CreateAppView(AppView);
                 Log.Debug("Called Create");
             }
             else
