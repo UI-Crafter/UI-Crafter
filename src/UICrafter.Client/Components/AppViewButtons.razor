@@ -3,20 +3,23 @@
         <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
     </MudOverlay>
 
-    <MudTextField @bind-Value="@AppView.Name" Label="App-view name" Variant="Variant.Outlined" Class="ma-5"></MudTextField>
+    <MudTextField @bind-Value="@AppView.Name" Label="App-view name" Variant="Variant.Outlined"></MudTextField>
 
-    <MudButtonGroup Variant="Variant.Outlined" Class="ma-5 uicrafter-tooltip-buttongroup">
-        <MudTooltip Text="Save" Arrow="true" Placement="Placement.Bottom" >
-            <MudIconButton Icon="@Icons.Material.Filled.Save" Size="Size.Large" OnClick="@SaveAppView" />
+    <MudButtonGroup Variant="Variant.Outlined" Class="uicrafter-tooltip-buttongroup ma-2">
+        <MudTooltip Text="Public" Arrow="true" Placement="Placement.Bottom" Class="uicrafter-tooltip-buttongroup">
+            <MudToggleIconButton @bind-Toggled="AppView.IsPublic" Variant="Variant.Outlined" Icon="@Icons.Material.Filled.ThumbDown" ToggledIcon="@Icons.Material.Filled.ThumbUp" />
         </MudTooltip>
-        <MudTooltip Text="Delete" Arrow="true" Placement="Placement.Bottom" >
-            <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Large" OnClick="@DeleteAppView" />
+        <MudTooltip Text="Save" Arrow="true" Placement="Placement.Bottom">
+            <MudIconButton Icon="@Icons.Material.Filled.Save" OnClick="@SaveAppView" />
         </MudTooltip>
-        <MudTooltip Text="Clear" Arrow="true" Placement="Placement.Bottom" >
-            <MudIconButton Icon="@Icons.Material.Filled.Clear" Size="Size.Large" OnClick="@ClearAppView" />
+        <MudTooltip Text="Delete" Arrow="true" Placement="Placement.Bottom">
+            <MudIconButton Icon="@Icons.Material.Filled.Delete" OnClick="@DeleteAppView" />
         </MudTooltip>
-        <MudTooltip Text="Load" Arrow="true" Placement="Placement.Bottom" >
-            <MudIconButton Icon="@Icons.Material.Filled.Download" Size="Size.Large" OnClick="@LoadAppView" />
+        <MudTooltip Text="Clear" Arrow="true" Placement="Placement.Bottom">
+            <MudIconButton Icon="@Icons.Material.Filled.Clear" OnClick="@ClearAppView" />
+        </MudTooltip>
+        <MudTooltip Text="Load" Arrow="true" Placement="Placement.Bottom">
+            <MudIconButton Icon="@Icons.Material.Filled.Download" OnClick="@LoadAppView" />
         </MudTooltip>
     </MudButtonGroup>
 </MudStack>
