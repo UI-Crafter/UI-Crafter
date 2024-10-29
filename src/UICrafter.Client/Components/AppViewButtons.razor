@@ -7,7 +7,7 @@
 
     <MudButtonGroup Variant="Variant.Outlined" Class="uicrafter-tooltip-buttongroup ma-2">
         <MudTooltip Text="Public" Arrow="true" Placement="Placement.Bottom" Class="uicrafter-tooltip-buttongroup">
-            <MudToggleIconButton @bind-Toggled="AppView.IsPublic" Variant="Variant.Outlined" Icon="@Icons.Material.Filled.ThumbDown" ToggledIcon="@Icons.Material.Filled.ThumbUp" />
+            <MudToggleIconButton @bind-Toggled="AppView.IsPublic" Variant="Variant.Outlined" Icon="@Icons.Material.Filled.PublicOff" ToggledIcon="@Icons.Material.Filled.Public" />
         </MudTooltip>
         <MudTooltip Text="Save" Arrow="true" Placement="Placement.Bottom">
             <MudIconButton Icon="@Icons.Material.Filled.Save" OnClick="@SaveAppView" />
