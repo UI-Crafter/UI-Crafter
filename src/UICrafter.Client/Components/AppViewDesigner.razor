@@ -1,8 +1,8 @@
 @using UICrafter.Client.Components.DnDComponents
 
-<MudContainer MaxWidth="MaxWidth.Small">
+<MudContainer MaxWidth="MaxWidth.Small" @onclick:stopPropagation Style="background-color: red;">
     <MudDropContainer T="UIComponent" @ref="DropContainer" Items="UIComponents" ItemsSelector="@((item,dropzone) => item.DropZoneID == dropzone)" ItemDropped="ComponentUpdated" Class="d-flex flex-grow-1">
-        <ChildContent>
+        <ChildContent >
             <MudDropZone T="UIComponent" Identifier="Drop Zone 1" AllowReorder="true" Class="rounded mud-background-gray pa-2 flex-grow-1 overflow-auto" Style="height: 70vh">
             </MudDropZone>
         </ChildContent>

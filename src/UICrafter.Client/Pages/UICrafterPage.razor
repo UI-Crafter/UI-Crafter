@@ -1,7 +1,7 @@
 @page "/uicrafter"
 @attribute [Authorize]
 
-<MudStack Row="true">
+<MudStack Row="true" @onclick="() => {SelectedComponent = null;}">
     <!-- Left section: Component Grid (20%) -->
     <ComponentGrid @bind-SelectedComponent="@SelectedComponent" @bind-DropContainer="@DropContainer" UIComponents="@UIComponentList.UIComponents" />
 
@@ -15,7 +15,18 @@
     </MudStack>
 
     <!-- Right section: Component Properties (25%) -->
-    <ComponentProperties @bind-SelectedComponent="@SelectedComponent" @bind-DropContainer="@DropContainer" UIComponents="@UIComponentList.UIComponents" />
+    <MudStack Style="width: 25%;" @onclick:stopPropagation>
+        <MudText>Properties:</MudText>
+        @if (SelectedComponent is not null)
+        {
+            <ComponentProperties @bind-SelectedComponent="@SelectedComponent" @bind-DropContainer="@DropContainer" UIComponents="@UIComponentList.UIComponents" />
+        }
+        else
+        {
+            <MudText>AppView properties and buttons</MudText>
+            @* <AppViewButtons @bind-SelectedComponent="@SelectedComponent" @bind-DropContainer="@DropContainer" UIComponentList="@UIComponentList" /> *@
+        }
+    </MudStack>
 </MudStack>
 
 
