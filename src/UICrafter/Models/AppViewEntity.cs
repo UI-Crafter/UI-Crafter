@@ -13,6 +13,7 @@ public class AppViewEntity
 	public required byte[] Content { get; set; }
 	public DateTime CreatedAtUTC { get; set; }
 	public DateTime UpdatedAtUTC { get; set; }
+	public bool IsPublic { get; set; }
 }
 
 
@@ -41,14 +42,14 @@ public partial class AppViewMapper
 	}
 
 	// Custom mapping for converting DateTime to Timestamp for UpdatedAt
-	private static Timestamp? MapUpdatedAtUTC(DateTime updatedAtURC)
+	private static Timestamp? MapUpdatedAtUTC(DateTime updatedAtUTC)
 	{
-		return Timestamp.FromDateTime(updatedAtURC.ToUniversalTime());
+		return Timestamp.FromDateTime(updatedAtUTC.ToUniversalTime());
 	}
 
-	private static DateTime MapUpdatedAtUTC(Timestamp updatedAtURC)
+	private static DateTime MapUpdatedAtUTC(Timestamp updatedAtUTC)
 	{
-		return updatedAtURC.ToDateTime();
+		return updatedAtUTC.ToDateTime();
 	}
 
 	// Custom mapping for converting byte[] to ByteString for AppViewEntity -> AppView
@@ -62,4 +63,17 @@ public partial class AppViewMapper
 	{
 		return content?.ToByteArray();
 	}
+
+	// Custom mapping for converting UserId string to Guid with default fallback
+	private static Guid MapUserId(string userId)
+	{
+		return Guid.TryParse(userId, out var guid) ? guid : Guid.Empty;
+	}
+
+	// Custom mapping for converting Guid to string
+	private static string MapUserId(Guid userId)
+	{
+		return userId.ToString();
+	}
 }
+

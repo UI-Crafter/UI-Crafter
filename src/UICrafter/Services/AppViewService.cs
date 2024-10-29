@@ -15,16 +15,16 @@ public class AppViewServicegRPC : AppViewService.AppViewServiceBase
 	{
 		return new ListAppViewsResponse
 		{
-			AppViews = { await _appViewRepository.GetAppViewsByUserIdAsync() }
+			AppViews = { await _appViewRepository.GetAppViews() }
 		};
 	}
 
-	public override Task<AppView> GetAppView(GetAppViewRequest request, ServerCallContext context) => _appViewRepository.GetAppViewByIdAsync(request.Id);
-	public override Task<AppView> CreateAppView(CreateAppViewRequest request, ServerCallContext context) => _appViewRepository.CreateAppViewAsync(request.AppView);
-	public override Task<AppView> UpdateAppView(UpdateAppViewRequest request, ServerCallContext context) => _appViewRepository.UpdateAppViewAsync(request.AppView);
+	public override Task<AppView> GetAppView(GetAppViewRequest request, ServerCallContext context) => _appViewRepository.GetAppViewById(request.Id);
+	public override Task<AppView> CreateAppView(CreateAppViewRequest request, ServerCallContext context) => _appViewRepository.CreateAppView(request.AppView);
+	public override Task<AppView> UpdateAppView(UpdateAppViewRequest request, ServerCallContext context) => _appViewRepository.UpdateAppView(request.AppView);
 	public override async Task<Empty> DeleteAppView(DeleteAppViewRequest request, ServerCallContext context)
 	{
-		await _appViewRepository.DeleteAppViewByIdAsync(request.Id);
+		await _appViewRepository.DeleteAppViewById(request.Id);
 		return new Empty();
 	}
 }

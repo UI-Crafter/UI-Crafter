@@ -56,7 +56,7 @@ service AppViewService {
   // Update an existing AppView
   rpc UpdateAppView(UpdateAppViewRequest) returns (AppView) {
     option (google.api.http) = {
-      put: "/v1/app_views/{app_view.Id}"
+      put: "/v1/app_views"
       body: "app_view"
     };
   }

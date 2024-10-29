@@ -71,12 +71,12 @@
         {
             if (AppView.Id == 0)
             {
-                await AppViewRepository.CreateAppViewAsync(AppView);
+                await AppViewRepository.CreateAppView(AppView);
                 Log.Debug("Called Create");
             }
             else
             {
-                await AppViewRepository.UpdateAppViewAsync(AppView);
+                await AppViewRepository.UpdateAppView(AppView);
                 Log.Debug("Called Update");
             }
         }
@@ -96,7 +96,7 @@
         {
             if (AppView.Id != 0)
             {
-                await AppViewRepository.DeleteAppViewByIdAsync(AppView.Id);
+                await AppViewRepository.DeleteAppViewById(AppView.Id);
 
                 ClearAppView();
 
@@ -128,7 +128,7 @@
 
         try
         {
-            AppView = await AppViewRepository.GetAppViewByIdAsync(1);
+            AppView = await AppViewRepository.GetAppViewById(1);
 
             var parsedContent = UIComponentList.Parser.ParseFrom(AppView.Content);
 
