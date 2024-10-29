@@ -2,9 +2,9 @@ namespace UICrafter.Repository;
 
 using Microsoft.EntityFrameworkCore;
 using UICrafter.Core.AppView;
+using UICrafter.Core.Extensions;
 using UICrafter.Core.Repository;
 using UICrafter.EntityConfigurations;
-using UICrafter.Extensions;
 using UICrafter.Models;
 
 public class AppViewRepository : IAppViewRepository
