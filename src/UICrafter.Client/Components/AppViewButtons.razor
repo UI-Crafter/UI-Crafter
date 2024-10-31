@@ -17,6 +17,9 @@
     [Inject]
     private IAppViewRepository AppViewRepository { get; set; } = default!;
 
+    @inject IDialogService DialogService
+
+
     private AppView AppView { get; set; } = new AppView { Name = string.Empty };
     private bool Visible { get; set; } = false;
 
@@ -122,6 +125,18 @@
 
     private async Task LoadAppView()
     {
+       
+        var parameters = new DialogParameters();
+        var options = new DialogOptions
+            {
+                CloseButton = true,
+                MaxWidth = MaxWidth.Small,
+                FullWidth = true
+            };
+
+        var dialog = DialogService.Show<LoadMetadataComponent>("Load Metadata", parameters, options);
+        await dialog.Result;
+        
         Visible = true;
 
         ClearAppView();

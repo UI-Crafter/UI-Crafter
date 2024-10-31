@@ -1,9 +1,17 @@
 @inject IHttpClientProvider HttpClientProvider
 
 <MudButton OnClick="CallApi"
-           Color="@buttonColor"
-           Disabled="@isDisabled">
-    @Button.Button.Label
+           Color="@buttonColor">
+    @if (_processing)
+    {
+        <MudProgressCircular Class="ms-n1" Size="Size.Small" Indeterminate="true" />
+        <MudText Class="ms-2">Processing</MudText>
+    }
+    else
+    {
+        <MudText> @Button.Button.Label </MudText>
+    }
+    
 </MudButton>
 
 @code {
@@ -13,17 +21,17 @@
     [CascadingParameter]
     public required StupidStore StupidStore { get; set; }
 
-    private bool isDisabled = false;
     private Color buttonColor = Color.Primary;
+    private bool _processing = false;
 
     private async Task CallApi()
     {
         var httpclient = HttpClientProvider.GetDefaultHttpClient();
         try
         {
-            isDisabled = true;
+            buttonColor = Color.Primary;
+            _processing = true;
             var originalLabel = Button.Button.Label;
-            Button.Button.Label = "Loading...";
 
             // Assume that Button.URL is the API endpoint
             var response = await httpclient.GetStringAsync(Button.Button.URL);
@@ -34,11 +42,9 @@
                 buttonColor = Color.Error;
                 return;
             }
-
             await Task.Delay(1000);
-            Button.Button.Label = originalLabel;
             buttonColor = Color.Success;
-            isDisabled = false;
+            _processing = false;
 
             // Notify subscribers
             StupidStore.NotifySubscribers(Button.Guid, response);
