@@ -1,25 +1,23 @@
 @page "/uicrafter"
 @attribute [Authorize]
 
-<MudStack Row="true" @onclick="kek">
+<MudStack Row="true" @onclick="OnBackgroundClick" Style="height: 100vh;">
     <!-- Left section: Component Grid (20%) -->
     <MudStack Style="width: 20%">
+        <MudText Class="">Components:</MudText>
         <ComponentGrid @bind-SelectedComponent="@SelectedComponent" @bind-DropContainer="@DropContainer" UIComponents="@UIComponentList.UIComponents" />
     </MudStack>
 
     <!-- Center section: Dropzone (55%) -->
     <MudStack Style="width: 55%;" Class="align-center">
         <MudText>App-view:</MudText>
-
         <AppViewDesigner @bind-SelectedComponent="@SelectedComponent" @bind-DropContainer="@DropContainer" UIComponents="@UIComponentList.UIComponents" />
-
-        <AppViewButtons @bind-SelectedComponent="@SelectedComponent" @bind-DropContainer="@DropContainer" UIComponentList="@UIComponentList" />
     </MudStack>
 
     <!-- Right section: Component Properties (25%) -->
-    <MudStack Style="width: 25%;" @onclick:stopPropagation>
+    <MudStack Style="width: 25%;">
         <MudText>Properties:</MudText>
-        <ComponentProperties @bind-SelectedComponent="@SelectedComponent" @bind-DropContainer="@DropContainer" UIComponents="@UIComponentList.UIComponents" />
+        <Properties @bind-SelectedComponent="@SelectedComponent" @bind-DropContainer="@DropContainer" UIComponents="@UIComponentList.UIComponents" @bind-AppView="AppView"/>
     </MudStack>
 </MudStack>
 
@@ -28,10 +26,13 @@
     private UIComponent? SelectedComponent { get; set; }
     private MudDropContainer<UIComponent>? DropContainer { get; set; }
     private UIComponentList UIComponentList { get; set; } = new UIComponentList();
+    private AppView AppView { get; set; } = new AppView { Name = string.Empty };
 
-    private void kek()
+    private void OnBackgroundClick()
     {
-        if (SelectedComponent is not null)
-            SelectedComponent = null;
+        if (SelectedComponent is null) return;
+
+        SelectedComponent = null;
+        DropContainer?.Refresh();
     }
 }
