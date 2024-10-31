@@ -1,2 +1,6 @@
-﻿body {
+body {
+}
+
+.uicrafter-tooltip-buttongroup > .mud-tooltip-root {
+	display: inline-flex !important;
 }
