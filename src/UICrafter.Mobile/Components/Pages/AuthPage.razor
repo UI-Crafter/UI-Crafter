@@ -50,7 +50,31 @@
     {
         @if (firstRender)
         {
-            AppViews = await AppViewRepository.GetAppViews() ?? AppViews;
+            try
+            {
+                AppViews = await AppViewRepository.GetAppViews() ?? AppViews;
+                Log.Debug("Got {count} appViews", AppViews.Count);
+            }
+            catch (Exception ex)
+            {
+                Log.Error("Got Exception: {exception}", ex);
+            }
+
+            Log.Information("HELP ME");
+            Log.Information("HELP ME");
+            Log.Information("HELP ME");
+            Log.Information("HELP ME");
+            Log.Information("HELP ME");
+            Log.Information("HELP ME");
+            Log.Information("HELP ME");
+            Log.Information("HELP ME");
+            Log.Information("HELP ME");
+            Log.Information("HELP ME");
+            Log.Information("HELP ME");
+            Log.Information("HELP ME");
+            Log.Information("HELP ME");
+            Log.Information("HELP ME");
+            Log.Information("HELP ME");
             StateHasChanged();
         }
     }
