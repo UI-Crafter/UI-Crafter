@@ -1,9 +1,11 @@
 @page "/uicrafter"
 @attribute [Authorize]
 
-<MudStack Row="true" @onclick="() => {SelectedComponent = null;}">
+<MudStack Row="true" @onclick="kek">
     <!-- Left section: Component Grid (20%) -->
-    <ComponentGrid @bind-SelectedComponent="@SelectedComponent" @bind-DropContainer="@DropContainer" UIComponents="@UIComponentList.UIComponents" />
+    <MudStack Style="width: 20%">
+        <ComponentGrid @bind-SelectedComponent="@SelectedComponent" @bind-DropContainer="@DropContainer" UIComponents="@UIComponentList.UIComponents" />
+    </MudStack>
 
     <!-- Center section: Dropzone (55%) -->
     <MudStack Style="width: 55%;" Class="align-center">
@@ -17,15 +19,7 @@
     <!-- Right section: Component Properties (25%) -->
     <MudStack Style="width: 25%;" @onclick:stopPropagation>
         <MudText>Properties:</MudText>
-        @if (SelectedComponent is not null)
-        {
-            <ComponentProperties @bind-SelectedComponent="@SelectedComponent" @bind-DropContainer="@DropContainer" UIComponents="@UIComponentList.UIComponents" />
-        }
-        else
-        {
-            <MudText>AppView properties and buttons</MudText>
-            @* <AppViewButtons @bind-SelectedComponent="@SelectedComponent" @bind-DropContainer="@DropContainer" UIComponentList="@UIComponentList" /> *@
-        }
+        <ComponentProperties @bind-SelectedComponent="@SelectedComponent" @bind-DropContainer="@DropContainer" UIComponents="@UIComponentList.UIComponents" />
     </MudStack>
 </MudStack>
 
@@ -34,4 +28,10 @@
     private UIComponent? SelectedComponent { get; set; }
     private MudDropContainer<UIComponent>? DropContainer { get; set; }
     private UIComponentList UIComponentList { get; set; } = new UIComponentList();
+
+    private void kek()
+    {
+        if (SelectedComponent is not null)
+            SelectedComponent = null;
+    }
 }
