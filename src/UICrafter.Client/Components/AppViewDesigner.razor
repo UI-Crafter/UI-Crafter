@@ -2,7 +2,7 @@
 
 <MudContainer MaxWidth="MaxWidth.Small" @onclick:stopPropagation>
     <MudDropContainer T="UIComponent" @ref="DropContainer" Items="UIComponents" ItemsSelector="@((item,dropzone) => item.DropZoneID == dropzone)" ItemDropped="ComponentUpdated" Class="d-flex flex-grow-1">
-        <ChildContent >
+        <ChildContent>
             <MudDropZone T="UIComponent" Identifier="Drop Zone 1" AllowReorder="true" Class="rounded mud-background-gray pa-2 flex-grow-1 overflow-auto" Style="height: 70vh">
             </MudDropZone>
         </ChildContent>
@@ -17,7 +17,7 @@
             }
             else if (context.ComponentCase == UIComponent.ComponentOneofCase.Textbox)
             {
-                <DragDropTextBox UIComponent="context" OnSelect="SelectComponent"/>
+                <DragDropTextBox UIComponent="context" OnSelect="SelectComponent" />
             }
             else
             {
@@ -55,7 +55,7 @@
         get => _internalDropContainer;
         set
         {
-            if(DropContainerChanged.HasDelegate && value != _internalDropContainer)
+            if (DropContainerChanged.HasDelegate && value != _internalDropContainer)
             {
                 _internalDropContainer = value;
                 DropContainerChanged.InvokeAsync(value);
@@ -65,7 +65,13 @@
     [Parameter]
     public required EventCallback<MudDropContainer<UIComponent>?> DropContainerChanged { get; set; }
 
-    private void SelectComponent(UIComponent component) => SelectedComponent = component;
+    private void SelectComponent(UIComponent component)
+    {
+        if (SelectedComponent == component) return;
+
+        SelectedComponent = component;
+        DropContainer?.Refresh();
+    }
 
     private void ComponentUpdated(MudItemDropInfo<UIComponent> component)
     {

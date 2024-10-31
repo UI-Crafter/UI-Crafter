@@ -1,25 +1,21 @@
-<MudStack>
-    <MudText Class="">Components:</MudText>
+<MudContainer Class="rounded mud-background-gray pa-4" @onclick:stopPropagation>
+    <MudGrid>
+        <MudItem sm="12" lg="4" Class="d-flex flex-column justify-start align-center">
+            <MudIconButton Icon="@Icons.Material.Filled.SmartButton" Variant="Variant.Outlined" OnClick=@AddNewButton Size="Size.Large" />
+            <MudText>API-Button</MudText>
+        </MudItem>
 
-    <MudContainer Class="rounded mud-background-gray pa-4">
-        <MudGrid>
-            <MudItem sm="12" lg="4" Class="d-flex flex-column justify-start align-center">
-                <MudIconButton Icon="@Icons.Material.Filled.SmartButton" Variant="Variant.Outlined" OnClick=@AddNewButton Size="Size.Large" />
-                <MudText>API-Button</MudText>
-            </MudItem>
+        <MudItem sm="12" lg="4" Class="d-flex flex-column justify-start align-center">
+            <MudIconButton Icon="@Icons.Material.Filled.TextFields" Variant="Variant.Outlined" OnClick=@AddNewTextbox Size="Size.Large" />
+            <MudText>Textbox</MudText>
+        </MudItem>
 
-            <MudItem sm="12" lg="4" Class="d-flex flex-column justify-start align-center">
-                <MudIconButton Icon="@Icons.Material.Filled.TextFields" Variant="Variant.Outlined" OnClick=@AddNewTextbox Size="Size.Large" />
-                <MudText>Textbox</MudText>
-            </MudItem>
-
-            <MudItem sm="12" lg="4" Class="d-flex flex-column justify-start align-center">
-                <MudIconButton Icon="@Icons.Material.Filled.Input" Variant="Variant.Outlined" OnClick=@AddNewInputField Size="Size.Large" />
-                <MudText>Input</MudText>
-            </MudItem>
-        </MudGrid>
-    </MudContainer>
-</MudStack>
+        <MudItem sm="12" lg="4" Class="d-flex flex-column justify-start align-center">
+            <MudIconButton Icon="@Icons.Material.Filled.Input" Variant="Variant.Outlined" OnClick=@AddNewInputField Size="Size.Large" />
+            <MudText>Input</MudText>
+        </MudItem>
+    </MudGrid>
+</MudContainer>
 
 @code {
     [Parameter]
