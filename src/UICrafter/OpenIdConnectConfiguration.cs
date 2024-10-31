@@ -4,7 +4,7 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
-using UICrafter.Extensions;
+using UICrafter.Core.Extensions;
 using UICrafter.Models;
 using UICrafter.Repository;
 

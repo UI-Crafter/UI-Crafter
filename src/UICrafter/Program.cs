@@ -155,7 +155,7 @@ app.MapGet("api/prototest", () =>
 app.MapGet("auth/login", (string? returnUrl) => TypedResults.Challenge(new AuthenticationProperties { RedirectUri = returnUrl }))
 			.AllowAnonymous();
 
-app.MapGroup("user/").MapUserAPI();
+app.MapGroup("user/").MapUserAPI().RequireAuthorization();
 
 app.MapGrpcService<AppViewServicegRPC>().RequireAuthorization().EnableGrpcWeb();
 

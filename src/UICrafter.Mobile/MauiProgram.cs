@@ -5,9 +5,12 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using MudBlazor.Services;
+using Serilog;
 using UICrafter.Core.AppView;
 using UICrafter.Core.DependencyInjection;
+using UICrafter.Core.Extensions;
 using UICrafter.Core.Repository;
 using UICrafter.Core.Utility;
 using UICrafter.Mobile.DependencyInjection;
@@ -61,7 +64,31 @@ public static class MauiProgram
 		builder.Services.AddCascadingAuthenticationState();
 
 		// gRPC
-		builder.Services.AddGrpcClient<AppViewService.AppViewServiceClient>();
+		builder.Services.AddGrpcClient<AppViewService.AppViewServiceClient>((services, options) =>
+			{
+				var settings = services.GetRequiredService<IOptions<ApiSettings>>();
+
+				options.Address = new Uri(settings.Value.BaseUrl);
+			})
+			.AddCallCredentials(async (context, metadata, services) =>
+			{
+				try
+				{
+					var authenticationStateProvider = services.GetRequiredService<AuthenticationStateProvider>();
+					var authState = await authenticationStateProvider.GetAuthenticationStateAsync();
+					var user = authState.User;
+
+					var token = user.GetAccessToken();
+
+					ArgumentNullException.ThrowIfNull(token);
+
+					metadata.Add("Authorization", $"Bearer {token}");
+				}
+				catch (Exception ex)
+				{
+					Log.Information("Failed adding gRPC auth header", ex);
+				}
+			});
 
 		// Repository
 		builder.Services.AddScoped<IAppViewRepository, AppViewRepository>();
