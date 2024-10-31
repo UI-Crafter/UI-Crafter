@@ -3,13 +3,24 @@
         <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
     </MudOverlay>
 
-    <MudTextField @bind-Value="@AppView.Name" Label="App-view name" Variant="Variant.Outlined" Class="ma-5"></MudTextField>
+    <MudTextField @bind-Value="@AppView.Name" Label="App-view name" Variant="Variant.Outlined"></MudTextField>
 
-    <MudButtonGroup Variant="Variant.Outlined" Class="ma-5">
-        <MudIconButton Icon="@Icons.Material.Filled.Save" Size="Size.Large" OnClick="@SaveAppView" />
-        <MudIconButton Icon="@Icons.Material.Filled.Delete" Size="Size.Large" OnClick="@DeleteAppView" />
-        <MudIconButton Icon="@Icons.Material.Filled.Clear" Size="Size.Large" OnClick="@ClearAppView" />
-        <MudIconButton Icon="@Icons.Material.Filled.Download" Size="Size.Large" OnClick="@LoadAppView" />
+    <MudButtonGroup Variant="Variant.Outlined" Class="uicrafter-tooltip-buttongroup ma-2">
+        <MudTooltip Text="Public" Arrow="true" Placement="Placement.Bottom" Class="uicrafter-tooltip-buttongroup">
+            <MudToggleIconButton @bind-Toggled="AppView.IsPublic" Variant="Variant.Outlined" Icon="@Icons.Material.Filled.PublicOff" ToggledIcon="@Icons.Material.Filled.Public" />
+        </MudTooltip>
+        <MudTooltip Text="Save" Arrow="true" Placement="Placement.Bottom">
+            <MudIconButton Icon="@Icons.Material.Filled.Save" OnClick="@SaveAppView" />
+        </MudTooltip>
+        <MudTooltip Text="Delete" Arrow="true" Placement="Placement.Bottom">
+            <MudIconButton Icon="@Icons.Material.Filled.Delete" OnClick="@DeleteAppView" />
+        </MudTooltip>
+        <MudTooltip Text="Clear" Arrow="true" Placement="Placement.Bottom">
+            <MudIconButton Icon="@Icons.Material.Filled.Clear" OnClick="@ClearAppView" />
+        </MudTooltip>
+        <MudTooltip Text="Load" Arrow="true" Placement="Placement.Bottom">
+            <MudIconButton Icon="@Icons.Material.Filled.Download" OnClick="@LoadAppView" />
+        </MudTooltip>
     </MudButtonGroup>
 </MudStack>
 
@@ -74,7 +85,7 @@
         {
             if (AppView.Id == 0)
             {
-                await AppViewRepository.CreateAppView(AppView);
+                AppView = await AppViewRepository.CreateAppView(AppView);
                 Log.Debug("Called Create");
             }
             else
