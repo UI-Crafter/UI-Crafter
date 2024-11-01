@@ -1,3 +1,5 @@
+@inject IDialogService DialogService
+
 @if (AppView is not null)
 {
     <MudOverlay Visible="Visible" DarkBackground="true" Absolute="true">
@@ -163,19 +165,23 @@
 
         try
         {
-            var test = await AppViewRepository.GetAppViews();
+            var dialog = DialogService.Show<AppViewSelectionDialog>();
+            var result = await dialog.Result;
 
-            var id = test.FirstOrDefault()?.Id ?? 0;
+            if (result is not null && !result.Canceled)
+            {
+                var id = (long)(result.Data ?? 0);
 
-            AppView = await AppViewRepository.GetAppViewById(id);
+                AppView = await AppViewRepository.GetAppViewById(id);
 
-            ClearAppView();
+                ClearAppView();
 
-            var parsedContent = UIComponentList.Parser.ParseFrom(AppView.Content);
+                var parsedContent = UIComponentList.Parser.ParseFrom(AppView.Content);
 
-            UIComponents.AddRange(parsedContent.UIComponents);
+                UIComponents.AddRange(parsedContent.UIComponents);
 
-            DropContainer?.Refresh();
+                DropContainer?.Refresh();
+            }
         }
         catch (Exception ex)
         {
