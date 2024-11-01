@@ -1,0 +1,54 @@
+@inherits BaseAPIButton
+@inject IHttpClientProvider HttpClientProvider
+
+@{
+    base.BuildRenderTree(__builder);
+}
+
+@code {
+    [Parameter]
+    public required UIComponent Button { get; set; }
+
+    [CascadingParameter]
+    public required StupidStore StupidStore { get; set; }
+
+    private bool _processing = false;
+
+    protected override void OnInitialized()
+    {
+        ButtonText = Button.Button.Label;
+        OnClick = EventCallback.Factory.Create<MouseEventArgs>(this, CallApi);
+    }
+
+
+    private async Task CallApi()
+    {
+        var httpClient = HttpClientProvider.GetDefaultHttpClient();
+        try
+        {
+            //buttonColor = Color.Primary;
+            _processing = true;
+            var originalLabel = Button.Button.Label;
+
+            var response = await httpClient.GetStringAsync(Button.Button.URL);
+
+            if (response == null)
+            {
+
+                buttonColor = Color.Error;
+                return;
+            }
+
+            buttonColor = Color.Success;
+            _processing = false;
+
+            StupidStore.NotifySubscribers(Button.Guid, response);
+        }
+        catch (Exception ex)
+        {
+            Log.Debug($"Error calling API for button {Button.Button.Label}: {ex.Message}");
+            buttonColor = Color.Error;
+            _processing = false;
+        }
+    }
+}
