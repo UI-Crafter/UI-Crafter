@@ -1,0 +1,49 @@
+@inject IAppViewRepository AppViewRepository
+
+<MudText Typo="Typo.h4">App Views</MudText>
+
+@if (isLoading == true)
+{
+    <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+}
+else
+{
+    <MudList T="AppView">
+        @foreach (var view in AppViews)
+        {
+            <MudListItem OnClick="() => HandleClick(view)">
+                <MudText>@view.Name</MudText>
+            </MudListItem>
+        }
+    </MudList>
+}
+
+@code {
+    private IList<AppView> AppViews { get; set; } = new List<AppView>();
+    private bool isLoading { get; set; } = true;
+
+    protected virtual void HandleClick(AppView view){}
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            try
+            {
+                // Simulate getting data from repository
+                AppViews = await AppViewRepository.GetAppViews() ?? AppViews;
+                Log.Information("Called gRPC");
+                // Simulate delay
+            }
+            catch (Exception ex)
+            {
+                Log.Error("Error fetching AppViews: ", ex);
+            }
+            finally
+            {
+                isLoading = false; // End loading
+                StateHasChanged(); // Force UI update
+            }
+        }
+    }
+}

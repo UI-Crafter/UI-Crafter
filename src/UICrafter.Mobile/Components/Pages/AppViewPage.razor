@@ -1,5 +1,6 @@
 @page "/appview/{viewId:long?}"
 
+@using UICrafter.Mobile.Components.UIComponents
 @inject IAppViewRepository AppViewRepository
 @inject NavigationManager NavigationManager
 
@@ -7,7 +8,7 @@
 
 
 <div style=@(!viewId.HasValue ? null : "display: none;")>
-    <LoadMetadataComponent />
+    <LoadMetaDataMobile />
 </div>
 @if (!viewId.HasValue)
 {

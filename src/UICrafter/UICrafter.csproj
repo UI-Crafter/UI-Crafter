@@ -40,4 +40,8 @@
     <Folder Include="Extensions\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include="..\UICrafter.Mobile\Components\Pages\LoadMetaDataListMobile.razor" Link="LoadMetaDataListMobile.razor" />
+  </ItemGroup>
+
 </Project>
