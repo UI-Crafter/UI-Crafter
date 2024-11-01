@@ -25,7 +25,7 @@ public class StupidStore
 
 			if (value.Count == 0)
 			{
-				_subscribers.Remove(buttonGUID); // Clean up if no subscribers are left
+				_subscribers.Remove(buttonGUID);
 			}
 		}
 	}

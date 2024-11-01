@@ -39,7 +39,6 @@ else
                         <PocTextBox Textbox="component" />
                         break;
                     default:
-                        // Handle unknown components if necessary
                         break;
                 }
             }
@@ -59,7 +58,7 @@ else
     private AppView? appView;
 
     private UIComponentList componentList = new UIComponentList();
-    private StupidStore stupidStore = new StupidStore();  // Shared store for updating TextBoxes
+    private StupidStore stupidStore = new StupidStore();
 
     private long? _oldId;
     private bool _isLoading = false;
@@ -79,17 +78,14 @@ else
             _oldId = viewId;
         }
 
-        // Fetch the appView via the gRPC call
         appView = await AppViewRepository.GetAppViewById(viewId.Value);
 
         if (appView != null && appView.Content != null)
         {
-            // Deserialize the Content byte array into a UIComponentList
             componentList = UIComponentList.Parser.ParseFrom(appView.Content);
         }
         else
         {
-            // Handle the case where the AppView is null or Content is null
             componentList = new UIComponentList();
         }
         _isLoading = false;
