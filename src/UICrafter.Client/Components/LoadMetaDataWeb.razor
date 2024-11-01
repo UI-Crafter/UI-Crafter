@@ -8,11 +8,5 @@
     [Parameter]
     public EventCallback<long> ClickFunction { get; set; }
 
-    protected override void HandleClick(AppView view)
-    {
-        if (ClickFunction.HasDelegate)
-        {
-            ClickFunction.InvokeAsync(view.Id);
-        }
-    }
+    protected override void HandleClick(AppView view) => ClickFunction.TryInvokeAsync(view.Id);
 }

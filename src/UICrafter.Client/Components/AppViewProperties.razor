@@ -170,7 +170,9 @@
 
             if (result is not null && !result.Canceled)
             {
-                var id = (long)(result.Data ?? 0);
+                ArgumentNullException.ThrowIfNull(result.Data);
+
+                var id = (long)(result.Data);
 
                 AppView = await AppViewRepository.GetAppViewById(id);
 
