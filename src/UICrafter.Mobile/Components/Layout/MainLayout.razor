@@ -19,7 +19,7 @@
         <div class="top-row px-4">
             <AuthorizeView>
                 <Authorized>
-                    Hello, @context.User.Identity.Name
+                    Hello, @context.User.Identity?.Name
                     <a href="#" @onclick="Logout">Log out</a>
                 </Authorized>
                 <NotAuthorized>
@@ -38,13 +38,13 @@
 @code {
     [Inject] private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
 
-    public async Task Login()
+    public Task Login()
     {
-        await ((CustomAuthStateProvider)AuthenticationStateProvider)
+        return ((CustomAuthStateProvider)AuthenticationStateProvider)
             .LogInAsync();
     }
 
-    public async Task Logout()
+    public void Logout()
     {
         ((CustomAuthStateProvider)AuthenticationStateProvider)
            .Logout();
