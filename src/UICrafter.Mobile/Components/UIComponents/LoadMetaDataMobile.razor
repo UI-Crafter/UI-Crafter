@@ -1,6 +1,6 @@
 @using UICrafter.Core.Components.BaseComponents
 
-@inherits LoadMetadataComponent
+@inherits LoadMetaDataList
 @inject NavigationManager NavigationManager
 
 @{
@@ -8,9 +8,5 @@
 }
 
 @code {
-    protected void HandleClick(AppView view)
-    {
-        NavigationManager.NavigateTo("/appview/" + view.Id);
-            
-    }
+    protected override void HandleClick(AppView view) => NavigationManager.NavigateTo("/appview/" + view.Id);
 }
