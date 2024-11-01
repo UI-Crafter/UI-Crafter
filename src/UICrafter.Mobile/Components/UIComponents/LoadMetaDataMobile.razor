@@ -1,15 +1,14 @@
 @using UICrafter.Core.Components.BaseComponents
 
 @inherits BaseLoadMetaDataList
-@inject NavigationManager NavigationManager
 
 @{
     base.BuildRenderTree(__builder);
 }
 
 @code {
-    protected override void HandleClick(AppView view)
+    protected override string? SetupHref(AppView view)
     {
-        NavigationManager.NavigateTo("/appview/" + view.Id);
+        return "/appview/" + view.Id;
     }
 }
