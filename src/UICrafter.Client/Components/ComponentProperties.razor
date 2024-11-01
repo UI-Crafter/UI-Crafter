@@ -1,5 +1,5 @@
-<MudStack>
-    @if(SelectedComponent is not null)
+@if (SelectedComponent is not null)
+{
     @if (SelectedComponent.ComponentCase == UIComponent.ComponentOneofCase.Button)
     {
         <MudTextField @bind-Value="SelectedComponent.Button.Label" Label="Button Label" Variant="Variant.Outlined" MaxLength="25"></MudTextField>
@@ -26,7 +26,7 @@
     <MudButtonGroup Variant="Variant.Outlined" Class="mx-auto">
         <MudButton StartIcon="@Icons.Material.Filled.Delete" OnClick=@DeleteSelectedComponent Size="Size.Large">Delete</MudButton>
     </MudButtonGroup>
-</MudStack>
+}
 
 @code {
     [Parameter]

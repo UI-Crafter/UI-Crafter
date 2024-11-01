@@ -1,4 +1,4 @@
-<MudStack Class="rounded mud-background-gray pa-4 my-2 " @onclick:stopPropagation>
+<MudStack Class="rounded mud-background-gray pa-4 " @onclick:stopPropagation>
     @if (SelectedComponent is not null)
     {
         <ComponentProperties @bind-SelectedComponent="@SelectedComponent" @bind-DropContainer="@DropContainer" UIComponents="@UIComponents" />
