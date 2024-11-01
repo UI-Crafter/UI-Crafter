@@ -1,0 +1,16 @@
+@inherits BaseInput
+
+@{
+    base.BuildRenderTree(__builder);
+}
+
+@code {
+    [Parameter]
+    public required UIComponent InputField { get; set; }
+
+    protected override void OnInitialized()
+    {
+        Label = InputField.InputField.Label;
+    }
+}
+

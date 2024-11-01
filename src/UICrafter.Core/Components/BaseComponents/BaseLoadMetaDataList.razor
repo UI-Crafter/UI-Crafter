@@ -25,6 +25,27 @@ else
     protected virtual void HandleClick(AppView view){}
     protected virtual string? SetupHref(AppView view) { return null; }
 
+    // protected override async void OnParametersSet()
+    // {
+    //     base.OnParametersSet();
+    //     isLoading = true;
+
+    //     try
+    //     {
+    //         AppViews = await AppViewRepository.GetAppViews() ?? AppViews;
+    //         Log.Information("Called gRPC");
+    //     }
+    //     catch (Exception ex)
+    //     {
+    //         Log.Error("Error fetching AppViews: ", ex);
+    //     }
+    //     finally
+    //     {
+    //         isLoading = false;
+    //         StateHasChanged();
+    //     }
+    // }
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
