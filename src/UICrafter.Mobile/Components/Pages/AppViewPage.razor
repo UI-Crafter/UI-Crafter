@@ -1,43 +1,55 @@
 @page "/appview/{viewId:long?}"
 
+@using UICrafter.Mobile.Components.UIComponents
 @inject IAppViewRepository AppViewRepository
 @inject NavigationManager NavigationManager
 
 <PageTitle>@appView.Name</PageTitle>
 
 
-<div style=@(viewId.HasValue ? null : "display: none;")>
-    <LoadMetadataComponent />
+<div style=@(!viewId.HasValue ? null : "display: none;")>
+    <LoadMetaDataMobile />
 </div>
-
-@if (viewId.HasValue && componentList != null && componentList.UIComponents.Any())
+@if (!viewId.HasValue)
 {
-    <CascadingValue Value="stupidStore">
-        @foreach (var component in componentList.UIComponents)
-        {
-            @switch (component.ComponentCase)
-            {
-                case UIComponent.ComponentOneofCase.Button:
-                    <PocButtonNoMistakes Button="component" />
-                    break;
-                case UIComponent.ComponentOneofCase.InputField:
-                    <PocAPIParamInputField InputField="component" />
-                    break;
-                case UIComponent.ComponentOneofCase.Textbox:
-                    <PocTextBox Textbox="component" />
-                    break;
-                default:
-                    // Handle unknown components if necessary
-                    break;
-            }
-        }
-    </CascadingValue>
+    return;
+}
+
+
+@if (_isLoading)
+{
+    <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
 }
 else
 {
-    <MudText Typo="Typo.body1">
-        No components to display.
-    </MudText>
+    @if (viewId.HasValue && componentList != null && componentList.UIComponents.Any())
+    {
+        <CascadingValue Value="stupidStore">
+            @foreach (var component in componentList.UIComponents)
+            {
+                @switch (component.ComponentCase)
+                {
+                    case UIComponent.ComponentOneofCase.Button:
+                        <PocButtonNoMistakes Button="component" />
+                        break;
+                    case UIComponent.ComponentOneofCase.InputField:
+                        <PocAPIParamInputField InputField="component" />
+                        break;
+                    case UIComponent.ComponentOneofCase.Textbox:
+                        <PocTextBox Textbox="component" />
+                        break;
+                    default:
+                        break;
+                }
+            }
+        </CascadingValue>
+    }
+    else
+    {
+        <MudText Typo="Typo.body1">
+            No components to display.
+        </MudText>
+    }
 }
 
 @code {
@@ -46,99 +58,37 @@ else
     private AppView? appView;
 
     private UIComponentList componentList = new UIComponentList();
-    private StupidStore stupidStore = new StupidStore();  // Shared store for updating TextBoxes
+    private StupidStore stupidStore = new StupidStore();
+
+    private long? _oldId;
+    private bool _isLoading = false;
 
     protected override async Task OnParametersSetAsync()
     {
         if (!viewId.HasValue)
         {
-            return; 
+            return;
         }
 
-        if (viewId == 1)
+        _isLoading = true;
+        if (_oldId != viewId)
         {
-            // Use a dummy/test case for componentList
-            appView = new AppView
-                {
-                    Id = 1,
-                    Name = "Test App View",
-                    // Other properties as needed
-                };
+            stupidStore = new();
+            componentList = new();
+            _oldId = viewId;
+        }
 
-            // Create a dummy UIComponentList with test data
-            componentList = new UIComponentList
-                {
-                    UIComponents =
-            {
-                new UIComponent
-                {
-                    Guid = "ButtonGUID",
-                    DropZoneID = "test-zone",
-                    Button = new UIButton
-                    {
-                        Label = "Test Button",
-                        URL = "https://dog-api.kinduff.com/api/facts?number=3"
-                    }
-                },
-                new UIComponent
-                {
-                    Guid = Guid.NewGuid().ToString(),
-                    DropZoneID = "test-zone",
-                    Textbox = new UITextbox
-                    {
-                        Label = "facts",
-                        NumberOfLines = 3,
-                        Content = "This is a test textbox.",
-                        SourceRef = "ButtonGUID",
-                        JsonField = "facts"
-                    }
-                },
-                new UIComponent
-                {
-                    Guid = Guid.NewGuid().ToString(),
-                    DropZoneID = "test-zone",
-                    Textbox = new UITextbox
-                    {
-                        Label = "Formattet full response",
-                        NumberOfLines = 3,
-                        Content = "This is a test textbox.",
-                        SourceRef = "ButtonGUID",
-                        JsonField = "response"
-                    }
-                },
-                new UIComponent
-                {
-                    Guid = Guid.NewGuid().ToString(),
-                    DropZoneID = "test-zone",
-                    Textbox = new UITextbox
-                    {
-                        Label = "success",
-                        NumberOfLines = 3,
-                        Content = "This is a test textbox.",
-                        SourceRef = "ButtonGUID",
-                        JsonField = "success"
-                    }
-                }
-                // Add more components as needed for testing
-            }
-                };
+        appView = await AppViewRepository.GetAppViewById(viewId.Value);
+
+        if (appView != null && appView.Content != null)
+        {
+            componentList = UIComponentList.Parser.ParseFrom(appView.Content);
         }
         else
         {
-            // Fetch the appView via the gRPC call
-            appView = await AppViewRepository.GetAppViewById(viewId.Value);
-
-            if (appView != null && appView.Content != null)
-            {
-                // Deserialize the Content byte array into a UIComponentList
-                componentList = UIComponentList.Parser.ParseFrom(appView.Content);
-            }
-            else
-            {
-                // Handle the case where the AppView is null or Content is null
-                componentList = new UIComponentList();
-            }
+            componentList = new UIComponentList();
         }
+        _isLoading = false;
     }
 }
 

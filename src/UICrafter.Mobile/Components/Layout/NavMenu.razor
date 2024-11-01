@@ -8,25 +8,12 @@
 
 <div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
     <nav class="flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="appview/1">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Use AppView
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="app-views">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Load AppView
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="authpage">
-                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Auth page
-            </NavLink>
-        </div>
+        <MudNavMenu>
+            <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
+            <AuthorizeView>
+                <MudNavLink Href="appview" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.BugReport">AppView</MudNavLink>
+                <MudNavLink Href="authpage" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Create">Authpage</MudNavLink>
+            </AuthorizeView>
+        </MudNavMenu>
     </nav>
 </div>

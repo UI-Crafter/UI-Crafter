@@ -1,0 +1,14 @@
+@using UICrafter.Core.Components.BaseComponents
+
+@inherits BaseLoadMetaDataList
+
+@{
+    base.BuildRenderTree(__builder);
+}
+
+@code {
+    protected override string? SetupHref(AppView view)
+    {
+        return "/appview/" + view.Id;
+    }
+}
