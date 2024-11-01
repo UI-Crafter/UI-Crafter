@@ -1,21 +1,30 @@
 @page "/uicrafter"
 @attribute [Authorize]
 
-<MudStack Row="true">
+<MudStack Row @onclick="OnBackgroundClick" Style="height: 100vh;">
     <!-- Left section: Component Grid (20%) -->
-    <ComponentGrid @bind-SelectedComponent="@SelectedComponent" @bind-DropContainer="@DropContainer" UIComponents="@UIComponentList.UIComponents" />
+    <MudStack Style="width: 20%">
+        <MudText>Components:</MudText>
+        <ComponentGrid @bind-SelectedComponent="@SelectedComponent" @bind-DropContainer="@DropContainer" UIComponents="@UIComponentList.UIComponents" />
+    </MudStack>
 
     <!-- Center section: Dropzone (55%) -->
     <MudStack Style="width: 55%;" Class="align-center">
         <MudText>App-view:</MudText>
-
         <AppViewDesigner @bind-SelectedComponent="@SelectedComponent" @bind-DropContainer="@DropContainer" UIComponents="@UIComponentList.UIComponents" />
-
-        <AppViewButtons @bind-SelectedComponent="@SelectedComponent" @bind-DropContainer="@DropContainer" UIComponentList="@UIComponentList" />
     </MudStack>
 
     <!-- Right section: Component Properties (25%) -->
-    <ComponentProperties @bind-SelectedComponent="@SelectedComponent" @bind-DropContainer="@DropContainer" UIComponents="@UIComponentList.UIComponents" />
+    <MudStack Style="width: 25%;">
+        <MudStack Row>
+            <MudText>@($"{CurrentPropertiesName()} properties:")</MudText>
+            @if (SelectedComponent is not null)
+            {
+                <MudIconButton Icon="@Icons.Material.Filled.Close" OnClick="() => {SelectedComponent = null;}" Class="ml-auto my-n1 mud-background-gray" Size="Size.Small" Variant="Variant.Filled"/>
+            }
+        </MudStack>
+        <Properties @bind-SelectedComponent="@SelectedComponent" @bind-DropContainer="@DropContainer" UIComponents="@UIComponentList.UIComponents" @bind-AppView="AppView"/>
+    </MudStack>
 </MudStack>
 
 
@@ -23,4 +32,21 @@
     private UIComponent? SelectedComponent { get; set; }
     private MudDropContainer<UIComponent>? DropContainer { get; set; }
     private UIComponentList UIComponentList { get; set; } = new UIComponentList();
+    private AppView AppView { get; set; } = new AppView { Name = string.Empty };
+
+    private void OnBackgroundClick()
+    {
+        if (SelectedComponent is null) return;
+
+        SelectedComponent = null;
+        DropContainer?.Refresh();
+    }
+
+    private string CurrentPropertiesName() => SelectedComponent?.ComponentCase switch
+    {
+        UIComponent.ComponentOneofCase.Button => "API-Button",
+        UIComponent.ComponentOneofCase.InputField => "Input Field",
+        UIComponent.ComponentOneofCase.Textbox => "Textbox",
+        _ => "App-view",
+    };
 }
