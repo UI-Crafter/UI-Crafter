@@ -4,7 +4,7 @@
 <MudStack Row @onclick="OnBackgroundClick" Style="height: 100vh;">
     <!-- Left section: Component Grid (20%) -->
     <MudStack Style="width: 20%">
-        <MudText Class="">Components:</MudText>
+        <MudText>Components:</MudText>
         <ComponentGrid @bind-SelectedComponent="@SelectedComponent" @bind-DropContainer="@DropContainer" UIComponents="@UIComponentList.UIComponents" />
     </MudStack>
 
@@ -20,7 +20,7 @@
             <MudText>@($"{CurrentPropertiesName()} properties:")</MudText>
             @if (SelectedComponent is not null)
             {
-                <MudIconButton Icon="@Icons.Material.Filled.Close" OnClick="() => {SelectedComponent = null;}" Class="ml-auto mud-background-gray" Size="Size.Small" Variant="Variant.Filled"/>
+                <MudIconButton Icon="@Icons.Material.Filled.Close" OnClick="() => {SelectedComponent = null;}" Class="ml-auto my-n1 mud-background-gray" Size="Size.Small" Variant="Variant.Filled"/>
             }
         </MudStack>
         <Properties @bind-SelectedComponent="@SelectedComponent" @bind-DropContainer="@DropContainer" UIComponents="@UIComponentList.UIComponents" @bind-AppView="AppView"/>
