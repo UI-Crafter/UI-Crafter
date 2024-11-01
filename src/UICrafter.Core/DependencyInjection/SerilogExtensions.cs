@@ -15,6 +15,7 @@ public static class SerilogExtensions
 		loggingBuilder.ClearProviders();
 		loggingBuilder.AddSerilog(Log.Logger, dispose: true);
 
+
 		return loggingBuilder;
 	}
 }

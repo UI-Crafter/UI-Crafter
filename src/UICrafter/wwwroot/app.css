@@ -1,21 +1,6 @@
 body {
 }
 
-/* Custom css to avoid tooltip offsetting the button group */
 .uicrafter-tooltip-buttongroup > .mud-tooltip-root {
-	display: inline-flex;
-}
-
-/* Custom css to align switch left despite LabelPosition = start */
-.uicrafter-switch .mud-switch.flex-row-reverse {
-	display: flex;
-	flex-direction: row-reverse;
-	justify-content: flex-end;
-	margin-left: unset;
-}
-
-/* Custom css to make the switch-track changed color when its active */
-/* Style utilizes that .mud-switch-base gains .mud-checked when its toggled on */
-.uicrafter-switch .mud-switch-base.mud-checked + .mud-switch-track {
-	background-color: var(--mud-palette-primary);
+	display: inline-flex !important;
 }

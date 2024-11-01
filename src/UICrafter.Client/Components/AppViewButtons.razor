@@ -1,34 +1,28 @@
-@if (AppView is not null)
-{
+<MudStack Row="true">
     <MudOverlay Visible="Visible" DarkBackground="true" Absolute="true">
         <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
     </MudOverlay>
 
     <MudTextField @bind-Value="@AppView.Name" Label="App-view name" Variant="Variant.Outlined"></MudTextField>
 
-    @if (AppView.CreatedAt != DateTime.MinValue && AppView.UpdatedAt != DateTime.MinValue)
-    {
-        <MudDatePicker Date="@AppView.CreatedAt" Label="Created at" Variant="Variant.Outlined" ReadOnly />
-        <MudDatePicker Date="@AppView.UpdatedAt" Label="Created at" Variant="Variant.Outlined" ReadOnly />
-    }
-
-    <MudSwitch @bind-Value="AppView.IsPublic" Class="uicrafter-switch" Label="Public" ThumbIcon="@(AppView.IsPublic ? Icons.Material.Filled.Public : Icons.Material.Filled.PublicOff)" LabelPosition="LabelPosition.Start" />
-
-    <MudButtonGroup Variant="Variant.Outlined" Class="uicrafter-tooltip-buttongroup justify-center ma-2">
-        <MudTooltip Text="Save" Arrow Placement="Placement.Bottom">
+    <MudButtonGroup Variant="Variant.Outlined" Class="uicrafter-tooltip-buttongroup ma-2">
+        <MudTooltip Text="Public" Arrow="true" Placement="Placement.Bottom" Class="uicrafter-tooltip-buttongroup">
+            <MudToggleIconButton @bind-Toggled="AppView.IsPublic" Variant="Variant.Outlined" Icon="@Icons.Material.Filled.PublicOff" ToggledIcon="@Icons.Material.Filled.Public" />
+        </MudTooltip>
+        <MudTooltip Text="Save" Arrow="true" Placement="Placement.Bottom">
             <MudIconButton Icon="@Icons.Material.Filled.Save" OnClick="@SaveAppView" />
         </MudTooltip>
-        <MudTooltip Text="Delete" Arrow Placement="Placement.Bottom">
+        <MudTooltip Text="Delete" Arrow="true" Placement="Placement.Bottom">
             <MudIconButton Icon="@Icons.Material.Filled.Delete" OnClick="@DeleteAppView" />
         </MudTooltip>
-        <MudTooltip Text="Clear" Arrow Placement="Placement.Bottom">
+        <MudTooltip Text="Clear" Arrow="true" Placement="Placement.Bottom">
             <MudIconButton Icon="@Icons.Material.Filled.Clear" OnClick="@ClearAppView" />
         </MudTooltip>
-        <MudTooltip Text="Load" Arrow Placement="Placement.Bottom">
+        <MudTooltip Text="Load" Arrow="true" Placement="Placement.Bottom">
             <MudIconButton Icon="@Icons.Material.Filled.Download" OnClick="@LoadAppView" />
         </MudTooltip>
     </MudButtonGroup>
-}
+</MudStack>
 
 @code {
     [Inject]
@@ -41,7 +35,7 @@
     private bool Visible { get; set; } = false;
 
     [Parameter]
-    public required RepeatedField<UIComponent> UIComponents { get; set; }
+    public required UIComponentList UIComponentList { get; set; }
 
     private UIComponent? _internalSelectedComponent;
     [Parameter]
@@ -77,30 +71,13 @@
     [Parameter]
     public required EventCallback<MudDropContainer<UIComponent>?> DropContainerChanged { get; set; }
 
-    private AppView? _internalAppView;
-    [Parameter]
-    public required AppView? AppView
-    {
-        get => _internalAppView;
-        set
-        {
-            if (AppViewChanged.HasDelegate && value != _internalAppView)
-            {
-                _internalAppView = value;
-                AppViewChanged.InvokeAsync(value);
-            }
-        }
-    }
-    [Parameter]
-    public required EventCallback<AppView?> AppViewChanged { get; set; }
+    AppView test = new AppView();
 
     private async Task SaveAppView()
     {
-        if (AppView is null) return;
-
         Visible = true;
 
-        var serializedContent = new UIComponentList { UIComponents = { UIComponents } }.ToByteString();
+        var serializedContent = UIComponentList.ToByteString();
 
         AppView.Content = serializedContent;
 
@@ -127,8 +104,6 @@
 
     private async Task DeleteAppView()
     {
-        if (AppView is null) return;
-
         Visible = true;
 
         try
@@ -152,9 +127,9 @@
 
     private void ClearAppView()
     {
-        if (UIComponents.Count == 0) return;
+        if (UIComponentList.UIComponents.Count == 0) return;
 
-        UIComponents.Clear();
+        UIComponentList.UIComponents.Clear();
         SelectedComponent = null;
         DropContainer?.Refresh();
     }
@@ -175,7 +150,7 @@
         
         Visible = true;
 
-        Visible = true;
+        ClearAppView();
 
         try
         {
@@ -185,11 +160,9 @@
 
             AppView = await AppViewRepository.GetAppViewById(id);
 
-            ClearAppView();
-
             var parsedContent = UIComponentList.Parser.ParseFrom(AppView.Content);
 
-            UIComponents.AddRange(parsedContent.UIComponents);
+            UIComponentList.UIComponents.AddRange(parsedContent.UIComponents);
 
             DropContainer?.Refresh();
         }

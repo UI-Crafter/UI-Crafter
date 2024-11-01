@@ -48,18 +48,9 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender)
+        @if (firstRender)
         {
-            try
-            {
-                AppViews = await AppViewRepository.GetAppViews() ?? AppViews;
-                Log.Debug("Got {count} appViews", AppViews.Count);
-            }
-            catch (Exception ex)
-            {
-                Log.Error("Got Exception: {exception}", ex);
-            }
-
+            AppViews = await AppViewRepository.GetAppViews() ?? AppViews;
             StateHasChanged();
         }
     }

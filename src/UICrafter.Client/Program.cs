@@ -23,7 +23,11 @@ builder.Services.AddScoped<IHttpClientProvider, HttpClientProvider>();
 builder.Services.AddMudServices();
 
 // gRPC
-builder.Services.AddGrpcClient<AppViewService.AppViewServiceClient>(options => options.Address = new Uri(builder.HostEnvironment.BaseAddress));
+builder.Services.AddGrpcClient<AppViewService.AppViewServiceClient>((services, options) =>
+{
+	var httpClient = services.GetRequiredService<HttpClient>();
+	options.Address = httpClient.BaseAddress!;
+});
 
 // Repository
 builder.Services.AddScoped<IAppViewRepository, AppViewRepository>();

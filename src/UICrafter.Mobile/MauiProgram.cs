@@ -28,8 +28,11 @@ public static class MauiProgram
 			.UseMauiApp<App>()
 			.ConfigureFonts(fonts => fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular"));
 
+		builder.Logging.AddSeriloggerSetup(builder.Configuration);
+
 		builder.Services.AddMauiBlazorWebView();
 		builder.Services.AddMudServices();
+
 
 		var configBuilder = new ConfigurationBuilder()
 			.AddEmbeddedResource("UICrafter.Mobile.appsettings.json");
@@ -89,8 +92,6 @@ public static class MauiProgram
 
 		// Repository
 		builder.Services.AddScoped<IAppViewRepository, AppViewRepository>();
-
-		builder.Logging.AddSeriloggerSetup(builder.Configuration);
 
 		return builder.Build();
 	}
