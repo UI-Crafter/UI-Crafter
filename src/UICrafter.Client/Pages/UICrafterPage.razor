@@ -1,7 +1,7 @@
 @page "/uicrafter"
 @attribute [Authorize]
 
-<MudStack Row @onclick="OnBackgroundClick" Style="height: 100vh;">
+<MudStack Row @onclick="DeselectComponent" Style="height: 100vh;">
     <!-- Left section: Component Grid (20%) -->
     <MudStack Style="width: 20%">
         <MudText>Components:</MudText>
@@ -20,7 +20,7 @@
             <MudText>@($"{CurrentPropertiesName()} properties:")</MudText>
             @if (SelectedComponent is not null)
             {
-                <MudIconButton Icon="@Icons.Material.Filled.Close" OnClick="OnBackgroundClick" Class="ml-auto my-n1 mud-background-gray" Size="Size.Small" Variant="Variant.Filled"/>
+                <MudIconButton Icon="@Icons.Material.Filled.Close" OnClick="DeselectComponent" Class="ml-auto my-n1 mud-background-gray" Size="Size.Small" Variant="Variant.Filled" />
             }
         </MudStack>
         <Properties @bind-SelectedComponent="@SelectedComponent" @bind-DropContainer="@DropContainer" UIComponents="@UIComponentList.UIComponents" @bind-AppView="AppView"/>
@@ -34,7 +34,7 @@
     private UIComponentList UIComponentList { get; set; } = new UIComponentList();
     private AppView AppView { get; set; } = new AppView { Name = string.Empty };
 
-    private void OnBackgroundClick()
+    private void DeselectComponent()
     {
         if (SelectedComponent is null) return;
 
