@@ -30,10 +30,8 @@ else
         {
             try
             {
-                // Simulate getting data from repository
                 AppViews = await AppViewRepository.GetAppViews() ?? AppViews;
                 Log.Information("Called gRPC");
-                // Simulate delay
             }
             catch (Exception ex)
             {
@@ -41,8 +39,8 @@ else
             }
             finally
             {
-                isLoading = false; // End loading
-                StateHasChanged(); // Force UI update
+                isLoading = false;
+                StateHasChanged();
             }
         }
     }
