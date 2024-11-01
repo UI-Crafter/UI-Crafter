@@ -1,0 +1,26 @@
+<MudDialog Style="height: 75vh">
+    <DialogContent>
+        <LoadMetaDataWeb ClickFunction="SelectAppView" />
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="() => MudDialog.Cancel()">Cancel</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    private MudDialogInstance MudDialog { get; set; } = null!;
+
+    private void SelectAppView(long id)
+    {
+        MudDialog.Close(DialogResult.Ok(id));
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        MudDialog.Options.NoHeader = true;
+        MudDialog.Options.MaxWidth = MaxWidth.Small;
+        MudDialog.Options.FullWidth = true;
+    }
+}

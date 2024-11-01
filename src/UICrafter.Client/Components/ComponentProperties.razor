@@ -2,18 +2,18 @@
 {
     @if (SelectedComponent.ComponentCase == UIComponent.ComponentOneofCase.Button)
     {
-        <MudTextField @bind-Value="SelectedComponent.Button.Label" Label="Button Label" Variant="Variant.Outlined" MaxLength="25"></MudTextField>
-        <MudTextField @bind-Value="SelectedComponent.Button.URL" Label="Button URL" Variant="Variant.Outlined"></MudTextField>
+        <MudTextField @bind-Value="SelectedComponent.Button.Label" Label="Button Label" Variant="Variant.Outlined" MaxLength="25" />
+        <MudTextField @bind-Value="SelectedComponent.Button.URL" Label="Button URL" Variant="Variant.Outlined" />
     }
     else if (SelectedComponent.ComponentCase == UIComponent.ComponentOneofCase.InputField)
     {
-        <MudTextField @bind-Value="SelectedComponent.InputField.Label" Label="Input Placeholder" Variant="Variant.Outlined" MaxLength="25"></MudTextField>
+        <MudTextField @bind-Value="SelectedComponent.InputField.Label" Label="Input Label" Variant="Variant.Outlined" MaxLength="25" />
     }
     else if (SelectedComponent.ComponentCase == UIComponent.ComponentOneofCase.Textbox)
     {
-        <MudTextField @bind-Value="SelectedComponent.Textbox.Label" Label="Textbox label" Variant="Variant.Outlined"></MudTextField>
-        <MudTextField @bind-Value="SelectedComponent.Textbox.NumberOfLines" Label="Number of lines" Variant="Variant.Outlined"></MudTextField>
-        <MudTextField @bind-Value="SelectedComponent.Textbox.Content" Label="Textbox Content" Variant="Variant.Outlined" Lines="4"></MudTextField>
+        <MudTextField @bind-Value="SelectedComponent.Textbox.Label" Label="Textbox label" Variant="Variant.Outlined"/>
+        <MudTextField @bind-Value="SelectedComponent.Textbox.NumberOfLines" Label="Number of lines" Variant="Variant.Outlined"/>
+        <MudTextField @bind-Value="SelectedComponent.Textbox.Content" Label="Textbox Content" Variant="Variant.Outlined" Lines="4"/>
         <MudSelect T="string" Label="Source Reference" @bind-Value="SelectedComponent.Textbox.SourceRef">
             <MudSelectItem Value="Guid.Empty.ToString()">None</MudSelectItem>
             @foreach (var component in UIComponents.Where(c => c.ComponentCase == UIComponent.ComponentOneofCase.Button))
@@ -21,7 +21,7 @@
                 <MudSelectItem Value="@component.Guid">@component.Button.Label</MudSelectItem>
             }
         </MudSelect>
-        <MudTextField @bind-Value="SelectedComponent.Textbox.JsonField" Label="Json Field" Variant="Variant.Outlined"></MudTextField>
+        <MudTextField @bind-Value="SelectedComponent.Textbox.JsonField" Label="Json Field" Variant="Variant.Outlined"/>
     }
     <MudButtonGroup Variant="Variant.Outlined" Class="mx-auto">
         <MudButton StartIcon="@Icons.Material.Filled.Delete" OnClick=@DeleteSelectedComponent Size="Size.Large">Delete</MudButton>

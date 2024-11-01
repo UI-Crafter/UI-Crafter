@@ -3,7 +3,7 @@
 <MudContainer MaxWidth="MaxWidth.Small" @onclick:stopPropagation>
     <MudDropContainer T="UIComponent" @ref="DropContainer" Items="UIComponents" ItemsSelector="@((item,dropzone) => item.DropZoneID == dropzone)" ItemDropped="ComponentUpdated" Class="d-flex flex-grow-1">
         <ChildContent>
-            <MudDropZone T="UIComponent" Identifier="Drop Zone 1" AllowReorder="true" Class="rounded mud-background-gray pa-2 flex-grow-1 overflow-auto" Style="height: 70vh">
+            <MudDropZone T="UIComponent" Identifier="Drop Zone 1" AllowReorder="true" Class="rounded mud-background-gray pa-2 flex-grow-1 overflow-auto" Style="height: 75vh">
             </MudDropZone>
         </ChildContent>
         <ItemRenderer>
