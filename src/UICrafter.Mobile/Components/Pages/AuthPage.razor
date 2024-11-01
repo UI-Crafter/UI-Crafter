@@ -48,7 +48,7 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        @if (firstRender)
+        if (firstRender)
         {
             try
             {
@@ -60,21 +60,6 @@
                 Log.Error("Got Exception: {exception}", ex);
             }
 
-            Log.Information("HELP ME");
-            Log.Information("HELP ME");
-            Log.Information("HELP ME");
-            Log.Information("HELP ME");
-            Log.Information("HELP ME");
-            Log.Information("HELP ME");
-            Log.Information("HELP ME");
-            Log.Information("HELP ME");
-            Log.Information("HELP ME");
-            Log.Information("HELP ME");
-            Log.Information("HELP ME");
-            Log.Information("HELP ME");
-            Log.Information("HELP ME");
-            Log.Information("HELP ME");
-            Log.Information("HELP ME");
             StateHasChanged();
         }
     }
