@@ -12,10 +12,14 @@
     [CascadingParameter]
     public required StupidStore StupidStore { get; set; }
 
+
+    private string ModifiedURL { get; set; } = string.Empty;
+
     private bool _processing = false;
 
     protected override void OnInitialized()
     {
+        ModifiedURL = Button.Button.URL;
         ButtonText = Button.Button.Label;
         OnClick = EventCallback.Factory.Create<MouseEventArgs>(this, CallApi);
     }
