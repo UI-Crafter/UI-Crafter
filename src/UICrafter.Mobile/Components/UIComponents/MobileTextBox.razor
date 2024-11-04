@@ -10,7 +10,7 @@
     public required UIComponent Textbox { get; set; }
 
     [CascadingParameter]
-    public required JsonPublisher StupidStore { get; set; }
+    public required JsonPublisher JSONPublisher { get; set; }
 
     protected override void OnInitialized()
     {
@@ -23,7 +23,7 @@
 
         if (!string.IsNullOrEmpty(Textbox.Textbox.SourceRef))
         {
-            StupidStore.Subscribe(Textbox.Textbox.SourceRef, UpdateTextboxContent);
+            JSONPublisher.Subscribe(Textbox.Textbox.SourceRef, UpdateTextboxContent);
         }
     }
 
@@ -68,7 +68,7 @@
 
     public void Dispose()
     {
-        StupidStore?.Unsubscribe(Textbox.Textbox.SourceRef, UpdateTextboxContent);
+        JSONPublisher?.Unsubscribe(Textbox.Textbox.SourceRef, UpdateTextboxContent);
     }
 
     private string ConvertValueToString(object value)

@@ -1,3 +1,4 @@
+@using System.Text.RegularExpressions
 @inherits BaseAPIButton
 @inject IHttpClientProvider HttpClientProvider
 
@@ -10,10 +11,13 @@
     public required UIComponent Button { get; set; }
 
     [CascadingParameter]
-    public required JsonPublisher StupidStore { get; set; }
+    public required JsonPublisher JSONPublisher { get; set; }
 
+    [CascadingParameter]
+    public required InputFieldPublisher inputFieldPublisher { get; set; }
 
     private string ModifiedURL { get; set; } = string.Empty;
+    private Dictionary<string, string> LogicalNamesPairing = [];
 
     private bool _processing = false;
 
@@ -22,15 +26,52 @@
         ModifiedURL = Button.Button.URL;
         ButtonText = Button.Button.Label;
         OnClick = EventCallback.Factory.Create<MouseEventArgs>(this, CallApi);
+        GetLogicalNamesFromURL();
     }
 
+    private void GetLogicalNamesFromURL()
+    {
+        if (string.IsNullOrEmpty(Button.Button.URL))
+        {
+            return;
+        }
+
+        var url = Button.Button.URL;
+        // in the url string find all the logical names wraped in {}
+
+        var matches = Regex.Matches(url, @"\{([^}]+)\}");
+
+        foreach (Match match in matches)
+        {
+            var logicalName = match.Groups[1].Value;
+            LogicalNamesPairing.Add(logicalName, "");
+            Log.Information($"Logical Name: {logicalName}");
+            inputFieldPublisher.Subscribe(logicalName, UpdateURL);
+        }
+    }
+
+    private void UpdateURL(string logicalName, string value)
+    {
+        if (LogicalNamesPairing.ContainsKey(logicalName))
+        {
+            LogicalNamesPairing[logicalName] = value;
+            ModifiedURL = Button.Button.URL;
+
+            foreach (var pair in LogicalNamesPairing)
+            {
+                ModifiedURL = ModifiedURL.Replace($"{{{pair.Key}}}", pair.Value);
+            }
+        }
+        Log.Information("Changed URL");
+    }
 
     private async Task CallApi()
     {
         var httpClient = HttpClientProvider.GetDefaultHttpClient();
         try
         {
-            var response = await httpClient.GetAsync(Button.Button.URL);
+            Log.Information(ModifiedURL);
+            var response = await httpClient.GetAsync(ModifiedURL);
 
             if (response.IsSuccessStatusCode)
             {
@@ -41,7 +82,7 @@
                 _processing = false;
 
                 // Notify subscribers with the button GUID and the response data
-                StupidStore.NotifySubscribers(Button.Guid, responseData);
+                JSONPublisher.NotifySubscribers(Button.Guid, responseData);
             }
             else
             {
@@ -61,5 +102,13 @@
             _processing = false;
             Console.WriteLine($"Exception: {ex.Message}");
         }
+    }
+
+    private void Dispose()
+    {
+        foreach (var pair in LogicalNamesPairing)
+		{
+			inputFieldPublisher.Unsubscribe(pair.Key, UpdateURL);
+		}
     }
 }
