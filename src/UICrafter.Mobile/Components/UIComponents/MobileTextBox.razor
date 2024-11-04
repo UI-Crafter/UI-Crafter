@@ -1,20 +1,27 @@
-<MudTextField @bind-Value="Textbox.Textbox.Content"
-              Label="@Textbox.Textbox.Label"
-              Variant="Variant.Outlined"
-              ReadOnly="true"
-              MaxLines="@Textbox.Textbox.NumberOfLines"
-              AutoGrow="true">
-</MudTextField>
+@using System.Text.Json
+
+@inherits BaseTextBox
+
+@{
+    base.BuildRenderTree(__builder);
+}
 
 @code {
     [Parameter]
     public required UIComponent Textbox { get; set; }
 
     [CascadingParameter]
-    public required StupidStore StupidStore { get; set; }
+    public required JsonPublisher StupidStore { get; set; }
 
     protected override void OnInitialized()
     {
+        base.OnInitialized();
+
+        Label = Textbox.Textbox.Label;
+        Content = Textbox.Textbox.Content;
+        Lines = Textbox.Textbox.NumberOfLines;
+
+
         if (!string.IsNullOrEmpty(Textbox.Textbox.SourceRef))
         {
             StupidStore.Subscribe(Textbox.Textbox.SourceRef, UpdateTextboxContent);
@@ -25,7 +32,7 @@
     {
         if (string.IsNullOrEmpty(Textbox.Textbox.JsonField))
         {
-            Textbox.Textbox.Content = "No JsonField specified.";
+            Content = "No JsonField specified.";
         }
         else
         {
@@ -36,7 +43,7 @@
 
                 string description = string.Join(" ", values);
 
-                Textbox.Textbox.Content = description;
+                Content = description;
                 StateHasChanged();
                 return;
             }
@@ -48,11 +55,11 @@
                 {
                     string description = ConvertValueToString(fieldValue);
 
-                    Textbox.Textbox.Content = description;
+                    Content = description;
                 }
                 else
                 {
-                    Textbox.Textbox.Content = $"Field '{fieldName}' not found in JSON response.";
+                    Content = $"Field '{fieldName}' not found in JSON response.";
                 }
             }
         }
@@ -69,8 +76,7 @@
     {
         if (value is List<object> list)
         {
-            var itemsAsString = list.Select(item => item.ToString());
-            return string.Join(" ", itemsAsString);
+            return string.Join(" ", list.Select(item => item.ToString()));
         }
         else if (value is Dictionary<string, object> dict)
         {

@@ -1,5 +1,36 @@
 @page "/"
 
-<h1>Hello User</h1>
+<MudContainer MaxWidth="MaxWidth.Medium" Class="pa-4 text-center">
+    <MudText Typo="Typo.h4" Align="Align.Center">Welcome to Our App!</MudText>
 
-Use Your Crafted AppViews here by navigating to the AppViews page.
+    <AuthorizeView>
+        <Authorized>
+            <MudText Typo="Typo.body1" Align="Align.Center" Class="mt-4 animate__animated animate__fadeIn">
+                You can explore the app by clicking below:
+            </MudText>
+
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Href="/appview" Class="mt-2 animate__animated animate__pulse animate__infinite">
+                App Views
+            </MudButton>
+        </Authorized>
+        <NotAuthorized>
+            <MudText Typo="Typo.body1" Align="Align.Center" Class="mt-4">
+                Please log in or register to access your views.
+            </MudText>
+
+            <MudStack Spacing="1" Justify="Justify.Center" AlignItems="AlignItems.Center" Class="mt-4">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Href="/" Class="login-button animate__animated animate__fadeIn">
+                    Login
+                </MudButton>
+                <MudButton Variant="Variant.Outlined" Color="Color.Secondary" Href="/" Class="register-button animate__animated animate__fadeIn">
+                    Register
+                </MudButton>
+            </MudStack>
+            </NotAuthorized>
+
+    </AuthorizeView>  
+</MudContainer>
+
+@code {
+
+}

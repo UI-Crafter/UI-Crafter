@@ -1,0 +1,20 @@
+@inherits BaseInput
+
+@{
+    base.BuildRenderTree(__builder);
+}
+
+@code {
+    [Parameter]
+    public required UIComponent InputField { get; set; }
+
+    [CascadingParameter]
+    public required JsonPublisher StupidStore { get; set; }
+
+    protected override void OnInitialized()
+    {
+        Label = InputField.InputField.Label;
+        Value = InputField.InputField.Value;
+    }
+}
+

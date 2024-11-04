@@ -1,6 +1,6 @@
 namespace UICrafter.Core.Utility;
 
-public class StupidStore
+public class JsonPublisher
 {
 	private readonly Dictionary<string, List<Action<Dictionary<string, object>>>> _subscribers = [];
 
