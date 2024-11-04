@@ -1,8 +1,9 @@
 @page "/appview/{viewId:long?}"
+@using System.ComponentModel
 @attribute [Authorize]
 
 @inject IAppViewRepository AppViewRepository
-@inject NavigationManager NavigationManager
+@inject RefreshViewState RefreshViewService
 
 <PageTitle>@appView.Name</PageTitle>
 
@@ -24,7 +25,8 @@ else
 {
     @if (viewId.HasValue && componentList != null && componentList.UIComponents.Any())
     {
-        <CascadingValue Value="stupidStore">
+        <CascadingValue Value="jsonPublisher">
+            <CascadingValue Value="inputFieldPublisher">
             @foreach (var component in componentList.UIComponents)
             {
                 @switch (component.ComponentCase)
@@ -42,6 +44,7 @@ else
                         break;
                 }
             }
+            </CascadingValue>
         </CascadingValue>
     }
     else
@@ -58,10 +61,24 @@ else
     private AppView? appView;
 
     private UIComponentList componentList = new UIComponentList();
-    private JsonPublisher stupidStore = new JsonPublisher();
+    private JsonPublisher jsonPublisher = new JsonPublisher();
+    private InputFieldPublisher inputFieldPublisher = new InputFieldPublisher();
 
     private long? _oldId;
     private bool _isLoading = false;
+
+    protected override void OnInitialized()
+    {
+        RefreshViewService.PropertyChanged += OnRefreshViewStateChanged!;
+    }
+
+    private async void OnRefreshViewStateChanged(object sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(RefreshViewService.IsRefreshing) && RefreshViewService.IsRefreshing)
+        {
+            await LoadData();
+        }
+    }
 
     protected override async Task OnParametersSetAsync()
     {
@@ -70,25 +87,41 @@ else
             return;
         }
 
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
         _isLoading = true;
         if (_oldId != viewId)
         {
-            stupidStore = new();
+            jsonPublisher = new();
             componentList = new();
             _oldId = viewId;
         }
-
-        appView = await AppViewRepository.GetAppViewById(viewId.Value);
-
-        if (appView != null && appView.Content != null)
+        try
         {
-            componentList = UIComponentList.Parser.ParseFrom(appView.Content);
+            appView = await AppViewRepository.GetAppViewById(viewId.Value);
+
+            if (appView != null && appView.Content != null)
+            {
+                componentList = UIComponentList.Parser.ParseFrom(appView.Content);
+            }
+            else
+            {
+                componentList = new UIComponentList();
+            }
         }
-        else
+        catch (Exception ex)
         {
-            componentList = new UIComponentList();
+            Log.Error("Error fetching AppView: ", ex);
         }
-        _isLoading = false;
+        finally
+        {
+            _isLoading = false;
+            RefreshViewService.SetIsRefreshing(false);
+            StateHasChanged();
+        }
     }
 }
 

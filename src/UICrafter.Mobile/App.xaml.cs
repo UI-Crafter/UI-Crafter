@@ -1,11 +1,13 @@
-﻿namespace UICrafter.Mobile;
+namespace UICrafter.Mobile;
+
+using UICrafter.Mobile.Utility;
 
 public partial class App : Application
 {
-	public App()
+	public App(RefreshViewState refreshViewState)
 	{
 		InitializeComponent();
 
-		MainPage = new MainPage();
+		MainPage = new MainPage(refreshViewState);
 	}
 }

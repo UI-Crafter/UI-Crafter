@@ -1,8 +1,17 @@
-<MudTextField T="string" Class="mb-2" Variant="Variant.Outlined" Label="@Label" @bind-Value="@Value" @onfocus="OnFocus" />
+<MudTextField
+    T="string"
+    Class="mb-2"
+    Variant="Variant.Outlined"
+    Label="@Label"
+    @bind-Value="@Value"
+    @onfocus="OnFocus"
+    />
 
 @code {
     protected string Label { get; set; } = string.Empty;
     protected string Value { get; set; } = string.Empty;
     protected string LogicalName { get; set; } = string.Empty;
     protected EventCallback<FocusEventArgs> OnFocus { get; set; }
+    //TextChanged="OnChange"
+    protected virtual void OnChange() {}
 }

@@ -1,14 +1,20 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:local="clr-namespace:UICrafter.Mobile"
+			 xmlns:states="clr-namespace:UICrafter.Mobile.Utility"
              x:Class="UICrafter.Mobile.MainPage"
-             BackgroundColor="{DynamicResource PageBackgroundColor}">
-
-    <BlazorWebView x:Name="blazorWebView" HostPage="wwwroot/index.html">
-        <BlazorWebView.RootComponents>
-            <RootComponent Selector="#app" ComponentType="{x:Type local:Components.Routes}" />
-        </BlazorWebView.RootComponents>
-    </BlazorWebView>
+             BackgroundColor="{DynamicResource PageBackgroundColor}"
+			 x:DataType="states:RefreshViewState">
+	<RefreshView IsRefreshing="{Binding IsRefreshing}"
+             Refreshing="RefreshView_Refreshing">
+		<ScrollView>
+			<BlazorWebView x:Name="blazorWebView" HostPage="wwwroot/index.html">
+				<BlazorWebView.RootComponents>
+					<RootComponent Selector="#app" ComponentType="{x:Type local:Components.Routes}" />
+				</BlazorWebView.RootComponents>
+			</BlazorWebView>
+		</ScrollView>
+	</RefreshView>
 
 </ContentPage>

@@ -11,11 +11,11 @@
 <MudSnackbarProvider />
 
 <div class="page">
-    <div class="sidebar">
+ @*    <div class="sidebar">
         <NavMenu />
-    </div>
+    </div> *@
 
-    <main>
+    <main class="main">
         <div class="top-row px-4">
             <AuthorizeView>
                 <Authorized>
@@ -32,8 +32,15 @@
             @Body
         </article>
     </main>
-</div>
 
+    <AuthorizeView>
+        <Authorized>
+            <footer class="footer">
+                <NativeNavbar />
+            </footer>
+        </Authorized>
+    </AuthorizeView>
+</div>
 
 @code {
     [Inject] private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
