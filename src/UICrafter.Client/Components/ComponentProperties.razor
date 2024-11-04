@@ -8,6 +8,7 @@
     else if (SelectedComponent.ComponentCase == UIComponent.ComponentOneofCase.InputField)
     {
         <MudTextField @bind-Value="SelectedComponent.InputField.Label" Label="Input Label" Variant="Variant.Outlined" MaxLength="25" />
+        <MudTextField @bind-Value="SelectedComponent.InputField.LogicalName" Label="Logical Name" Variant="Variant.Outlined" MaxLength="25" ReadOnly />
     }
     else if (SelectedComponent.ComponentCase == UIComponent.ComponentOneofCase.Textbox)
     {
@@ -42,6 +43,12 @@
             if (SelectedComponentChanged.HasDelegate && value != _internalSelectedComponent)
             {
                 _internalSelectedComponent = value;
+
+                if(_internalSelectedComponent?.ComponentCase == UIComponent.ComponentOneofCase.InputField)
+                {
+                    _internalSelectedComponent.InputField.LogicalName = _internalSelectedComponent.InputField.Label.ToLower().Replace(" ", "-");
+                }
+
                 SelectedComponentChanged.InvokeAsync(value);
             }
         }
