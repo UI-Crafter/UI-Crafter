@@ -36,7 +36,12 @@
     [Inject]
     private IAppViewRepository AppViewRepository { get; set; } = default!;
 
+    [Inject]
+    private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
+
     private bool Visible { get; set; } = false;
+
+    private ClaimsPrincipal User { get; set; } = default!;
 
     [Parameter]
     public required RepeatedField<UIComponent> UIComponents { get; set; }
@@ -91,6 +96,12 @@
     }
     [Parameter]
     public required EventCallback<AppView?> AppViewChanged { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        User = authState.User;
+    }
 
     private async Task SaveAppView()
     {
@@ -174,7 +185,14 @@
 
                 var id = (long)(result.Data);
 
-                AppView = await AppViewRepository.GetAppViewById(id);
+                var tmp = await AppViewRepository.GetAppViewById(id);
+
+                if(tmp.UserId != User.GetAzureId().ToString())
+                {
+                    tmp.Id = 0;
+                }
+
+                AppView = tmp;
 
                 ClearAppView();
 

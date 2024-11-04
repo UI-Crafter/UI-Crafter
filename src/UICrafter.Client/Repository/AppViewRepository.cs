@@ -21,6 +21,13 @@ public class AppViewRepository : IAppViewRepository
 		return response.AppViews;
 	}
 
+	public async Task<IList<AppView>> GetPublicAppViews()
+	{
+		var response = await _appViewServiceClient.ListPublicAppViewsAsync(new Empty());
+
+		return response.AppViews;
+	}
+
 	public async Task<AppView> GetAppViewById(long id) => await _appViewServiceClient.GetAppViewAsync(new GetAppViewRequest { Id = id });
 
 	public async Task<AppView> CreateAppView(AppView view) => await _appViewServiceClient.CreateAppViewAsync(new CreateAppViewRequest { AppView = view });
@@ -28,4 +35,5 @@ public class AppViewRepository : IAppViewRepository
 	public async Task<AppView> UpdateAppView(AppView view) => await _appViewServiceClient.UpdateAppViewAsync(new UpdateAppViewRequest { AppView = view });
 
 	public async Task DeleteAppViewById(long id) => await _appViewServiceClient.DeleteAppViewAsync(new DeleteAppViewRequest { Id = id });
+
 }

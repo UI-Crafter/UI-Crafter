@@ -1,7 +1,5 @@
 @inject IAppViewRepository AppViewRepository
 
-<MudText Class="my-2" Typo="Typo.h4">App Views</MudText>
-
 @if (isLoading == true)
 {
     <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
@@ -34,6 +32,8 @@ else
     private IList<AppView> AppViews { get; set; } = new List<AppView>();
     private bool isLoading { get; set; } = true;
 
+    protected bool LoadPublic { get; set; } = false;
+
     protected virtual void HandleClick(AppView view) { }
     protected virtual string? SetupHref(AppView view) { return null; }
 
@@ -64,7 +64,14 @@ else
         {
             try
             {
-                AppViews = await AppViewRepository.GetAppViews() ?? AppViews;
+                if (LoadPublic)
+                {
+                    AppViews = await AppViewRepository.GetPublicAppViews() ?? AppViews;
+                }
+                else
+                {
+                    AppViews = await AppViewRepository.GetAppViews() ?? AppViews;
+                }
                 Log.Information("Called gRPC");
             }
             catch (Exception ex)
