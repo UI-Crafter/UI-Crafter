@@ -2,6 +2,7 @@ namespace UICrafter.Services;
 
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
+using Microsoft.AspNetCore.Authorization;
 using UICrafter.Core.AppView;
 using UICrafter.Core.Repository;
 
@@ -16,6 +17,14 @@ public class AppViewServicegRPC : AppViewService.AppViewServiceBase
 		return new ListAppViewsResponse
 		{
 			AppViews = { await _appViewRepository.GetAppViews() }
+		};
+	}
+
+	public override async Task<ListAppViewsResponse> ListPublicAppViews(Empty request, ServerCallContext context)
+	{
+		return new ListAppViewsResponse
+		{
+			AppViews = { await _appViewRepository.GetPublicAppViews() }
 		};
 	}
 

@@ -1,6 +1,6 @@
 namespace UICrafter.Core.Utility;
 
-public class StupidStore
+public class JsonPublisher
 {
 	private readonly Dictionary<string, List<Action<Dictionary<string, object>>>> _subscribers = [];
 
@@ -10,9 +10,11 @@ public class StupidStore
 		{
 			value.Add(callback);
 		}
-
-		value = [];
-		_subscribers[buttonGUID] = value;
+		else
+		{
+			value = [callback];
+			_subscribers[buttonGUID] = value;
+		}
 	}
 
 	public void Unsubscribe(string buttonGUID, Action<Dictionary<string, object>> callback)
@@ -20,6 +22,11 @@ public class StupidStore
 		if (_subscribers.TryGetValue(buttonGUID, out var value))
 		{
 			value.Remove(callback);
+
+			if (value.Count == 0)
+			{
+				_subscribers.Remove(buttonGUID);
+			}
 		}
 	}
 
@@ -30,7 +37,7 @@ public class StupidStore
 		{
 			foreach (var callback in value)
 			{
-				callback(processedData);
+				callback?.Invoke(processedData);
 			}
 		}
 	}

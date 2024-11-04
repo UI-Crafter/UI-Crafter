@@ -1,0 +1,69 @@
+@inject IAppViewRepository AppViewRepository
+
+@if (IsLoading == true)
+{
+    <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+}
+else
+{
+    if (AppViews.Count == 0)
+    {
+        <MudText>No App-Views were found</MudText>
+    }
+    else
+    {
+        <MudTextField @bind-Value="SearchString" Class="ma-2" Placeholder="Search" Adornment="Adornment.Start" Immediate="true" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium"></MudTextField>
+        <MudList T="AppView">
+            @foreach (var view in AppViews.Where(x => x.Name.Contains(SearchString, StringComparison.InvariantCultureIgnoreCase)))
+            {
+                <MudListItem OnClick="() => HandleClick(view)" Href=@(SetupHref(view))>
+                    <MudText>Name: @view.Name</MudText>
+                    <MudText>Last Updated: @view.UpdatedAt.ToShortDateString()</MudText>
+                    <MudStack Row>
+                        <MudText>Public:</MudText>
+                        <MudIcon Icon="@(view.IsPublic ? Icons.Material.Filled.Public : Icons.Material.Filled.PublicOff)" />
+                    </MudStack>
+                </MudListItem>
+            }
+        </MudList>
+    }
+}
+
+@code {
+    private IList<AppView> AppViews { get; set; } = new List<AppView>();
+    private bool IsLoading { get; set; } = true;
+    private string SearchString { get; set; } = string.Empty;
+
+    protected bool LoadPublic { get; set; } = false;
+
+    protected virtual void HandleClick(AppView view) { }
+    protected virtual string? SetupHref(AppView view) { return null; }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            try
+            {
+                if (LoadPublic)
+                {
+                    AppViews = await AppViewRepository.GetPublicAppViews() ?? AppViews;
+                }
+                else
+                {
+                    AppViews = await AppViewRepository.GetAppViews() ?? AppViews;
+                }
+                Log.Information("Called gRPC");
+            }
+            catch (Exception ex)
+            {
+                Log.Error("Error fetching AppViews: ", ex);
+            }
+            finally
+            {
+                IsLoading = false;
+                StateHasChanged();
+            }
+        }
+    }
+}

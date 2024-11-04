@@ -1,3 +1,5 @@
+@inject IDialogService DialogService
+
 @if (AppView is not null)
 {
     <MudOverlay Visible="Visible" DarkBackground="true" Absolute="true">
@@ -34,7 +36,12 @@
     [Inject]
     private IAppViewRepository AppViewRepository { get; set; } = default!;
 
+    [Inject]
+    private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
+
     private bool Visible { get; set; } = false;
+
+    private ClaimsPrincipal User { get; set; } = default!;
 
     [Parameter]
     public required RepeatedField<UIComponent> UIComponents { get; set; }
@@ -89,6 +96,12 @@
     }
     [Parameter]
     public required EventCallback<AppView?> AppViewChanged { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        User = authState.User;
+    }
 
     private async Task SaveAppView()
     {
@@ -163,19 +176,32 @@
 
         try
         {
-            var test = await AppViewRepository.GetAppViews();
+            var dialog = DialogService.Show<AppViewSelectionDialog>();
+            var result = await dialog.Result;
 
-            var id = test.FirstOrDefault()?.Id ?? 0;
+            if (result is not null && !result.Canceled)
+            {
+                ArgumentNullException.ThrowIfNull(result.Data);
 
-            AppView = await AppViewRepository.GetAppViewById(id);
+                var id = (long)(result.Data);
 
-            ClearAppView();
+                var tmp = await AppViewRepository.GetAppViewById(id);
 
-            var parsedContent = UIComponentList.Parser.ParseFrom(AppView.Content);
+                if(tmp.UserId != User.GetAzureId().ToString())
+                {
+                    tmp.Id = 0;
+                }
 
-            UIComponents.AddRange(parsedContent.UIComponents);
+                AppView = tmp;
 
-            DropContainer?.Refresh();
+                ClearAppView();
+
+                var parsedContent = UIComponentList.Parser.ParseFrom(AppView.Content);
+
+                UIComponents.AddRange(parsedContent.UIComponents);
+
+                DropContainer?.Refresh();
+            }
         }
         catch (Exception ex)
         {

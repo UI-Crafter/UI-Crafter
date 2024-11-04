@@ -1,0 +1,34 @@
+<MudDialog Class="uicrafter-dialog" Style="height: 75vh">
+    <DialogContent>
+        <MudTabs>
+            <MudTabPanel Class="pa-2" Text="My app-views">
+                <LoadMetaDataWeb ClickFunction="SelectAppView" Public="false" />
+            </MudTabPanel>
+            <MudTabPanel Class="pa-2" Text="App-view hub">
+                <LoadMetaDataWeb ClickFunction="SelectAppView" Public="true" />
+            </MudTabPanel>
+        </MudTabs>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="() => MudDialog.Cancel()">Cancel</MudButton>
+    </DialogActions>
+</MudDialog>
+
+
+@code {
+    [CascadingParameter]
+    private MudDialogInstance MudDialog { get; set; } = null!;
+
+    private void SelectAppView(long id)
+    {
+        MudDialog.Close(DialogResult.Ok(id));
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        MudDialog.Options.NoHeader = true;
+        MudDialog.Options.MaxWidth = MaxWidth.Small;
+        MudDialog.Options.FullWidth = true;
+    }
+}

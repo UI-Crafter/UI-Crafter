@@ -1,0 +1,40 @@
+@inherits BaseInput
+
+@{
+    base.BuildRenderTree(__builder);
+}
+
+@code {
+    [Parameter]
+    public required UIComponent InputField { get; set; }
+
+    [CascadingParameter]
+    public required JsonPublisher JSONPublisher { get; set; }
+
+    [CascadingParameter]
+    public required InputFieldPublisher inputFieldPublisher { get; set; }
+
+    protected override void OnInitialized()
+    {
+        Label = InputField.InputField.Label;
+        Value = InputField.InputField.Value;
+        LogicalName = InputField.InputField.LogicalName;
+
+        Log.Information($"InputField: {Label} - {Value} - {LogicalName}");
+    }
+
+    private void OnValueChange(string value)
+	{
+        Log.Information("Changed Input field");
+        Value = Value?.ToString() ?? "";
+        inputFieldPublisher.NotifySubscribers(InputField.InputField.LogicalName, Value);
+	}
+
+ //    protected override void OnChange()
+ //    {
+ //        Log.Information("Changed Input field");
+ //        Value = Value?.ToString() ?? "";     
+ //        inputFieldPublisher.NotifySubscribers(InputField.InputField.LogicalName, Value);
+	// }
+}
+
