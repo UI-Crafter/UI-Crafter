@@ -1,6 +1,3 @@
-// Copyright (c) Microsoft Corporation. All rights reserved.
-// Licensed under the MIT License.
-
 namespace UICrafter.Mobile.MSALClient;
 
 using Microsoft.Identity.Client;
@@ -8,71 +5,57 @@ using Microsoft.Identity.Client.Extensions.Msal;
 using Serilog;
 
 /// <summary>
-/// Contains methods that initialize and use the MSAL SDK
+/// Provides methods to initialize and use the MSAL SDK for handling authentication and token caching.
 /// </summary>
 public class MSALClientHelper
 {
 	/// <summary>
-	/// As for the Tenant, you can use a name as obtained from the azure portal, e.g. kko365.onmicrosoft.com"
+	/// Configuration details for Azure AD, including the tenant and authority.
 	/// </summary>
 	public AzureAdConfig AzureAdConfig { get; set; }
 
 	/// <summary>
-	/// Gets the authentication result (if available) from MSAL's various operations.
+	/// Stores the authentication result obtained from MSAL operations.
 	/// </summary>
-	/// <value>
-	/// The authentication result.
-	/// </value>
 	public AuthenticationResult? AuthResult { get; private set; }
 
 	/// <summary>
-	/// Gets the MSAL public client application instance.
+	/// The instance of MSAL's public client application used for authentication.
 	/// </summary>
-	/// <value>
-	/// The public client application.
-	/// </value>
 	public IPublicClientApplication PublicClientApplication { get; private set; } = default!;
 
 	/// <summary>
-	/// This will determine if the Interactive Authentication should be Embedded or System view
-	/// </summary>
-	public bool UseEmbedded { get; set; }
-
-	/// <summary>
-	/// The PublicClientApplication builder used internally
+	/// Builder used to configure the MSAL public client application.
 	/// </summary>
 	private readonly PublicClientApplicationBuilder _publicClientApplicationBuilder;
 
-	// Token Caching setup - Mac
+	// Token caching properties for macOS and Linux
 	public static readonly string KeyChainServiceName = "UICrafter.Auth";
-
 	public static readonly string KeyChainAccountName = "MSALCache";
-
 	public static readonly KeyValuePair<string, string> LinuxKeyRingAttr2 = new("ProductGroup", "UICrafter");
 
 	private static readonly string _pCANotInitializedExceptionMessage = "The PublicClientApplication needs to be initialized before calling this method. Use InitializePublicClientAppAsync() to initialize.";
 
 	/// <summary>
-	/// Initializes a new instance of the <see cref="MSALClientHelper"/> class.
+	/// Initializes a new instance of <see cref="MSALClientHelper"/> with the specified Azure AD configuration.
 	/// </summary>
 	public MSALClientHelper(AzureAdConfig azureAdConfig)
 	{
 		AzureAdConfig = azureAdConfig;
 
 		_publicClientApplicationBuilder = PublicClientApplicationBuilder.Create(AzureAdConfig.ClientId)
-			.WithExperimentalFeatures() // this is for upcoming logger
+			.WithExperimentalFeatures()
 			.WithAuthority(AzureAdConfig.Authority)
 			.WithLogging(new MyIdentityLogger(), enablePiiLogging: false)
 			.WithIosKeychainSecurityGroup("com.uicrafter.adalcache");
 	}
 
 	/// <summary>
-	/// Initializes the public client application of MSAL.NET with the required information to correctly authenticate the user.
+	/// Initializes the MSAL public client application for user authentication.
 	/// </summary>
-	/// <returns></returns>
-	public async Task<IAccount?> InitializePublicClientAppAsync()
+	public async Task InitializePublicClientAppAsync()
 	{
-		// Initialize the MSAL library by building a public client application
+		// Configure the redirect URI based on platform
 		PublicClientApplication = _publicClientApplicationBuilder
 #if WINDOWS
 			.WithRedirectUri("http://localhost")
@@ -82,13 +65,12 @@ public class MSALClientHelper
 			.Build();
 
 		await AttachTokenCache();
-		return await FetchSignedInUserFromCache().ConfigureAwait(false);
 	}
 
 	/// <summary>
-	/// Attaches the token cache to the Public Client app.
+	/// Attaches the token cache to the MSAL client to enable secure storage and retrieval of tokens.
 	/// </summary>
-	/// <returns>IAccount list of already signed-in users (if available)</returns>
+	/// <returns>Returns a list of accounts from the token cache, if available.</returns>
 	private async Task<IEnumerable<IAccount>?> AttachTokenCache()
 	{
 		if (DeviceInfo.Current.Platform != DevicePlatform.WinUI)
@@ -96,23 +78,49 @@ public class MSALClientHelper
 			return null;
 		}
 
-		// Cache configuration and hook-up to public application. Refer to https://github.com/AzureAD/microsoft-authentication-extensions-for-dotnet/wiki/Cross-platform-Token-Cache#configuring-the-token-cache
-		var storageProperties = new StorageCreationPropertiesBuilder(AzureAdConfig.CacheFileName, AzureAdConfig.CacheDir)
-				.Build();
-
+		var storageProperties = new StorageCreationPropertiesBuilder(AzureAdConfig.CacheFileName, AzureAdConfig.CacheDir).Build();
 		var msalcachehelper = await MsalCacheHelper.CreateAsync(storageProperties);
 		msalcachehelper.RegisterCache(PublicClientApplication.UserTokenCache);
 
-		// If the cache file is being reused, we'd find some already-signed-in accounts
 		return await PublicClientApplication.GetAccountsAsync().ConfigureAwait(false);
 	}
 
 	/// <summary>
-	/// Signs in the user and obtains an Access token for a provided set of scopes
+	/// Attempts to silently sign in the user using cached tokens if available.
 	/// </summary>
-	/// <param name="scopes"></param>
-	/// <returns> Access Token</returns>
-	public async Task<string> SignInUserAndAcquireAccessToken(string[] scopes)
+	/// <param name="scopes">Scopes required for the token.</param>
+	/// <returns>Authentication result if successful; otherwise, null.</returns>
+	public async Task<AuthenticationResult?> TrySignInUserSilently(string[] scopes)
+	{
+		Exception<NullReferenceException>.ThrowOn(() => PublicClientApplication is null, _pCANotInitializedExceptionMessage);
+
+		var existingUser = await FetchSignedInUserFromCache().ConfigureAwait(false);
+
+		if (existingUser is null)
+		{
+			return null;
+		}
+
+		try
+		{
+			AuthResult = await PublicClientApplication
+				.AcquireTokenSilent(scopes, existingUser)
+				.ExecuteAsync();
+		}
+		catch (MsalException msalEx)
+		{
+			Log.Warning("Error acquiring token silently", msalEx);
+		}
+
+		return AuthResult;
+	}
+
+	/// <summary>
+	/// Initiates the user sign-in process and obtains an access token for the specified scopes.
+	/// </summary>
+	/// <param name="scopes">The required access token scopes.</param>
+	/// <returns>The authentication result containing the access token.</returns>
+	public async Task<AuthenticationResult?> SignInUserAndAcquireAccessToken(string[] scopes)
 	{
 		Exception<NullReferenceException>.ThrowOn(() => PublicClientApplication is null, _pCANotInitializedExceptionMessage);
 
@@ -120,68 +128,40 @@ public class MSALClientHelper
 
 		try
 		{
-			// 1. Try to sign-in the previously signed-in account
-			if (existingUser is not null)
-			{
-				AuthResult = await PublicClientApplication
-					.AcquireTokenSilent(scopes, existingUser)
-					.ExecuteAsync()
-					.ConfigureAwait(false);
-			}
-			else
-			{
-				AuthResult = await SignInUserInteractivelyAsync(scopes);
-			}
+			AuthResult = existingUser is not null
+				? await PublicClientApplication.AcquireTokenSilent(scopes, existingUser).ExecuteAsync()
+				: await SignInUserInteractive(scopes);
 		}
 		catch (MsalUiRequiredException ex)
 		{
-			Log.Information("A MsalUiRequiredException happened on AcquireTokenSilentAsync. This indicates you need to call AcquireTokenInteractive to acquire a token interactively", ex);
-
-			AuthResult = await PublicClientApplication
-				.AcquireTokenInteractive(scopes)
-				//.WithUseEmbeddedWebView(true)
-				.ExecuteAsync()
-				.ConfigureAwait(false);
+			Log.Information("UI required for token acquisition. Attempting interactive sign-in.", ex);
+			AuthResult = await SignInUserInteractive(scopes);
 		}
 		catch (MsalException msalEx)
 		{
-			Log.Error("Error Acquiring Token interactively", msalEx);
+			Log.Error("Error acquiring token interactively", msalEx);
+			throw;
 		}
 
-		return AuthResult?.IdToken ?? string.Empty;
+		return AuthResult;
 	}
 
 	/// <summary>
-	/// Shows a pattern to sign-in a user interactively in applications that are input constrained and would need to fall-back on device code flow.
+	/// Initiates an interactive sign-in to acquire an access token.
 	/// </summary>
-	/// <param name="scopes">The scopes.</param>
-	/// <param name="existingAccount">The existing account.</param>
-	/// <returns></returns>
-	public async Task<AuthenticationResult> SignInUserInteractivelyAsync(string[] scopes, IAccount? existingAccount = null)
+	/// <param name="scopes">The required access token scopes.</param>
+	/// <returns>The authentication result containing the access token.</returns>
+	public async Task<AuthenticationResult?> SignInUserInteractive(string[] scopes)
 	{
-
-		Exception<NullReferenceException>.ThrowOn(() => PublicClientApplication == null, _pCANotInitializedExceptionMessage);
-
-		if (PublicClientApplication.IsUserInteractive())
-		{
-			return await PublicClientApplication.AcquireTokenInteractive(scopes)
-				//.WithUseEmbeddedWebView(true)
+		return AuthResult = await PublicClientApplication
+				.AcquireTokenInteractive(scopes)
 				.WithParentActivityOrWindow(PlatformConfig.Instance.ParentWindow)
 				.ExecuteAsync()
 				.ConfigureAwait(false);
-		}
-
-		// If the operating system does not have UI (e.g. SSH into Linux), you can fallback to device code, however this
-		// flow will not satisfy the "device is managed" CA policy.
-		return await PublicClientApplication.AcquireTokenWithDeviceCode(scopes, (dcr) =>
-		{
-			Log.Information(dcr.Message);
-			return Task.CompletedTask;
-		}).ExecuteAsync().ConfigureAwait(false);
 	}
 
 	/// <summary>
-	/// Removes the first signed-in user's record from token cache
+	/// Signs out the first signed-in user and removes their token cache.
 	/// </summary>
 	public async Task SignOutUserAsync()
 	{
@@ -190,12 +170,12 @@ public class MSALClientHelper
 	}
 
 	/// <summary>
-	/// Removes a given user's record from token cache
+	/// Signs out a specified user by removing their record from the token cache.
 	/// </summary>
-	/// <param name="user">The user.</param>
-	public async Task SignOutUserAsync(IAccount user)
+	/// <param name="user">The user to sign out.</param>
+	public async Task SignOutUserAsync(IAccount? user)
 	{
-		if (PublicClientApplication is null)
+		if (PublicClientApplication is null || user is null)
 		{
 			return;
 		}
@@ -204,18 +184,15 @@ public class MSALClientHelper
 	}
 
 	/// <summary>
-	/// Fetches the signed in user from MSAL's token cache (if available).
+	/// Retrieves the signed-in user from the MSAL token cache, if available.
 	/// </summary>
-	/// <returns></returns>
+	/// <returns>The account of the signed-in user or null if no account is found.</returns>
 	public async Task<IAccount?> FetchSignedInUserFromCache()
 	{
 		Exception<NullReferenceException>.ThrowOn(() => PublicClientApplication == null, _pCANotInitializedExceptionMessage);
 
 		var accounts = await PublicClientApplication.GetAccountsAsync();
 
-		// Error corner case: we should always have 0 or 1 accounts, not expecting > 1
-		// This is just an example of how to resolve this ambiguity, which can arise if more apps share a token cache.
-		// Note that some apps prefer to use a random account from the cache.
 		if (accounts.Count() > 1)
 		{
 			foreach (var acc in accounts)

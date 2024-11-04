@@ -21,7 +21,7 @@ public partial class App : MauiWinUIApplication
 		PlatformConfig.Instance.RedirectUri = $"msal{PublicClientSingleton.Instance.MSALClientHelper.AzureAdConfig.ClientId}://auth";
 
 		// Initialize MSAL
-		var existinguser = Task.Run(PublicClientSingleton.Instance.MSALClientHelper.InitializePublicClientAppAsync).Result;
+		PublicClientSingleton.Instance.MSALClientHelper.InitializePublicClientAppAsync().Wait();
 	}
 
 	protected override MauiApp CreateMauiApp() => MauiProgram.CreateMauiApp();

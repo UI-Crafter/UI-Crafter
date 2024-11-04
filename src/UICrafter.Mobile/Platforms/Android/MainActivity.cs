@@ -18,7 +18,7 @@ public class MainActivity : MauiAppCompatActivity
 		PlatformConfig.Instance.ParentWindow = this;
 
 		// Initialize MSAL and platformConfig is set
-		_ = Task.Run(PublicClientSingleton.Instance.MSALClientHelper.InitializePublicClientAppAsync).Result;
+		PublicClientSingleton.Instance.MSALClientHelper.InitializePublicClientAppAsync().Wait();
 	}
 
 	protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)

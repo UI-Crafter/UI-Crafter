@@ -3,6 +3,8 @@ namespace UICrafter.Mobile;
 using System.Net.Http.Headers;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Components.Authorization;
+using Microsoft.Identity.Client;
+using Serilog;
 using UICrafter.Mobile.MSALClient;
 
 public class CustomAuthStateProvider : AuthenticationStateProvider
@@ -18,6 +20,36 @@ public class CustomAuthStateProvider : AuthenticationStateProvider
 
 	public override Task<AuthenticationState> GetAuthenticationStateAsync() => Task.FromResult(new AuthenticationState(_currentUser));
 
+	private async void InitializeAuthenticationStateAsync()
+	{
+		try
+		{
+			// Attempt to acquire a cached token silently
+			var result = await PublicClientSingleton.Instance
+				.MSALClientHelper
+				.TrySignInUserSilently(PublicClientSingleton.Instance.GetScopes()!)
+				.ConfigureAwait(false);
+
+			// Set the authenticated user if a cached token is available
+			if (result != null)
+			{
+				_currentUser = CreateClaimsPrincipal(result);
+				_httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", result.IdToken);
+			}
+		}
+		catch (MsalUiRequiredException)
+		{
+			// Remain in unauthenticated state if no cached token is available
+			_currentUser = new ClaimsPrincipal(new ClaimsIdentity());
+		}
+		catch (Exception ex)
+		{
+			Log.Error("Failed to initialize authentication state", ex);
+		}
+
+		NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(_currentUser)));
+	}
+
 	public async Task LogInAsync()
 	{
 		var loginTask = LogInAsyncCore();
@@ -27,55 +59,47 @@ public class CustomAuthStateProvider : AuthenticationStateProvider
 
 	private async Task<AuthenticationState> LogInAsyncCore()
 	{
-		var user = await LoginWithPublicClientSingletonAsync();
-		_currentUser = user;
+		try
+		{
+			// Acquire token interactively
+			var result = await PublicClientSingleton.Instance
+				.MSALClientHelper
+				.SignInUserAndAcquireAccessToken(PublicClientSingleton.Instance.GetScopes()!);
+
+			// Set user with claims from result
+			_currentUser = CreateClaimsPrincipal(result!);
+			_httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", result!.IdToken);
+
+			var response = await _httpClient.PutAsync("user/authenticated", null);
+			if (!response.IsSuccessStatusCode)
+			{
+				// Handle failed registration if necessary
+				throw new InvalidOperationException("Backend login registration failed.");
+			}
+		}
+		catch (Exception ex)
+		{
+			Log.Error("Error during interactive login", ex);
+		}
+
 		return new AuthenticationState(_currentUser);
 	}
 
-	private async Task<ClaimsPrincipal> LoginWithPublicClientSingletonAsync()
-	{
-		// Set whether the interactive login should use the embedded or system browser
-		PublicClientSingleton.Instance.UseEmbedded = true;
-
-		// Acquire token interactively using PublicClientSingleton
-		var result = await PublicClientSingleton.Instance.AcquireTokenInteractiveAsync(PublicClientSingleton.Instance.GetScopes()!);
-
-		var claims = new List<Claim> { new Claim("AccessToken", result.IdToken) };
-		claims.AddRange(result.ClaimsPrincipal.Claims);
-
-		var identity = new ClaimsIdentity(claims, "Custom", "name", ClaimTypes.Role);
-		var principal = new ClaimsPrincipal(identity);
-
-		// Set the access token in the HTTP client headers
-		_httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", result.IdToken);
-
-		var response = await _httpClient.PutAsync("user/authenticated", null);
-		if (!response.IsSuccessStatusCode)
-		{
-			// Handle failed registration if necessary
-			throw new InvalidOperationException("Backend login registration failed.");
-		}
-
-		return principal;
-	}
-
-	public void Logout()
+	public async Task SignOutAsync()
 	{
 		_currentUser = new ClaimsPrincipal(new ClaimsIdentity());
-		PublicClientSingleton.Instance.SignOutAsync(); // Clear user cache in singleton
+		await PublicClientSingleton.Instance.MSALClientHelper.SignOutUserAsync();
+		_httpClient.DefaultRequestHeaders.Authorization = null;
+
 		NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(_currentUser)));
 	}
 
-	private async void InitializeAuthenticationStateAsync()
+	private static ClaimsPrincipal CreateClaimsPrincipal(AuthenticationResult result)
 	{
-		// Check if there is a cached user in the singleton and initialize _currentUser accordingly
-		var cachedUser = await PublicClientSingleton.Instance.AcquireTokenSilentAsync(PublicClientSingleton.Instance.GetScopes()!);
-		if (cachedUser != null)
-		{
-			var claims = new List<Claim> { new Claim("AccessToken", cachedUser) };
-			_currentUser = new ClaimsPrincipal(new ClaimsIdentity(claims, "Custom", "name", ClaimTypes.Role));
-			_httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", cachedUser);
-			NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(_currentUser)));
-		}
+		var claims = new List<Claim> { new("AccessToken", result.IdToken) };
+		claims.AddRange(result.ClaimsPrincipal.Claims);
+
+		var identity = new ClaimsIdentity(claims, "Custom", "name", ClaimTypes.Role);
+		return new ClaimsPrincipal(identity);
 	}
 }

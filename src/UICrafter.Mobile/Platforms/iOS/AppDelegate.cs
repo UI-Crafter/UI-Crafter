@@ -15,7 +15,7 @@ public class AppDelegate : MauiUIApplicationDelegate
 		PlatformConfig.Instance.RedirectUri = $"msal{PublicClientSingleton.Instance.MSALClientHelper.AzureAdConfig.ClientId}://auth";
 
 		// Initialize MSAL and platformConfig is set
-		var existinguser = Task.Run(PublicClientSingleton.Instance.MSALClientHelper.InitializePublicClientAppAsync).Result;
+		PublicClientSingleton.Instance.MSALClientHelper.InitializePublicClientAppAsync().Wait();
 
 		return base.FinishedLaunching(application, launchOptions);
 	}
