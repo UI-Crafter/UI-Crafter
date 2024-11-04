@@ -23,6 +23,7 @@ message UIButton{
 message UIInputField{
 	string Label = 1;
 	string Value = 2;
+	string LogicalName = 3;
 }
 
 message UITextbox{
