@@ -11,7 +11,7 @@
                 You can explore the app by clicking below:
             </MudText>
 
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="NavigateToAppViews" Class="mt-2 animate__animated animate__pulse animate__infinite">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Href="/appview" Class="mt-2 animate__animated animate__pulse animate__infinite">
                 App Views
             </MudButton>
         </Authorized>
@@ -21,10 +21,10 @@
             </MudText>
 
             <MudStack Spacing="1" Justify="Justify.Center" AlignItems="AlignItems.Center" Class="mt-4">
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="NavigateToLogin" Class="login-button animate__animated animate__fadeIn">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Href="/" Class="login-button animate__animated animate__fadeIn">
                     Login
                 </MudButton>
-                <MudButton Variant="Variant.Outlined" Color="Color.Secondary" OnClick="NavigateToRegister" Class="register-button animate__animated animate__fadeIn">
+                <MudButton Variant="Variant.Outlined" Color="Color.Secondary" Href="/" Class="register-button animate__animated animate__fadeIn">
                     Register
                 </MudButton>
             </MudStack>
@@ -34,19 +34,4 @@
 </MudContainer>
 
 @code {
- 
-    private void NavigateToLogin()
-    {
-        Navigation.NavigateTo("/");
-    }
-
-    private void NavigateToRegister()
-    {
-        Navigation.NavigateTo("/");
-    }
-
-    private void NavigateToAppViews()
-    {
-        Navigation.NavigateTo("/appview");
-    }
 }

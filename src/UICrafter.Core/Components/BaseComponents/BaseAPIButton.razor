@@ -1,12 +1,12 @@
 <MudContainer Class="d-flex justify-center pa-1">
-    <MudButton Class="mb-2" Variant="Variant.Filled" Color="@buttonColor" OnClick="OnClick" @onfocus="OnFocus">
+    <MudButton Class="mb-2" Variant="Variant.Filled" Color="@ButtonColor" OnClick="OnClick" @onfocus="OnFocus">
         @ButtonText
     </MudButton>
 </MudContainer>
 
 @code {
     protected string ButtonText { get; set; } = string.Empty;
-    protected Color buttonColor;
+    protected Color ButtonColor;
     protected EventCallback<MouseEventArgs> OnClick { get; set; }
     protected EventCallback<FocusEventArgs> OnFocus { get; set; }
 }

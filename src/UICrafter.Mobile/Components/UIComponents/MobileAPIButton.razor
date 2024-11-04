@@ -30,29 +30,36 @@
         var httpClient = HttpClientProvider.GetDefaultHttpClient();
         try
         {
-            //buttonColor = Color.Primary;
-            _processing = true;
-            var originalLabel = Button.Button.Label;
+            var response = await httpClient.GetAsync(Button.Button.URL);
 
-            var response = await httpClient.GetStringAsync(Button.Button.URL);
-
-            if (response == null)
+            if (response.IsSuccessStatusCode)
             {
+                var responseData = await response.Content.ReadAsStringAsync(); ;
 
-                buttonColor = Color.Error;
-                return;
+                // Update the button color and other state based on successful response
+                ButtonColor = Color.Success;
+                _processing = false;
+
+                // Notify subscribers with the button GUID and the response data
+                StupidStore.NotifySubscribers(Button.Guid, responseData);
             }
+            else
+            {
+                // Handle unsuccessful response (e.g., error status code)
+                ButtonColor = Color.Error;
+                _processing = false;
 
-            buttonColor = Color.Success;
-            _processing = false;
-
-            StupidStore.NotifySubscribers(Button.Guid, response);
+                // Optionally log or handle error information
+                var errorMessage = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"Error: {errorMessage}");
+            }
         }
         catch (Exception ex)
         {
-            Log.Debug($"Error calling API for button {Button.Button.Label}: {ex.Message}");
-            buttonColor = Color.Error;
+            // Handle exceptions (e.g., network issues, deserialization errors)
+            ButtonColor = Color.Error;
             _processing = false;
+            Console.WriteLine($"Exception: {ex.Message}");
         }
     }
 }
