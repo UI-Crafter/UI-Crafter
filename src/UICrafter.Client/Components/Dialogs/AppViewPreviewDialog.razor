@@ -1,7 +1,7 @@
 <MudDialog Class="" Style="height: 75vh">
     <DialogContent>
         @* Extract from Mobile: AppViewPage *@
-        <CascadingValue Value="stupidStore">
+        <CascadingValue Value="jsonPublisher">
             @foreach (var component in UIComponents)
             {
                 @switch (component.ComponentCase)
@@ -34,7 +34,7 @@
     [Parameter]
     public required RepeatedField<UIComponent> UIComponents { get; set; }
 
-    private JsonPublisher stupidStore = new JsonPublisher();
+    private JsonPublisher jsonPublisher = new JsonPublisher();
 
     protected override async Task OnInitializedAsync()
     {

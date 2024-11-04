@@ -23,9 +23,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Update="Components\Dialogs\AppViewPreviewDialog.razor">
-      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
-    </Content>
     <Content Update="Pages\AuthenticationError.razor">
       <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
     </Content>
