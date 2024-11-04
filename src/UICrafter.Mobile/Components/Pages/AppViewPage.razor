@@ -1,4 +1,5 @@
 @page "/appview/{viewId:long?}"
+@attribute [Authorize]
 
 @using UICrafter.Mobile.Components.UIComponents
 @inject IAppViewRepository AppViewRepository
@@ -58,7 +59,7 @@ else
     private AppView? appView;
 
     private UIComponentList componentList = new UIComponentList();
-    private StupidStore stupidStore = new StupidStore();
+    private JsonPublisher stupidStore = new JsonPublisher();
 
     private long? _oldId;
     private bool _isLoading = false;
