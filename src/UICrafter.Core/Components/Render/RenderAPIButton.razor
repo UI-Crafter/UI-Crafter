@@ -1,0 +1,65 @@
+@inherits BaseAPIButton
+@inject IHttpClientProvider HttpClientProvider
+
+@{
+    base.BuildRenderTree(__builder);
+}
+
+@code {
+    [Parameter]
+    public required UIComponent Button { get; set; }
+
+    [CascadingParameter]
+    public required JsonPublisher StupidStore { get; set; }
+
+
+    private string ModifiedURL { get; set; } = string.Empty;
+
+    private bool _processing = false;
+
+    protected override void OnInitialized()
+    {
+        ModifiedURL = Button.Button.URL;
+        ButtonText = Button.Button.Label;
+        OnClick = EventCallback.Factory.Create<MouseEventArgs>(this, CallApi);
+    }
+
+
+    private async Task CallApi()
+    {
+        var httpClient = HttpClientProvider.GetDefaultHttpClient();
+        try
+        {
+            var response = await httpClient.GetAsync(Button.Button.URL);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var responseData = await response.Content.ReadAsStringAsync(); ;
+
+                // Update the button color and other state based on successful response
+                ButtonColor = Color.Success;
+                _processing = false;
+
+                // Notify subscribers with the button GUID and the response data
+                StupidStore.NotifySubscribers(Button.Guid, responseData);
+            }
+            else
+            {
+                // Handle unsuccessful response (e.g., error status code)
+                ButtonColor = Color.Error;
+                _processing = false;
+
+                // Optionally log or handle error information
+                var errorMessage = await response.Content.ReadAsStringAsync();
+                Console.WriteLine($"Error: {errorMessage}");
+            }
+        }
+        catch (Exception ex)
+        {
+            // Handle exceptions (e.g., network issues, deserialization errors)
+            ButtonColor = Color.Error;
+            _processing = false;
+            Console.WriteLine($"Exception: {ex.Message}");
+        }
+    }
+}
