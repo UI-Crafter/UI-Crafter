@@ -19,3 +19,9 @@ body {
 .uicrafter-switch .mud-switch-base.mud-checked + .mud-switch-track {
 	background-color: var(--mud-palette-primary);
 }
+
+
+.uicrafter-dialog .mud-dialog-content {
+		margin: 0px;
+		padding: 0px;
+}

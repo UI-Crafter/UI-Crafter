@@ -20,6 +20,13 @@ public class AppViewRepository : IAppViewRepository
 		return response.AppViews;
 	}
 
+	public async Task<IList<AppView>> GetPublicAppViews()
+	{
+		var response = await _appViewServiceClient.ListPublicAppViewsAsync(new Google.Protobuf.WellKnownTypes.Empty());
+
+		return response.AppViews;
+	}
+
 	public async Task<AppView> GetAppViewById(long id) => await _appViewServiceClient.GetAppViewAsync(new GetAppViewRequest { Id = id });
 
 	public async Task<AppView> CreateAppView(AppView view) => await _appViewServiceClient.CreateAppViewAsync(new CreateAppViewRequest { AppView = view });
