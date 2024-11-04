@@ -1,0 +1,131 @@
+@using System.Text.Json
+@inherits BaseTextBox
+
+@{
+    base.BuildRenderTree(__builder);
+}
+
+@code {
+    [Parameter]
+    public required UIComponent Textbox { get; set; }
+
+    [CascadingParameter]
+    public required JsonPublisher JSONPublisher { get; set; }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+
+        Label = Textbox.Textbox.Label;
+        Content = Textbox.Textbox.Content;
+        Lines = Textbox.Textbox.NumberOfLines;
+
+
+        if (!string.IsNullOrEmpty(Textbox.Textbox.SourceRef))
+        {
+            JSONPublisher.Subscribe(Textbox.Textbox.SourceRef, UpdateTextboxContent);
+        }
+    }
+
+    private void UpdateTextboxContent(Dictionary<string, object> jsonResponse)
+    {
+        if (string.IsNullOrEmpty(Textbox.Textbox.JsonField))
+        {
+            Content = "No JsonField specified.";
+        }
+        else
+        {
+
+            if (Textbox.Textbox.JsonField == "response")
+            {
+                List<string> values = ExtractValues(jsonResponse);
+
+                string description = string.Join(" ", values);
+
+                Content = description;
+                StateHasChanged();
+                return;
+            }
+            else
+            {
+                string fieldName = Textbox.Textbox.JsonField;
+
+                if (jsonResponse.TryGetValue(fieldName, out var fieldValue))
+                {
+                    string description = ConvertValueToString(fieldValue);
+
+                    Content = description;
+                }
+                else
+                {
+                    Content = $"Field '{fieldName}' not found in JSON response.";
+                }
+            }
+        }
+
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        JSONPublisher?.Unsubscribe(Textbox.Textbox.SourceRef, UpdateTextboxContent);
+    }
+
+    private string ConvertValueToString(object value)
+    {
+        if (value is List<object> list)
+        {
+            return string.Join(" ", list.Select(item => item.ToString()));
+        }
+        else if (value is Dictionary<string, object> dict)
+        {
+            return JsonSerializer.Serialize(dict);
+        }
+        else
+        {
+            return value?.ToString() ?? string.Empty;
+        }
+    }
+
+    private List<string> ExtractValues(object obj, string parentName = "", int indentLevel = 0, bool isArrayItem = false)
+    {
+        List<string> values = new List<string>();
+        string indent = new string(' ', indentLevel * 2);
+
+        if (obj is Dictionary<string, object> dict)
+        {
+            foreach (var kvp in dict)
+            {
+                values.AddRange(ExtractValues(kvp.Value, kvp.Key, indentLevel));
+            }
+        }
+        else if (obj is List<object> list)
+        {
+            if (!string.IsNullOrEmpty(parentName) && !isArrayItem)
+            {
+                values.Add($"{indent}{parentName}:");
+            }
+
+            for (int i = 0; i < list.Count; i++)
+            {
+                var item = list[i];
+
+                values.AddRange(ExtractValues(item, $"{parentName}[{i}]", indentLevel + 1, isArrayItem: true));
+            }
+        }
+        else if (obj != null)
+        {
+
+            if (!string.IsNullOrEmpty(parentName) && !isArrayItem)
+            {
+                values.Add($"{indent}{parentName}: {obj}");
+            }
+            else
+            {
+                values.Add($"{indent}- {obj}");
+            }
+        }
+
+        return values;
+    }
+}

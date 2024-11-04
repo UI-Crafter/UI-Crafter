@@ -1,6 +1,6 @@
 @inject IAppViewRepository AppViewRepository
 
-@if (isLoading == true)
+@if (IsLoading == true)
 {
     <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
 }
@@ -12,8 +12,9 @@ else
     }
     else
     {
+        <MudTextField @bind-Value="SearchString" Class="ma-2" Placeholder="Search" Adornment="Adornment.Start" Immediate="true" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium"></MudTextField>
         <MudList T="AppView">
-            @foreach (var view in AppViews)
+            @foreach (var view in AppViews.Where(x => x.Name.Contains(SearchString, StringComparison.InvariantCultureIgnoreCase)))
             {
                 <MudListItem OnClick="() => HandleClick(view)" Href=@(SetupHref(view))>
                     <MudText>Name: @view.Name</MudText>
@@ -30,7 +31,8 @@ else
 
 @code {
     private IList<AppView> AppViews { get; set; } = new List<AppView>();
-    private bool isLoading { get; set; } = true;
+    private bool IsLoading { get; set; } = true;
+    private string SearchString { get; set; } = string.Empty;
 
     protected bool LoadPublic { get; set; } = false;
 
@@ -59,7 +61,7 @@ else
             }
             finally
             {
-                isLoading = false;
+                IsLoading = false;
                 StateHasChanged();
             }
         }

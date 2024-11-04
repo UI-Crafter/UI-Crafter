@@ -1,0 +1,49 @@
+<MudDialog Class="" Style="height: 75vh">
+    <DialogContent>
+        @* Extract from Mobile: AppViewPage *@
+        <CascadingValue Value="jsonPublisher">
+            <CascadingValue Value="inputFieldPublisher">
+                @foreach (var component in UIComponents)
+                {
+                    @switch (component.ComponentCase)
+                    {
+                        case UIComponent.ComponentOneofCase.Button:
+                            <RenderAPIButton Button="component" />
+                            break;
+                        case UIComponent.ComponentOneofCase.InputField:
+                            <RenderInputField InputField="component" />
+                            break;
+                        case UIComponent.ComponentOneofCase.Textbox:
+                            <RenderTextBox Textbox="component" />
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            </CascadingValue>
+        </CascadingValue>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="() => MudDialog.Close()">Close</MudButton>
+    </DialogActions>
+</MudDialog>
+
+
+@code {
+    [CascadingParameter]
+    private MudDialogInstance MudDialog { get; set; } = null!;
+
+    [Parameter]
+    public required RepeatedField<UIComponent> UIComponents { get; set; }
+
+    private JsonPublisher jsonPublisher = new JsonPublisher();
+    private InputFieldPublisher inputFieldPublisher = new InputFieldPublisher();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        MudDialog.Options.NoHeader = true;
+        MudDialog.Options.MaxWidth = MaxWidth.Small;
+        MudDialog.Options.FullWidth = true;
+    }
+}
