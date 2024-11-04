@@ -205,4 +205,19 @@ public class MSALClientHelper
 
 		return accounts.SingleOrDefault();
 	}
+
+	public async Task<AuthenticationResult?> ForceRefreshAccessTokenAsync(string[] scopes)
+	{
+		var existingUser = await FetchSignedInUserFromCache();
+
+		if (existingUser is not null)
+		{
+			return await PublicClientApplication
+				.AcquireTokenSilent(scopes, existingUser)
+				.WithForceRefresh(true)
+				.ExecuteAsync();
+		}
+
+		return null; // or handle accordingly if no valid account exists
+	}
 }

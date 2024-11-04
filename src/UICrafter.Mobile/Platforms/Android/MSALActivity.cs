@@ -8,7 +8,7 @@ using Microsoft.Identity.Client;
 [IntentFilter([Intent.ActionView],
 		Categories = [Intent.CategoryBrowsable, Intent.CategoryDefault],
 		DataHost = "auth",
-		DataScheme = "msal3469f319-54f9-42d5-b2af-4d24c06994dc")]
+		DataScheme = "msalffacc574-3df3-471f-ae2b-71a6a42f1978")]
 public class MsalActivity : BrowserTabActivity
 {
 }
