@@ -1,9 +1,6 @@
 @page "/appview/{viewId:long?}"
 @attribute [Authorize]
 
-@inject IAppViewRepository AppViewRepository
-@inject NavigationManager NavigationManager
-
 <PageTitle>@appView.Name</PageTitle>
 
 
