@@ -11,7 +11,7 @@ public class DownStreamApiConfig
 	/// <value>
 	/// The scopes.
 	/// </value>
-	public string Scopes { get; set; }
+	public string? Scopes { get; set; }
 
 	/// <summary>
 	/// Gets the scopes in a format as expected by the various MSAL SDK methods.
@@ -19,6 +19,6 @@ public class DownStreamApiConfig
 	/// <value>
 	/// The scopes.
 	/// </value>
-	public string[] ScopesArray => Scopes.Split(' ');
+	public string[]? ScopesArray => Scopes?.Split(' ');
 
 }

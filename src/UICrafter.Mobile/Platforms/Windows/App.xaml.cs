@@ -3,6 +3,7 @@
 
 namespace UICrafter.Mobile.WinUI;
 
+using Microsoft.UI.Xaml;
 using UICrafter.Mobile.MSALClient;
 
 /// <summary>
@@ -16,8 +17,6 @@ public partial class App : MauiWinUIApplication
 	/// </summary>
 	public App()
 	{
-		this.InitializeComponent();
-
 		// configure redirect URI for your application
 		PlatformConfig.Instance.RedirectUri = $"msal{PublicClientSingleton.Instance.MSALClientHelper.AzureAdConfig.ClientId}://auth";
 
@@ -26,4 +25,12 @@ public partial class App : MauiWinUIApplication
 	}
 
 	protected override MauiApp CreateMauiApp() => MauiProgram.CreateMauiApp();
+
+	protected override void OnLaunched(LaunchActivatedEventArgs args)
+	{
+		base.OnLaunched(args);
+
+		var app = UICrafter.Mobile.App.Current;
+		PlatformConfig.Instance.ParentWindow = (app.Windows[0].Handler.PlatformView as MauiWinUIWindow)!.WindowHandle;
+	}
 }

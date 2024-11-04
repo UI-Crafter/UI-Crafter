@@ -9,7 +9,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Identity.Client;
 
 /// <summary>
-/// This is a singleton implementation to wrap the MSALClient and associated classes to support static initialization model for platforms that need this.
+/// This is a singleton implementation to wrap the MSALClient and associated classes to support static initialization model for platforms that need 
 /// </summary>
 public class PublicClientSingleton
 {
@@ -21,12 +21,12 @@ public class PublicClientSingleton
 	/// <summary>
 	/// This is the configuration for the application found within the 'appsettings.json' file.
 	/// </summary>
-	private static IConfiguration AppConfiguration;
+	private static IConfiguration _appConfiguration = default!;
 
 	/// <summary>
 	/// Gets the instance of MSALClientHelper.
 	/// </summary>
-	public DownstreamApiHelper DownstreamApiHelper { get; }
+	public DownStreamApiConfig DownStreamApiConfig { get; }
 
 	/// <summary>
 	/// Gets the instance of MSALClientHelper.
@@ -36,7 +36,7 @@ public class PublicClientSingleton
 	/// <summary>
 	/// This will determine if the Interactive Authentication should be Embedded or System view
 	/// </summary>
-	public bool UseEmbedded { get; set; } = false;
+	public bool UseEmbedded { get; set; }
 
 	//// Custom logger for sample
 	//private readonly IdentityLogger _logger = new IdentityLogger();
@@ -50,15 +50,14 @@ public class PublicClientSingleton
 		// Load config
 		var assembly = Assembly.GetExecutingAssembly();
 		using var stream = assembly.GetManifestResourceStream("UICrafter.Mobile.appsettings.json");
-		AppConfiguration = new ConfigurationBuilder()
-			.AddJsonStream(stream)
+		_appConfiguration = new ConfigurationBuilder()
+			.AddJsonStream(stream!)
 			.Build();
 
-		AzureAdConfig azureADConfig = AppConfiguration.GetSection("AzureAd").Get<AzureAdConfig>();
-		this.MSALClientHelper = new MSALClientHelper(azureADConfig);
+		var azureADConfig = _appConfiguration.GetSection("AzureAd").Get<AzureAdConfig>()!;
+		MSALClientHelper = new MSALClientHelper(azureADConfig);
 
-		DownStreamApiConfig downStreamApiConfig = AppConfiguration.GetSection("DownstreamApi").Get<DownStreamApiConfig>();
-		this.DownstreamApiHelper = new DownstreamApiHelper(downStreamApiConfig, this.MSALClientHelper);
+		DownStreamApiConfig = _appConfiguration.GetSection("DownstreamApi").Get<DownStreamApiConfig>()!;
 	}
 
 	/// <summary>
@@ -68,7 +67,7 @@ public class PublicClientSingleton
 	public async Task<string> AcquireTokenSilentAsync()
 	{
 		// Get accounts by policy
-		return await this.AcquireTokenSilentAsync(this.GetScopes()).ConfigureAwait(false);
+		return await AcquireTokenSilentAsync(GetScopes()!).ConfigureAwait(false);
 	}
 
 	/// <summary>
@@ -78,7 +77,7 @@ public class PublicClientSingleton
 	/// <returns>An access token</returns>
 	public async Task<string> AcquireTokenSilentAsync(string[] scopes)
 	{
-		return await this.MSALClientHelper.SignInUserAndAcquireAccessToken(scopes).ConfigureAwait(false);
+		return await MSALClientHelper.SignInUserAndAcquireAccessToken(scopes).ConfigureAwait(false);
 	}
 
 	/// <summary>
@@ -88,8 +87,8 @@ public class PublicClientSingleton
 	/// <returns></returns>
 	internal async Task<AuthenticationResult> AcquireTokenInteractiveAsync(string[] scopes)
 	{
-		this.MSALClientHelper.UseEmbedded = this.UseEmbedded;
-		return await this.MSALClientHelper.SignInUserInteractivelyAsync(scopes).ConfigureAwait(false);
+		MSALClientHelper.UseEmbedded = UseEmbedded;
+		return await MSALClientHelper.SignInUserInteractivelyAsync(scopes).ConfigureAwait(false);
 	}
 
 	/// <summary>
@@ -98,15 +97,15 @@ public class PublicClientSingleton
 	/// <returns></returns>
 	internal async Task SignOutAsync()
 	{
-		await this.MSALClientHelper.SignOutUserAsync().ConfigureAwait(false);
+		await MSALClientHelper.SignOutUserAsync().ConfigureAwait(false);
 	}
 
 	/// <summary>
 	/// Gets scopes for the application
 	/// </summary>
 	/// <returns>An array of all scopes</returns>
-	internal string[] GetScopes()
+	internal string[]? GetScopes()
 	{
-		return this.DownstreamApiHelper.DownstreamApiConfig.ScopesArray;
+		return DownStreamApiConfig.ScopesArray;
 	}
 }

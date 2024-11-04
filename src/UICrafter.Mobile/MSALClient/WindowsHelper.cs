@@ -1,6 +1,8 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License.
 
+#pragma warning disable SYSLIB1054 // Use 'LibraryImportAttribute' instead of 'DllImportAttribute' to generate P/Invoke marshalling code at compile time
+
 namespace UICrafter.Mobile.MSALClient;
 
 using System.Runtime.InteropServices;
@@ -30,6 +32,7 @@ public static class WindowsHelper
 	/// <param name="flags">The ancestor to be retrieved.</param>
 	/// <returns>The return value is the handle to the ancestor window.</returns>
 	[DllImport("user32.dll", ExactSpelling = true)]
+
 	private static extern IntPtr GetAncestor(IntPtr hwnd, GetAncestorFlags flags);
 
 	[DllImport("kernel32.dll")]
@@ -41,8 +44,8 @@ public static class WindowsHelper
 	/// <returns></returns>
 	public static IntPtr GetConsoleOrTerminalWindow()
 	{
-		IntPtr consoleHandle = GetConsoleWindow();
-		IntPtr handle = GetAncestor(consoleHandle, GetAncestorFlags.GetRootOwner);
+		var consoleHandle = GetConsoleWindow();
+		var handle = GetAncestor(consoleHandle, GetAncestorFlags.GetRootOwner);
 
 		return handle;
 	}
