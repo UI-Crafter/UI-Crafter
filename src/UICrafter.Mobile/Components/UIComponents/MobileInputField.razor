@@ -23,11 +23,18 @@
         Log.Information($"InputField: {Label} - {Value} - {LogicalName}");
     }
 
-    protected override void OnChange()
-    {
+    private void OnValueChange(string value)
+	{
         Log.Information("Changed Input field");
-        Value = Value?.ToString() ?? "";     
+        Value = Value?.ToString() ?? "";
         inputFieldPublisher.NotifySubscribers(InputField.InputField.LogicalName, Value);
 	}
+
+ //    protected override void OnChange()
+ //    {
+ //        Log.Information("Changed Input field");
+ //        Value = Value?.ToString() ?? "";     
+ //        inputFieldPublisher.NotifySubscribers(InputField.InputField.LogicalName, Value);
+	// }
 }
 
