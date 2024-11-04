@@ -1,6 +1,6 @@
 @inject IAppViewRepository AppViewRepository
 
-<MudText Typo="Typo.h4">App Views</MudText>
+<MudText Class="my-2" Typo="Typo.h4">App Views</MudText>
 
 @if (isLoading == true)
 {
@@ -8,21 +8,33 @@
 }
 else
 {
-    <MudList T="AppView">
-        @foreach (var view in AppViews)
-        {
-            <MudListItem OnClick="() => HandleClick(view)" Href=@(SetupHref(view))>
-                <MudText>@view.Name</MudText>
-            </MudListItem>
-        }
-    </MudList>
+    if (AppViews.Count == 0)
+    {
+        <MudText>No App-Views were found</MudText>
+    }
+    else
+    {
+        <MudList T="AppView">
+            @foreach (var view in AppViews)
+            {
+                <MudListItem OnClick="() => HandleClick(view)" Href=@(SetupHref(view))>
+                    <MudText>Name: @view.Name</MudText>
+                    <MudText>Last Updated: @view.UpdatedAt.ToShortDateString()</MudText>
+                    <MudStack Row>
+                        <MudText>Public:</MudText>
+                        <MudIcon Icon="@(view.IsPublic ? Icons.Material.Filled.Public : Icons.Material.Filled.PublicOff)" />
+                    </MudStack>
+                </MudListItem>
+            }
+        </MudList>
+    }
 }
 
 @code {
     private IList<AppView> AppViews { get; set; } = new List<AppView>();
     private bool isLoading { get; set; } = true;
 
-    protected virtual void HandleClick(AppView view){}
+    protected virtual void HandleClick(AppView view) { }
     protected virtual string? SetupHref(AppView view) { return null; }
 
     // protected override async void OnParametersSet()
