@@ -38,6 +38,24 @@ public class AppViewRepository : IAppViewRepository
 			.ToListAsync();
 	}
 
+	public async Task<IList<AppView>> GetPublicAppViews()
+	{
+		return await _dbContext
+			.AppViews
+			.AsNoTracking()
+			.Where(x => x.IsPublic)
+			.Select(x => new AppView
+			{
+				Id = x.Id,
+				UserId = x.UserId.ToString(),
+				Name = x.Name,
+				CreatedAt = x.CreatedAtUTC,
+				UpdatedAt = x.UpdatedAtUTC,
+				IsPublic = x.IsPublic,
+			})
+			.ToListAsync();
+	}
+
 	public async Task<AppView> GetAppViewById(long id)
 	{
 		var user = _httpContextAccessor.HttpContext!.User;

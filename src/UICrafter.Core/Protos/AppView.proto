@@ -74,4 +74,11 @@ service AppViewService {
       get: "/v1/app_views"
     };
   }
+
+  // List all public AppViews
+  rpc ListPublicAppViews(google.protobuf.Empty) returns (ListAppViewsResponse) {
+    option (google.api.http) = {
+      get: "/v1/public_app_views"
+    };
+  }
 }
