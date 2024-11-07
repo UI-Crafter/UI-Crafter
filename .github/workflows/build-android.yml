@@ -1,0 +1,45 @@
+name: Build MAUI App
+
+on:
+  push:
+    branches:
+      - main
+      - GitHub-Actions-Android
+  pull_request:
+    branches:
+      - main
+      - GitHub-Actions-Android
+  workflow_dispatch:
+
+env:
+  DOTNET_VERSION: '8.0.x'
+
+jobs:
+  buildAndroid:
+    runs-on: windows-2022
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup .NET SDK ${{ env.DOTNET_VERSION }}
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Install .NET MAUI workloads
+        run: dotnet workload install maui
+
+      - name: Restore NuGet packages
+        run: |
+          cd src\UICrafter.Mobile
+          dotnet restore
+
+      - name: Build Android App
+        run: |
+          cd src\UICrafter.Mobile
+          dotnet publish -f net8.0-android -c Release
+
+      - uses: actions/upload-artifact@v3
+        with:
+          name: artifacts-android
+          path: src\UICrafter.Mobile\bin\Release\net8.0-android\publish\
