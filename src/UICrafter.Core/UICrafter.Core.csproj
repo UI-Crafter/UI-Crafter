@@ -24,10 +24,7 @@
   </ItemGroup>
 
 	<ItemGroup>
-		<Protobuf Include="protos\annotations.proto" GrpcServices="Both" />
-		<Protobuf Include="protos\AppView.proto" GrpcServices="Both" />
-		<Protobuf Include="protos\http.proto" GrpcServices="Both" />
-		<Protobuf Include="protos\UIComponents.proto" GrpcServices="Both" />
+		<Protobuf Include="**\*.proto" GrpcServices="Both" />
 	</ItemGroup>
 
 </Project>
