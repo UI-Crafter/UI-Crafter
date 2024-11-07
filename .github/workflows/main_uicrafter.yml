@@ -1,12 +1,10 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure: https://github.com/Azure/actions
-
-name: Build and deploy ASP.Net Core app to Azure Web App - UICrafter
+name: Build and Deploy ASP.NET Core App to Azure Web App - UICrafter
 
 on:
   push:
     branches:
       - main
+      - GitHub-Actions-Android
   workflow_dispatch:
 
 jobs:
@@ -14,52 +12,52 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout Code
+        uses: actions/checkout@v4
 
-      - name: Set up .NET Core
+      - name: Set up .NET Core SDK
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.x'
 
+      - name: Restore NuGet packages
+        run: dotnet restore src/UICrafter/UICrafter.csproj
+
       - name: Build with dotnet
-        run: dotnet build --configuration Release
+        run: dotnet build src/UICrafter/UICrafter.csproj --configuration Release --no-restore
 
-      - name: dotnet publish
-        run: dotnet publish -c Release -o ${{env.DOTNET_ROOT}}/myapp
+      - name: Publish the app
+        run: dotnet publish src/UICrafter/UICrafter.csproj --configuration Release --no-build --output ./published_app
 
-      - name: Upload artifact for deployment job
+      - name: Upload Artifact for Deployment
         uses: actions/upload-artifact@v4
         with:
-          name: .net-app
-          path: ${{env.DOTNET_ROOT}}/myapp
+          name: published_app
+          path: ./published_app
 
   deploy:
     runs-on: ubuntu-latest
     needs: build
     environment:
       name: 'Production'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     permissions:
-      id-token: write #This is required for requesting the JWT
+      id-token: write
 
     steps:
-      - name: Download artifact from build job
+      - name: Download Artifact from Build Job
         uses: actions/download-artifact@v4
         with:
-          name: .net-app
-      
+          name: published_app
+
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_CC0BAB8E494C4074BD0EE33F96078FFB }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_437411173E9E41078CAB559A7B2E047F }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_E6B8679180E44F97BBA987560E410D89 }}
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
 
       - name: Deploy to Azure Web App
-        id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
-          app-name: 'UICrafter'
-          slot-name: 'Production'
-          package: .
-          
+          app-name: 'UICrafter'  # Replace with your actual Web App name
+          package: ./published_app
