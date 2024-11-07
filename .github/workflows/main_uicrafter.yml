@@ -23,7 +23,7 @@ jobs:
           dotnet-version: '8.x'
 
       - name: dotnet publish
-        run: dotnet publish -c Release
+        run: dotnet publish -c Release src/UICrafter/
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
