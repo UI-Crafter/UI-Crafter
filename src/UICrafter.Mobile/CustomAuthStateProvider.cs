@@ -2,24 +2,57 @@ namespace UICrafter.Mobile;
 
 using System.Net.Http.Headers;
 using System.Security.Claims;
-using System.Text.Json;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Identity.Client;
+using Serilog;
+using UICrafter.Mobile.MSALClient;
 
-// Inspired from this guide: https://medium.com/@ganeshonline6301/secure-your-net-maui-blazor-hybrid-app-with-azure-entra-id-authentication-0b28a127d66a
-public class CustomAuthStateProvider : AuthenticationStateProvider
+public class CustomAuthStateProvider : AuthenticationStateProvider, IDisposable
 {
-	private const string PrincipalKey = "principal_identity";
 	private readonly HttpClient _httpClient;
 	private ClaimsPrincipal _currentUser = new(new ClaimsIdentity());
+
+	private readonly PeriodicTimer _periodicTimer = new(TimeSpan.FromMinutes(5));
 
 	public CustomAuthStateProvider(HttpClient httpClient)
 	{
 		_httpClient = httpClient;
-		_ = LoadAuthStateAsync();
+		InitializeAuthenticationStateAsync();
+
+		Task.Run(RunTimer);
 	}
 
 	public override Task<AuthenticationState> GetAuthenticationStateAsync() => Task.FromResult(new AuthenticationState(_currentUser));
+
+	private async void InitializeAuthenticationStateAsync()
+	{
+		try
+		{
+			// Attempt to acquire a cached token silently
+			var result = await PublicClientSingleton.Instance
+				.MSALClientHelper
+				.TrySignInUserSilently(PublicClientSingleton.Instance.GetScopes()!)
+				.ConfigureAwait(false);
+
+			// Set the authenticated user if a cached token is available
+			if (result != null)
+			{
+				_currentUser = CreateClaimsPrincipal(result);
+				_httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", result.IdToken);
+			}
+		}
+		catch (MsalUiRequiredException)
+		{
+			// Remain in unauthenticated state if no cached token is available
+			_currentUser = new ClaimsPrincipal(new ClaimsIdentity());
+		}
+		catch (Exception ex)
+		{
+			Log.Error("Failed to initialize authentication state", ex);
+		}
+
+		NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(_currentUser)));
+	}
 
 	public async Task LogInAsync()
 	{
@@ -30,95 +63,88 @@ public class CustomAuthStateProvider : AuthenticationStateProvider
 
 	private async Task<AuthenticationState> LogInAsyncCore()
 	{
-		var user = await LoginWithExternalProviderAsync();
-		_currentUser = user;
+		try
+		{
+			// Acquire token interactively
+			var result = await PublicClientSingleton.Instance
+				.MSALClientHelper
+				.SignInUserAndAcquireAccessToken(PublicClientSingleton.Instance.GetScopes()!);
 
-		// Persist the claims principal identity
-		await SavePrincipalIdentityAsync(_currentUser);
+			// Set user with claims from result
+			_currentUser = CreateClaimsPrincipal(result!);
+			_httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", result!.IdToken);
+
+			var response = await _httpClient.PutAsync("user/authenticated", null);
+			if (!response.IsSuccessStatusCode)
+			{
+				// Handle failed registration if necessary
+				throw new InvalidOperationException("Backend login registration failed.");
+			}
+		}
+		catch (Exception ex)
+		{
+			Log.Error("Error during interactive login", ex);
+		}
 
 		return new AuthenticationState(_currentUser);
 	}
 
-	private async Task<ClaimsPrincipal> LoginWithExternalProviderAsync()
-	{
-		var pcaOptions = new PublicClientApplicationOptions
-		{
-			ClientId = "3469f319-54f9-42d5-b2af-4d24c06994dc",
-			TenantId = "common",
-			RedirectUri = "http://localhost:5002",
-			Instance = "https://uicrafters.b2clogin.com/tfp",
-		};
-
-		var pca = PublicClientApplicationBuilder.CreateWithApplicationOptions(pcaOptions)
-			.WithB2CAuthority("https://uicrafters.b2clogin.com/tfp/uicrafters.onmicrosoft.com/b2c_1_login-register")
-			.Build();
-
-		var scopes = new[] { "openid", "offline_access" };
-		var result = await pca.AcquireTokenInteractive(scopes).ExecuteAsync();
-
-		var claims = new List<Claim> { new Claim("AccessToken", result.IdToken) };
-		claims.AddRange(result.ClaimsPrincipal.Claims);
-
-		var identity = new ClaimsIdentity(claims, "Custom", "name", ClaimTypes.Role);
-		var principal = new ClaimsPrincipal(identity);
-
-		var accessToken = result.IdToken;
-
-		_httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-
-		var response = await _httpClient.PutAsync("user/authenticated", null);
-		if (!response.IsSuccessStatusCode)
-		{
-			// Handle failed registration if necessary
-			throw new InvalidOperationException("Backend login registration failed.");
-		}
-
-		return principal;
-	}
-
-	public void Logout()
+	public async Task SignOutAsync()
 	{
 		_currentUser = new ClaimsPrincipal(new ClaimsIdentity());
-		SecureStorage.Default.Remove(PrincipalKey);
+		await PublicClientSingleton.Instance.MSALClientHelper.SignOutUserAsync();
+		_httpClient.DefaultRequestHeaders.Authorization = null;
+
 		NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(_currentUser)));
 	}
 
-	private async Task LoadAuthStateAsync()
+	private static ClaimsPrincipal CreateClaimsPrincipal(AuthenticationResult result)
 	{
-		var principalJson = await SecureStorage.Default.GetAsync(PrincipalKey);
-		if (!string.IsNullOrEmpty(principalJson))
+		var claims = new List<Claim> { new("AccessToken", result.IdToken) };
+		claims.AddRange(result.ClaimsPrincipal.Claims);
+
+		var identity = new ClaimsIdentity(claims, "Custom", "name", ClaimTypes.Role);
+		return new ClaimsPrincipal(identity);
+	}
+
+	private async Task RunTimer()
+	{
+		while (await _periodicTimer.WaitForNextTickAsync())
 		{
-			var claimsPrincipal = DeserializePrincipal(principalJson);
-			if (claimsPrincipal != null)
+			if (_currentUser.Identity is not null && _currentUser.Identity.IsAuthenticated)
 			{
-				_currentUser = claimsPrincipal;
-				NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(_currentUser)));
+				await RefreshTokenAsync();
 			}
 		}
 	}
 
-	private async Task SavePrincipalIdentityAsync(ClaimsPrincipal principal)
+	private async Task RefreshTokenAsync()
 	{
-		var principalJson = SerializePrincipal(principal);
-		await SecureStorage.Default.SetAsync(PrincipalKey, principalJson);
-	}
-
-	private string SerializePrincipal(ClaimsPrincipal principal)
-	{
-		var claims = principal.Claims.Select(c => new { c.Type, c.Value }).ToList();
-		return JsonSerializer.Serialize(claims);
-	}
-
-	private ClaimsPrincipal DeserializePrincipal(string json)
-	{
-		var claimsData = JsonSerializer.Deserialize<List<Dictionary<string, string>>>(json);
-		if (claimsData == null)
+		try
 		{
-			return new ClaimsPrincipal(new ClaimsIdentity());
-		}
+			// Try to acquire a new access token with force refresh
+			var result = await PublicClientSingleton.Instance.MSALClientHelper.ForceRefreshAccessTokenAsync(PublicClientSingleton.Instance.GetScopes()!);
 
-		var claims = claimsData.Select(c => new Claim(c["Type"], c["Value"])).ToList();
-		var identity = new ClaimsIdentity(claims, "Custom", "name", ClaimTypes.Role);
-		return new ClaimsPrincipal(identity);
+			if (result is not null)
+			{
+				_currentUser = CreateClaimsPrincipal(result);
+				NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(_currentUser)));
+			}
+		}
+		catch (MsalUiRequiredException)
+		{
+			_currentUser = new ClaimsPrincipal(new ClaimsIdentity());
+			NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(_currentUser)));
+		}
+		catch (Exception ex)
+		{
+			Log.Error($"Token refresh failed", ex);
+		}
+	}
+
+	public void Dispose()
+	{
+		_periodicTimer.Dispose();
+		GC.SuppressFinalize(this);
 	}
 }

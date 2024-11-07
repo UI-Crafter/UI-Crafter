@@ -51,9 +51,9 @@
             .LogInAsync();
     }
 
-    public void Logout()
+    public Task Logout()
     {
-        ((CustomAuthStateProvider)AuthenticationStateProvider)
-           .Logout();
+        return ((CustomAuthStateProvider)AuthenticationStateProvider)
+           .SignOutAsync();
     }
 }
