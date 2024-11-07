@@ -4,7 +4,6 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-		<GrpcServiceType Condition="'$(GrpcServiceType)' == ''">Both</GrpcServiceType>
 		<NoWarn>BL0007</NoWarn>
   </PropertyGroup>
 
@@ -27,9 +26,8 @@
 		<PackageReference Include="Serilog.Settings.Configuration" Version="8.0.4" />
   </ItemGroup>
 
-
 	<ItemGroup>
-		<Protobuf Include="protos\**\*.proto" GrpcServices="$(GrpcServiceType)" />
+		<Protobuf Include="protos\**\*.proto" />
 	</ItemGroup>
 
 </Project>
