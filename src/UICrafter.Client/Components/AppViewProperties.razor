@@ -1,4 +1,5 @@
 @inject IDialogService DialogService
+@inject ISnackbar Snackbar
 
 @if (AppView is not null)
 {
@@ -99,6 +100,8 @@
 
     protected override async Task OnInitializedAsync()
     {
+        Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomLeft;
+
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         User = authState.User;
     }
@@ -118,16 +121,17 @@
             if (AppView.Id == 0)
             {
                 AppView = await AppViewRepository.CreateAppView(AppView);
-                Log.Debug("Called Create");
+                Snackbar.Add("App-view was created", Severity.Success);
             }
             else
             {
                 await AppViewRepository.UpdateAppView(AppView);
-                Log.Debug("Called Update");
+                Snackbar.Add("App-view was updated", Severity.Success);
             }
         }
         catch (Exception ex)
         {
+            Snackbar.Add("Error while uploading App-view", Severity.Error);
             Log.Error("Error while saving AppView: {message}", ex.Message);
         }
 
@@ -152,10 +156,13 @@
                 ClearAppView();
 
                 AppView = new AppView();
+
+                Snackbar.Add("App-view was deleted", Severity.Success);
             }
         }
         catch (Exception ex)
         {
+            Snackbar.Add("Error while deleting App-view", Severity.Error);
             Log.Debug("Error while deleting AppView: {message}", ex.Message);
         }
 
@@ -208,6 +215,7 @@
         }
         catch (Exception ex)
         {
+            Snackbar.Add("Error while loading App-view", Severity.Error);
             Log.Debug("Error while loading AppView: {message}", ex.Message);
         }
 
