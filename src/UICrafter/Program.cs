@@ -21,6 +21,7 @@ using Microsoft.OpenApi.Models;
 using UICrafter.Core.DependencyInjection;
 using UICrafter.Core.AppView;
 using UICrafter.Options;
+using MudBlazor;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -105,6 +106,20 @@ builder.Services.AddRazorComponents()
 	.AddInteractiveWebAssemblyComponents();
 
 builder.Services.AddHttpContextAccessor();
+
+//Snackbar settings
+builder.Services.AddMudServices(config =>
+{
+	config.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.BottomLeft;
+
+	config.SnackbarConfiguration.PreventDuplicates = true;
+	config.SnackbarConfiguration.NewestOnTop = false;
+	config.SnackbarConfiguration.ShowCloseIcon = true;
+	config.SnackbarConfiguration.VisibleStateDuration = 1000;
+	config.SnackbarConfiguration.HideTransitionDuration = 500;
+	config.SnackbarConfiguration.ShowTransitionDuration = 500;
+	config.SnackbarConfiguration.SnackbarVariant = Variant.Filled;
+});
 
 var app = builder.Build();
 

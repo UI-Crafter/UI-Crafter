@@ -1,0 +1,84 @@
+@page "/profile"
+@attribute [Authorize]
+
+<PageTitle>User Profile</PageTitle>
+
+<MudContainer MaxWidth="MaxWidth.Medium" Class="pa-4">
+
+    <MudPaper Class="pa-4 my-2">
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Href="/" OnClick="Logout">Logout</MudButton>
+    </MudPaper>
+
+    <MudPaper Class="pa-4 my-2">
+        <h2>User Profile</h2>
+        <MudDivider Class="my-1" DividerType="DividerType.FullWidth" Style="padding: 1px 0;" />
+
+        <MudText Typography="Typography.H6">Name:</MudText>
+        <MudText>@FullName</MudText>
+
+        <MudText Typography="Typography.H6">Email:</MudText>
+        <MudText>@Email</MudText>
+
+        <MudText Typography="Typography.H6">User ID:</MudText>
+        <MudText>@UserId</MudText>
+
+        <MudText Typography="Typography.H6">Issuer:</MudText>
+        <MudText>@Issuer</MudText>
+
+        <MudText Typography="Typography.H6">Token Expiration:</MudText>
+        <MudText>@Expiration</MudText>
+    </MudPaper>
+
+    <MudPaper Class="pa-4 my-2">
+        You have @AppViews.Count AppViews
+        <ul>
+            @foreach (var view in AppViews)
+            {
+                <li>Name: @view.Name</li>
+            }
+        </ul>
+    </MudPaper>
+
+</MudContainer>
+
+@code {
+    [Inject] private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
+    [Inject] private IHttpClientProvider HttpClientProvider { get; set; } = default!;
+    [Inject] private IAppViewRepository AppViewRepository { get; set; } = default!;
+
+    private IEnumerable<Claim> claims = [];
+    private string FullName { get; set; } = string.Empty;
+    private string Email { get; set; } = string.Empty;
+    private string UserId { get; set; } = string.Empty;
+    private string Issuer { get; set; } = string.Empty;
+    private string Expiration { get; set; } = string.Empty;
+    private IList<AppView> AppViews { get; set; } = [];
+
+    [CascadingParameter]
+    private Task<AuthenticationState> AuthState { get; set; } = default!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthState;
+        if (authState is not null)
+        {
+            claims = authState.User.Claims;
+
+            // Extract relevant claims for the profile page
+            FullName = claims.FirstOrDefault(c => c.Type == "name")?.Value ?? "N/A";
+            Email = claims.FirstOrDefault(c => c.Type == "emails")?.Value ?? "N/A";
+            UserId = claims.FirstOrDefault(c => c.Type == "sub")?.Value ?? "N/A";
+            Issuer = claims.FirstOrDefault(c => c.Type == "iss")?.Value ?? "N/A";
+            Expiration = claims.FirstOrDefault(c => c.Type == "exp") != null
+                         ? DateTimeOffset.FromUnixTimeSeconds(long.Parse(claims.First(c => c.Type == "exp").Value)).ToString("g")
+                         : "N/A";
+        }
+
+        AppViews = await AppViewRepository.GetAppViews() ?? new List<AppView>();
+    }
+
+    public Task Logout()
+    {
+        return ((CustomAuthStateProvider)AuthenticationStateProvider).SignOutAsync();
+    }
+}
