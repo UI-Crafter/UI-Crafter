@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - GitHub-Actions-Android
   workflow_dispatch:
 
 env:
