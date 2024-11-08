@@ -58,6 +58,7 @@ jobs:
           path: |
             ~/.nuget/packages
             ~/.dotnet
+            ~/.workload
           key: ${{ runner.os }}-dotnet-${{ env.DOTNET_VERSION }}-maui
           restore-keys: |
             ${{ runner.os }}-dotnet-${{ env.DOTNET_VERSION }}
@@ -68,7 +69,9 @@ jobs:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
       - name: Install .NET MAUI workloads
-        run: dotnet workload install maui
+        run: |
+          cd src\UICrafter.Mobile
+          dotnet workload restore
 
       - name: Restore NuGet packages
         run: |
