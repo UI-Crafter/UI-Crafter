@@ -136,13 +136,16 @@
 
     private async Task DeleteAppView()
     {
-        if (AppView is null) return;
+        if (AppView is null || AppView.Id == 0) return;
 
         Visible = true;
 
         try
         {
-            if (AppView.Id != 0)
+            var dialog = DialogService.Show<DeleteDialog>();
+            var result = await dialog.Result;
+
+            if (result is not null && !result.Canceled)
             {
                 await AppViewRepository.DeleteAppViewById(AppView.Id);
 
