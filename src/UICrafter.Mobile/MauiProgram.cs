@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
+using MudBlazor;
 using MudBlazor.Services;
 using Serilog;
 using UICrafter.Core.AppView;
@@ -91,6 +92,20 @@ public static class MauiProgram
 					Log.Information("Failed adding gRPC auth header", ex);
 				}
 			});
+
+		//Snackbar settings
+		builder.Services.AddMudServices(config =>
+		{
+			config.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.BottomCenter;
+
+			config.SnackbarConfiguration.PreventDuplicates = true;
+			config.SnackbarConfiguration.NewestOnTop = false;
+			config.SnackbarConfiguration.ShowCloseIcon = true;
+			config.SnackbarConfiguration.VisibleStateDuration = 1000;
+			config.SnackbarConfiguration.HideTransitionDuration = 500;
+			config.SnackbarConfiguration.ShowTransitionDuration = 500;
+			config.SnackbarConfiguration.SnackbarVariant = Variant.Filled;
+		});
 
 		// Repository
 		builder.Services.AddScoped<IAppViewRepository, AppViewRepository>();

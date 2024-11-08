@@ -1,0 +1,38 @@
+@inject ISnackbar Snackbar
+
+
+
+@code {
+
+    [Parameter]
+    public required string ResponseCode { get; set; }
+
+    protected override void OnInitialized()
+    {
+        switch (ResponseCode)
+        {
+            case "200":
+                Snackbar.Add("Success", Severity.Success);
+                break;
+            case "400":
+                Snackbar.Add("Bad Request", Severity.Error);
+                break;
+            case "401":
+                Snackbar.Add("Unauthorized", Severity.Error);
+                break;
+            case "403":
+                Snackbar.Add("Forbidden", Severity.Error);
+                break;
+            case "404":
+                Snackbar.Add("Not Found", Severity.Error);
+                break;
+            case "500":
+                Snackbar.Add("Internal Server Error", Severity.Error);
+                break;
+            default:
+                Snackbar.Add("Unknown Error", Severity.Error);
+                break;
+        }
+    }
+
+}
