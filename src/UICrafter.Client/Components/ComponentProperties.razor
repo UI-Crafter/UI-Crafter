@@ -1,3 +1,5 @@
+@using System.Text.RegularExpressions
+
 @if (SelectedComponent is not null)
 {
     @if (SelectedComponent.ComponentCase == UIComponent.ComponentOneofCase.Button)
@@ -7,7 +9,7 @@
     }
     else if (SelectedComponent.ComponentCase == UIComponent.ComponentOneofCase.InputField)
     {
-        <MudTextField @bind-Value="SelectedComponent.InputField.Label" Label="Input Label" Variant="Variant.Outlined" MaxLength="25" />
+        <MudTextField T="string" Value="SelectedComponent.InputField.Label" ValueChanged="OnInputFieldChange" Label="Input Label" Variant="Variant.Outlined" MaxLength="25" />
         <MudTextField @bind-Value="SelectedComponent.InputField.LogicalName" Label="Logical Name" Variant="Variant.Outlined" MaxLength="25" ReadOnly />
     }
     else if (SelectedComponent.ComponentCase == UIComponent.ComponentOneofCase.Textbox)
@@ -44,11 +46,6 @@
             {
                 _internalSelectedComponent = value;
 
-                if(_internalSelectedComponent?.ComponentCase == UIComponent.ComponentOneofCase.InputField)
-                {
-                    _internalSelectedComponent.InputField.LogicalName = _internalSelectedComponent.InputField.Label.ToLower().Replace(" ", "-");
-                }
-
                 SelectedComponentChanged.InvokeAsync(value);
             }
         }
@@ -72,6 +69,14 @@
     }
     [Parameter]
     public required EventCallback<MudDropContainer<UIComponent>?> DropContainerChanged { get; set; }
+
+    private void OnInputFieldChange(string input)
+    {
+        if (SelectedComponent?.ComponentCase != UIComponent.ComponentOneofCase.InputField) return;
+
+        SelectedComponent.InputField.Label = input;
+        SelectedComponent.InputField.LogicalName = Regex.Replace(input.ToLower().Replace(" ", "-"), @"[^a-z0-9-]", "");
+    }
 
     private void DeleteSelectedComponent()
     {
