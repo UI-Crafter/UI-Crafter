@@ -1,6 +1,11 @@
 body {
 }
 
+/* Custom css to make the label background fit the container background */
+.mud-background-gray {
+	--mud-palette-surface: var(--mud-palette-background-gray);
+}
+	
 /* Custom css to avoid tooltip offsetting the button group */
 .uicrafter-tooltip-buttongroup > .mud-tooltip-root {
 	display: inline-flex;
@@ -20,8 +25,8 @@ body {
 	background-color: var(--mud-palette-primary);
 }
 
-
+/* Custom css to remove standard padding & margin in a dialog */
 .uicrafter-dialog .mud-dialog-content {
-		margin: 0px;
-		padding: 0px;
+	margin: 0px;
+	padding: 0px;
 }

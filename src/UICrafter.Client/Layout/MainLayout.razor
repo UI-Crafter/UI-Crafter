@@ -6,19 +6,15 @@
 <MudSnackbarProvider />
 <MudLayout>
     <MudAppBar Elevation="1">
-        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@((e) => DrawerToggle())" />
-        <MudText Typo="Typo.h5" Class="ml-3">UICrafter</MudText>
+        <MudLink Class="ml-3" Href="/" Typo="Typo.h5" Underline="Underline.None">UICrafter</MudLink>
         <MudSpacer />
+        <NavMenu />
         <UserProfileAvatar ThemeMode=@theme.ThemeMode ThemeModeChanged=@ThemeModeChanged />
     </MudAppBar>
-    <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always" Elevation="2">
-        <NavMenu />
-    </MudDrawer>
     <MudMainContent Class="mt-16 pa-4">
         @Body
     </MudMainContent>
 </MudLayout>
-
 
 <div id="blazor-error-ui">
     An unhandled error has occurred.
@@ -26,11 +22,11 @@
     <a class="dismiss">🗙</a>
 </div>
 
+
 @code {
     [CascadingParameter] public Theme theme { get; set; } = new();
     [Inject] private IJSRuntime JSRuntime { get; set; } = default!;
 
-    private bool _drawerOpen = true;
     private bool _isDarkMode = true;
     private MudTheme _theme = new();
     private MudThemeProvider MudThemeProvider { get; set; } = new();
@@ -55,11 +51,6 @@
             await MudThemeProvider.WatchSystemPreference(OnSystemPreferenceChanged);
             StateHasChanged();
         }
-    }
-
-    private void DrawerToggle()
-    {
-        _drawerOpen = !_drawerOpen;
     }
 
     private void DarkModeToggle()

@@ -11,14 +11,14 @@
     @if (AppView.CreatedAt != DateTime.MinValue && AppView.UpdatedAt != DateTime.MinValue)
     {
         <MudDatePicker Date="@AppView.CreatedAt" Label="Created at" Variant="Variant.Outlined" ReadOnly />
-        <MudDatePicker Date="@AppView.UpdatedAt" Label="Created at" Variant="Variant.Outlined" ReadOnly />
+        <MudDatePicker Date="@AppView.UpdatedAt" Label="Updated at" Variant="Variant.Outlined" ReadOnly />
     }
 
     <MudSwitch @bind-Value="AppView.IsPublic" Class="uicrafter-switch" Label="Public" ThumbIcon="@(AppView.IsPublic ? Icons.Material.Filled.Public : Icons.Material.Filled.PublicOff)" LabelPosition="LabelPosition.Start" />
 
     <MudButtonGroup Variant="Variant.Outlined" Class="uicrafter-tooltip-buttongroup justify-center ma-2">
-        <MudTooltip Text="Save" Arrow Placement="Placement.Bottom">
-            <MudIconButton Icon="@Icons.Material.Filled.Save" OnClick="@SaveAppView" />
+        <MudTooltip Text="Upload" Arrow Placement="Placement.Bottom">
+            <MudIconButton Icon="@Icons.Material.Filled.CloudUpload" OnClick="@SaveAppView" />
         </MudTooltip>
         <MudTooltip Text="Delete" Arrow Placement="Placement.Bottom">
             <MudIconButton Icon="@Icons.Material.Filled.Delete" OnClick="@DeleteAppView" />
@@ -27,7 +27,7 @@
             <MudIconButton Icon="@Icons.Material.Filled.Clear" OnClick="@ClearAppView" />
         </MudTooltip>
         <MudTooltip Text="Load" Arrow Placement="Placement.Bottom">
-            <MudIconButton Icon="@Icons.Material.Filled.Download" OnClick="@LoadAppView" />
+            <MudIconButton Icon="@Icons.Material.Filled.CloudDownload" OnClick="@LoadAppView" />
         </MudTooltip>
     </MudButtonGroup>
 }

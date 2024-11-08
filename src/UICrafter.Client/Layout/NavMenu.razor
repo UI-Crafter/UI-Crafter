@@ -1,9 +1,6 @@
-@inject NavigationManager NavigationManager
-
-<MudNavMenu>
-    <MudNavLink Href="" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
-    <MudNavLink Href="testpage" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.BugReport">Test Page</MudNavLink>
+<MudStack Row Class="my-auto mr-12" Spacing="10">
     <AuthorizeView>
-        <MudNavLink Href="uicrafter" Match="NavLinkMatch.Prefix" Icon="@Icons.Material.Filled.Create">UI-Crafter</MudNavLink>
+        <MudLink Href="uicrafter">App-view editor</MudLink>
     </AuthorizeView>
-</MudNavMenu>
+    <MudLink Href="testpage">Test</MudLink>
+</MudStack>
