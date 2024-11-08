@@ -11,4 +11,13 @@
     {
         return "/appview/" + view.Id;
     }
+
+    [Parameter]
+    public bool Public { get; set; }
+
+    protected override void OnInitialized()
+    {
+        LoadPublic = Public;
+    }
+
 }

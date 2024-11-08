@@ -27,23 +27,7 @@ else
     {
         <CascadingValue Value="jsonPublisher">
             <CascadingValue Value="inputFieldPublisher">
-            @foreach (var component in componentList.UIComponents)
-            {
-                @switch (component.ComponentCase)
-                {
-                    case UIComponent.ComponentOneofCase.Button:
-                        <MobileAPIButton Button="component" />
-                        break;
-                    case UIComponent.ComponentOneofCase.InputField:
-                        <MobileInputField InputField="component" />
-                        break;
-                    case UIComponent.ComponentOneofCase.Textbox:
-                        <MobileTextBox Textbox="component" />
-                        break;
-                    default:
-                        break;
-                }
-            }
+                <ComponentListRender componentList="componentList"/> 
             </CascadingValue>
         </CascadingValue>
     }
