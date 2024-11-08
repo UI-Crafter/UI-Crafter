@@ -10,7 +10,6 @@ on:
 env:
   DOTNET_VERSION: '8.0.x'
 
-# Add permissions to allow pushing tags
 permissions:
   contents: write
 
@@ -26,10 +25,8 @@ jobs:
         shell: pwsh
         run: |
           $date = Get-Date -Format "yyyy.MM.dd"
-          # Get existing tags that start with today's date
           $tags = git tag --list "$date.*"
           if ($tags) {
-              # Extract numbers from tags and find the max
               $numbers = $tags -replace "$date\." -replace "[^0-9]", "" | ForEach-Object { [int]$_ }
               $maxNumber = ($numbers | Measure-Object -Maximum).Maximum
               $newNumber = $maxNumber + 1
@@ -78,17 +75,26 @@ jobs:
           cd src\UICrafter.Mobile
           dotnet publish -f net8.0-android -c Release
 
+      - name: Copy APK Files
+        run: |
+          mkdir apk_files
+          copy src\UICrafter.Mobile\bin\Release\net8.0-android\publish\*.apk apk_files\
+
+      - name: Verify APK Files
+        run: |
+          dir apk_files\*.apk
+
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v3
         with:
           name: android-apk
-          path: src\UICrafter.Mobile\bin\Release\net8.0-android\publish\
+          path: apk_files\*.apk
 
       - name: Create GitHub Release
         id: create_release
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ env.TAG }}
-          files: src\UICrafter.Mobile\bin\Release\net8.0-android\publish\*.apk
+          files: apk_files/*.apk
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
