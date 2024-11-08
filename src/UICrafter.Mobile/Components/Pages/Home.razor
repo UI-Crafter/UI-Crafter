@@ -21,11 +21,8 @@
             </MudText>
 
             <MudStack Spacing="1" Justify="Justify.Center" AlignItems="AlignItems.Center" Class="mt-4">
-                <MudButton Variant="Variant.Filled" Color="Color.Primary" Href="/" Class="login-button animate__animated animate__fadeIn">
-                    Login
-                </MudButton>
-                <MudButton Variant="Variant.Outlined" Color="Color.Secondary" Href="/" Class="register-button animate__animated animate__fadeIn">
-                    Register
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Login" Class="login-button animate__animated animate__fadeIn">
+                    Login or Register
                 </MudButton>
             </MudStack>
             </NotAuthorized>
@@ -34,4 +31,9 @@
 </MudContainer>
 
 @code {
+    public Task Login()
+    {
+        return ((CustomAuthStateProvider)AuthenticationStateProvider)
+            .LogInAsync();
+    }
 }
