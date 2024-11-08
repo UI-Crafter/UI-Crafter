@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - GitHub-Actions-Android
   workflow_dispatch:
 
 env:
@@ -47,20 +46,23 @@ jobs:
 
       - name: Generate Tag
         id: tag
+        shell: pwsh
         run: |
-          # Generate a unique tag using the current date and commit count
-          TAG="v$(date +'%Y%m%d')-$(git rev-list --count HEAD)"
-          echo "Generated tag: $TAG"
-          echo "tag=$TAG" >> $GITHUB_ENV
+          $date = Get-Date -Format "yyyyMMdd"
+          $commitCount = (git rev-list --count HEAD)
+          $TAG = "v${date}-${commitCount}"
+          Write-Output "Generated tag: $TAG"
+          echo "tag=$TAG" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8
 
       - name: Push Tag
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: pwsh
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git tag ${{ env.TAG }}
-          git push origin ${{ env.TAG }}
+          git tag $env:TAG
+          git push origin $env:TAG
 
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v3
