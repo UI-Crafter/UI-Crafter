@@ -10,12 +10,45 @@ on:
 env:
   DOTNET_VERSION: '8.0.x'
 
+# Add permissions to allow pushing tags
+permissions:
+  contents: write
+
 jobs:
   buildAndroid:
     runs-on: windows-2022
 
     steps:
       - uses: actions/checkout@v3
+
+      - name: Generate Tag
+        id: tag
+        shell: pwsh
+        run: |
+          $date = Get-Date -Format "yyyy.MM.dd"
+          # Get existing tags that start with today's date
+          $tags = git tag --list "$date.*"
+          if ($tags) {
+              # Extract numbers from tags and find the max
+              $numbers = $tags -replace "$date\." -replace "[^0-9]", "" | ForEach-Object { [int]$_ }
+              $maxNumber = ($numbers | Measure-Object -Maximum).Maximum
+              $newNumber = $maxNumber + 1
+          } else {
+              $newNumber = 1
+          }
+          $TAG = "$date.$newNumber"
+          Write-Output "Generated tag: $TAG"
+          echo "TAG=$TAG" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8
+
+      - name: Push Tag
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: pwsh
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag $env:TAG
+          git push origin $env:TAG
 
       - name: Cache .NET packages
         uses: actions/cache@v3
@@ -44,26 +77,6 @@ jobs:
         run: |
           cd src\UICrafter.Mobile
           dotnet publish -f net8.0-android -c Release
-
-      - name: Generate Tag
-        id: tag
-        shell: pwsh
-        run: |
-          $date = Get-Date -Format "yyyyMMdd"
-          $commitCount = (git rev-list --count HEAD)
-          $TAG = "v${date}-${commitCount}"
-          Write-Output "Generated tag: $TAG"
-          echo "tag=$TAG" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8
-
-      - name: Push Tag
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        shell: pwsh
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git tag $env:TAG
-          git push origin $env:TAG
 
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v3
