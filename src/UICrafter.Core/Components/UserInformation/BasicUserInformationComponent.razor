@@ -1,0 +1,63 @@
+@using System.Security.Claims
+
+<MudOverlay Visible="_isLoading" Absolute="true" DarkBackground="true">
+    <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
+</MudOverlay>
+
+<MudContainer MaxWidth="MaxWidth.Medium" Class="pa-4">
+    <MudPaper Class="pa-4 my-2">
+        <h2>User Profile</h2>
+        <MudDivider Class="my-1" DividerType="DividerType.FullWidth" Style="padding: 1px 0;" />
+
+        <MudText Typography="Typography.H6">Name:</MudText>
+        <MudText>@name</MudText>
+
+        <MudText Typography="Typography.H6">Email:</MudText>
+        <MudText>@email</MudText>
+    </MudPaper>
+
+    <MudPaper Class="pa-4 my-2">
+        You have @AppViews.Count AppViews
+        <ul>
+            @foreach (var view in AppViews)
+            {
+                <li>Name: @view.Name</li>
+            }
+        </ul>
+    </MudPaper>
+</MudContainer>
+
+@code {
+    [Inject] private IAppViewRepository AppViewRepository { get; set; } = default!;
+ 
+    private string name = string.Empty;
+    private string email = string.Empty;
+
+    private IList<AppView> AppViews { get; set; } = [];
+    private ClaimsPrincipal? user;
+
+    private bool _isLoading { get; set; } = true;
+
+
+    [CascadingParameter]
+    private Task<AuthenticationState> AuthState { get; set; } = default!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        AppViews = await AppViewRepository.GetAppViews() ?? new List<AppView>();
+    }
+
+    protected override async Task OnParametersSetAsync()
+    {
+        var authState = await AuthState;
+        if (authState is not null)
+        {
+            user = authState.User;
+            name = user.GetName();
+            email = user.GetEmail();
+        }
+        _isLoading = false;
+    }
+
+    
+}

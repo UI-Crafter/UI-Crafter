@@ -11,35 +11,36 @@
 <div style=@(!viewId.HasValue ? null : "display: none;")>
     <LoadMetaDataMobile />
 </div>
+
 @if (!viewId.HasValue)
 {
     return;
 }
 
-
-@if (_isLoading)
-{
-    <div style="display: flex; justify-content: center; align-items: center; height: 100vh;">
+<MudOverlay Visible="_isLoading" Absolute="true" DarkBackground="true">
         <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
-    </div>
+</MudOverlay>
+
+<MobileComponentListRender
+                           componentList="componentList"
+                           jsonPublisher="jsonPublisher"
+                           inputFieldPublisher="inputFieldPublisher" />
+
+@* @if (componentList != null && componentList.UIComponents.Any())
+{
+    <CascadingValue Value="jsonPublisher">
+        <CascadingValue Value="inputFieldPublisher">
+            <ComponentListRender UIComponents="componentList.UIComponents" />
+        </CascadingValue>
+    </CascadingValue>
 }
 else
 {
-    @if (viewId.HasValue && componentList != null && componentList.UIComponents.Any())
-    {
-        <CascadingValue Value="jsonPublisher">
-            <CascadingValue Value="inputFieldPublisher">
-                <ComponentListRender componentList="componentList"/> 
-            </CascadingValue>
-        </CascadingValue>
-    }
-    else
-    {
-        <MudText Typo="Typo.body1">
-            No components to display.
-        </MudText>
-    }
-}
+    <MudText Typo="Typo.body1">
+        No components to display.
+    </MudText>
+} *@
+
 
 @code {
     [Parameter]
@@ -51,7 +52,7 @@ else
     private InputFieldPublisher inputFieldPublisher = new InputFieldPublisher();
 
     private long? _oldId;
-    private bool _isLoading = false;
+    private bool _isLoading { get; set; } = false;
 
     protected override void OnInitialized()
     {

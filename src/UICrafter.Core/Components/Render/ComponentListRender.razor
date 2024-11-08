@@ -1,51 +1,25 @@
-
-@if (componentList != null)
+@foreach (var component in UIComponents)
 {
-	@foreach (var component in componentList.UIComponents)
-	{
-		@switch (component.ComponentCase)
-		{
-			case UIComponent.ComponentOneofCase.Button:
-				<RenderAPIButton Button="component" />
-				break;
-			case UIComponent.ComponentOneofCase.InputField:
-				<RenderInputField InputField="component" />
-				break;
-			case UIComponent.ComponentOneofCase.Textbox:
-				<RenderTextBox Textbox="component" />
-				break;
-			default:
-				break;
-		}
-	}
-} else if (UIComponents != null)
-{
-	@foreach (var component in UIComponents)
-	{
-		@switch (component.ComponentCase)
-		{
-			case UIComponent.ComponentOneofCase.Button:
-				<RenderAPIButton Button="component" />
-				break;
-			case UIComponent.ComponentOneofCase.InputField:
-				<RenderInputField InputField="component" />
-				break;
-			case UIComponent.ComponentOneofCase.Textbox:
-				<RenderTextBox Textbox="component" />
-				break;
-			default:
-				break;
-		}
-	}
+    @switch (component.ComponentCase)
+    {
+        case UIComponent.ComponentOneofCase.Button:
+            <RenderAPIButton Button="component" />
+            break;
+        case UIComponent.ComponentOneofCase.InputField:
+            <RenderInputField InputField="component" />
+            break;
+        case UIComponent.ComponentOneofCase.Textbox:
+            <RenderTextBox Textbox="component" />
+            break;
+        default:
+            break;
+    }
 }
 
 
 
 
-@code{
+@code {
     [Parameter]
-    public UIComponentList? componentList { get; set; }
-
-    [Parameter]
-    public RepeatedField<UIComponent>? UIComponents { get; set; }
+    public required RepeatedField<UIComponent> UIComponents { get; set; }
 }

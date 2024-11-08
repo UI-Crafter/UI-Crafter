@@ -69,8 +69,8 @@
 
         if (string.IsNullOrEmpty(ModifiedURL))
         {
-            ButtonColor = Color.Error;
-            DisplaySnackbar("Button URL is not set");
+            ButtonColor = Color.Info;
+            Snackbar.Add("Button URL is empty", Severity.Info);
             return;
         }
 
@@ -89,32 +89,31 @@
             {
                 var responseData = await response.Content.ReadAsStringAsync(); ;
 
-          
                 ButtonColor = Color.Success;
 
-                
                 JSONPublisher.NotifySubscribers(Button.Guid, responseData);
+
+                Snackbar.Add("Success", Severity.Success);
             }
             else
             {
                 ButtonColor = Color.Error;
 
                 var errorMessage = await response.Content.ReadAsStringAsync();
-                Console.WriteLine($"Error: {errorMessage}");
+                Log.Information($"Error: {errorMessage}");
+                Snackbar.Add(errorMessage, Severity.Error);
             }
             Log.Information(((int)response.StatusCode).ToString());
-            DisplaySnackbar(((int)response.StatusCode).ToString());
         }
         catch (Exception ex)
         {
             ButtonColor = Color.Error;
-            Console.WriteLine($"Exception: {ex.Message}");
-            DisplaySnackbar($"{ex.Message}");
+            Log.Information($"Exception: {ex.Message}");
+            Snackbar.Add($"{ex.Message}", Severity.Error);
         }
         finally
         {
             _processing = false;
-            //ADD Snackbar class or razor component
         }
     }
 
@@ -126,31 +125,31 @@
         }
     }
 
-    private void DisplaySnackbar(string responseCode)
-    {
-        switch (responseCode)
-        {
-            case "200":
-                Snackbar.Add("Success", Severity.Success);
-                break;
-            case "400":
-                Snackbar.Add("Bad Request", Severity.Error);
-                break;
-            case "401":
-                Snackbar.Add("Unauthorized", Severity.Error);
-                break;
-            case "403":
-                Snackbar.Add("Forbidden", Severity.Error);
-                break;
-            case "404":
-                Snackbar.Add("Not Found", Severity.Error);
-                break;
-            case "500":
-                Snackbar.Add("Internal Server Error", Severity.Error);
-                break;
-            default:
-                Snackbar.Add(responseCode, Severity.Error);
-                break;
-        }
-    }
+    // private void DisplaySnackbar(string responseCode)
+    // {
+    //     switch (responseCode)
+    //     {
+    //         case "200":
+    //             Snackbar.Add("Success", Severity.Success);
+    //             break;
+    //         case "400":
+    //             Snackbar.Add("Bad Request", Severity.Error);
+    //             break;
+    //         case "401":
+    //             Snackbar.Add("Unauthorized", Severity.Error);
+    //             break;
+    //         case "403":
+    //             Snackbar.Add("Forbidden", Severity.Error);
+    //             break;
+    //         case "404":
+    //             Snackbar.Add("Not Found", Severity.Error);
+    //             break;
+    //         case "500":
+    //             Snackbar.Add("Internal Server Error", Severity.Error);
+    //             break;
+    //         default:
+    //             Snackbar.Add(responseCode, Severity.Error);
+    //             break;
+    //     }
+    // }
 }
