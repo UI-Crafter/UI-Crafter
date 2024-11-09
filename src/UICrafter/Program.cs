@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Web;
 using Microsoft.IdentityModel.Tokens;
-using MudBlazor.Services;
 using UICrafter;
 using UICrafter.API;
 using UICrafter.Components;
@@ -21,14 +20,13 @@ using Microsoft.OpenApi.Models;
 using UICrafter.Core.DependencyInjection;
 using UICrafter.Core.AppView;
 using UICrafter.Options;
-using MudBlazor;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Logging.AddSeriloggerSetup(builder.Configuration);
 
 // Add MudBlazor services
-builder.Services.AddMudServices();
+builder.Services.AddUICrafterMudServices();
 
 // Http setup
 builder.Services.AddHttpClient();
@@ -106,20 +104,6 @@ builder.Services.AddRazorComponents()
 	.AddInteractiveWebAssemblyComponents();
 
 builder.Services.AddHttpContextAccessor();
-
-//Snackbar settings
-builder.Services.AddMudServices(config =>
-{
-	config.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.BottomLeft;
-
-	config.SnackbarConfiguration.PreventDuplicates = true;
-	config.SnackbarConfiguration.NewestOnTop = false;
-	config.SnackbarConfiguration.ShowCloseIcon = true;
-	config.SnackbarConfiguration.VisibleStateDuration = 1000;
-	config.SnackbarConfiguration.HideTransitionDuration = 500;
-	config.SnackbarConfiguration.ShowTransitionDuration = 500;
-	config.SnackbarConfiguration.SnackbarVariant = Variant.Filled;
-});
 
 var app = builder.Build();
 

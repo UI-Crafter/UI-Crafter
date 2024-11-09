@@ -1,7 +1,7 @@
 namespace UICrafter.Mobile.Utility;
 using System.ComponentModel;
 
-public class RefreshViewState : INotifyPropertyChanged
+public partial class RefreshViewState : INotifyPropertyChanged
 {
 	private bool _isRefreshing;
 
@@ -18,7 +18,7 @@ public class RefreshViewState : INotifyPropertyChanged
 		}
 	}
 
-	public event PropertyChangedEventHandler PropertyChanged;
+	public event PropertyChangedEventHandler? PropertyChanged;
 
 	public void SetIsRefreshing(bool isRefreshing)
 	{

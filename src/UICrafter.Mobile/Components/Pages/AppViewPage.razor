@@ -5,7 +5,7 @@
 @inject IAppViewRepository AppViewRepository
 @inject RefreshViewState RefreshViewService
 
-<PageTitle>@appView.Name</PageTitle>
+<PageTitle>@appView?.Name</PageTitle>
 
 
 <div style=@(!viewId.HasValue ? null : "display: none;")>
@@ -17,12 +17,9 @@
     return;
 }
 
-<MudOverlay Visible="_isLoading" Absolute="true" DarkBackground="true">
-        <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
-</MudOverlay>
+<CenterLoading Visible="_isLoading" />
 
-<MobileComponentListRender
-                           componentList="componentList"
+<MobileComponentListRender componentList="componentList"
                            jsonPublisher="jsonPublisher"
                            inputFieldPublisher="inputFieldPublisher" />
 
@@ -73,7 +70,7 @@
         }
         try
         {
-            appView = await AppViewRepository.GetAppViewById(viewId.Value);
+            appView = await AppViewRepository.GetAppViewById(viewId!.Value);
 
             if (appView != null && appView.Content != null)
             {

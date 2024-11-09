@@ -1,19 +1,18 @@
 @using System.Security.Claims
+@attribute [Authorize]
 
-<MudOverlay Visible="_isLoading" Absolute="true" DarkBackground="true">
-    <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
-</MudOverlay>
+<CenterLoading Visible="_isLoading"/>
 
 <MudContainer MaxWidth="MaxWidth.Medium" Class="pa-4">
     <MudPaper Class="pa-4 my-2">
-        <h2>User Profile</h2>
+        <MudText Typo="Typo.h2">User Profile</MudText>
         <MudDivider Class="my-1" DividerType="DividerType.FullWidth" Style="padding: 1px 0;" />
 
-        <MudText Typography="Typography.H6">Name:</MudText>
-        <MudText>@user.GetName()</MudText>
+        <MudText Typo="Typo.h6">Name:</MudText>
+        <MudText>@User.GetName()</MudText>
 
-        <MudText Typography="Typography.H6">Email:</MudText>
-        <MudText>@user.GetEmail()</MudText>
+        <MudText Typo="Typo.h6">Email:</MudText>
+        <MudText>@User.GetEmail()</MudText>
     </MudPaper>
 
     <MudPaper Class="pa-4 my-2">
@@ -29,18 +28,14 @@
 
 @code {
     [Inject] private IAppViewRepository AppViewRepository { get; set; } = default!;
- 
-    //private string name = string.Empty;
-    //private string email = string.Empty;
 
     private IList<AppView> AppViews { get; set; } = [];
-    private ClaimsPrincipal? user;
 
     private bool _isLoading { get; set; } = true;
 
-
     [CascadingParameter]
     private Task<AuthenticationState> AuthState { get; set; } = default!;
+    private ClaimsPrincipal User { get; set; } = default!;
 
     protected override async Task OnInitializedAsync()
     {
@@ -52,12 +47,8 @@
         var authState = await AuthState;
         if (authState is not null)
         {
-            user = authState.User;
-            //name = user.GetName();
-            //email = user.GetEmail();
+            User = authState.User;
         }
         _isLoading = false;
     }
-
-    
 }

@@ -1,9 +1,10 @@
+@using UICrafter.Core.Components.UserInformation;
 @page "/profile"
 @attribute [Authorize]
 
 <PageTitle>User Profile</PageTitle>
 
-<UICrafter.Core.Components.UserInformation.BasicUserInformationComponent/>
+<BasicUserInformationComponent/>
 
 <MudButton Variant="Variant.Filled" Color="Color.Primary" Href="/" OnClick="Logout">Logout</MudButton>
 

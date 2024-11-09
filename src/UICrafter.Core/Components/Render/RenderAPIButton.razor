@@ -1,4 +1,5 @@
-i l@using System.Text.RegularExpressions
+@using System.Text.RegularExpressions
+@using Microsoft.AspNetCore.WebUtilities
 @inherits BaseAPIButton
 @inject IHttpClientProvider HttpClientProvider
 @inject ISnackbar Snackbar
@@ -44,7 +45,7 @@ i l@using System.Text.RegularExpressions
         {
             var logicalName = match.Groups[1].Value;
             LogicalNamesPairing.Add(logicalName, "");
-            Log.Information($"Logical Name: {logicalName}");
+            Log.Debug("Logical Name: {logicalName}", logicalName);
             inputFieldPublisher.Subscribe(logicalName, UpdateURL);
         }
     }
@@ -55,7 +56,7 @@ i l@using System.Text.RegularExpressions
         {
             LogicalNamesPairing[logicalName] = value;
         }
-        Log.Information("Changed URL storage");
+        Log.Debug("Changed URL storage");
     }
 
     private async Task CallApi()
@@ -100,15 +101,15 @@ i l@using System.Text.RegularExpressions
                 ButtonColor = Color.Error;
 
                 var errorMessage = await response.Content.ReadAsStringAsync();
-                Log.Information($"Error: {errorMessage}");
-                Snackbar.Add(errorMessage, Severity.Error);
+                Log.Debug("Bad response from appview api {error}", errorMessage);
+                Snackbar.Add($"{response.StatusCode} - {response.ReasonPhrase ?? ReasonPhrases.GetReasonPhrase((int)response.StatusCode)}: {errorMessage}", Severity.Error);
             }
             Log.Information(((int)response.StatusCode).ToString());
         }
         catch (Exception ex)
         {
             ButtonColor = Color.Error;
-            Log.Information($"Exception: {ex.Message}");
+            Log.Information("Something went wrong fetching from endpoint {exception}", ex);
             Snackbar.Add($"{ex.Message}", Severity.Error);
         }
         finally
