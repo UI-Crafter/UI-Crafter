@@ -1,4 +1,4 @@
-@using System.Text.RegularExpressions
+i l@using System.Text.RegularExpressions
 @inherits BaseAPIButton
 @inject IHttpClientProvider HttpClientProvider
 @inject ISnackbar Snackbar
@@ -124,32 +124,4 @@
             inputFieldPublisher.Unsubscribe(pair.Key, UpdateURL);
         }
     }
-
-    // private void DisplaySnackbar(string responseCode)
-    // {
-    //     switch (responseCode)
-    //     {
-    //         case "200":
-    //             Snackbar.Add("Success", Severity.Success);
-    //             break;
-    //         case "400":
-    //             Snackbar.Add("Bad Request", Severity.Error);
-    //             break;
-    //         case "401":
-    //             Snackbar.Add("Unauthorized", Severity.Error);
-    //             break;
-    //         case "403":
-    //             Snackbar.Add("Forbidden", Severity.Error);
-    //             break;
-    //         case "404":
-    //             Snackbar.Add("Not Found", Severity.Error);
-    //             break;
-    //         case "500":
-    //             Snackbar.Add("Internal Server Error", Severity.Error);
-    //             break;
-    //         default:
-    //             Snackbar.Add(responseCode, Severity.Error);
-    //             break;
-    //     }
-    // }
 }
