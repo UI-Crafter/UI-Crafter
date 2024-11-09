@@ -1,0 +1,107 @@
+name: Build MAUI App
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+env:
+  DOTNET_VERSION: '8.0.x'
+
+permissions:
+  contents: write
+
+jobs:
+  buildAndroid:
+    runs-on: windows-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Generate Tag
+        id: tag
+        shell: pwsh
+        run: |
+          $date = Get-Date -Format "yyyy.MM.dd"
+          # Fetch remote tags
+          git fetch --tags
+          # Get existing tags that start with today's date
+          $tags = git tag --list "$date.*"
+          if ($tags) {
+              # Extract numbers from tags and find the max
+              $numbers = $tags -replace "$date\." -replace "[^0-9]", "" | ForEach-Object { [int]$_ }
+              $maxNumber = ($numbers | Measure-Object -Maximum).Maximum
+              $newNumber = $maxNumber + 1
+          } else {
+              $newNumber = 1
+          }
+          $TAG = "$date.$newNumber"
+          Write-Output "Generated tag: $TAG"
+          echo "TAG=$TAG" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8
+
+
+      - name: Push Tag
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: pwsh
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag $env:TAG
+          git push origin $env:TAG
+
+      - name: Cache .NET packages
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.nuget/packages
+            ~/.dotnet
+            ~/.workload
+          key: ${{ runner.os }}-dotnet-${{ env.DOTNET_VERSION }}-maui
+          restore-keys: |
+            ${{ runner.os }}-dotnet-${{ env.DOTNET_VERSION }}
+
+      - name: Setup .NET SDK ${{ env.DOTNET_VERSION }}
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: ${{ env.DOTNET_VERSION }}
+
+      - name: Install .NET MAUI workloads
+        run: |
+          cd src\UICrafter.Mobile
+          dotnet workload restore
+
+      - name: Restore NuGet packages
+        run: |
+          cd src\UICrafter.Mobile
+          dotnet restore
+
+      - name: Build Android App
+        run: |
+          cd src\UICrafter.Mobile
+          dotnet publish -f net8.0-android -c Release
+
+      - name: Copy APK Files
+        run: |
+          mkdir apk_files
+          copy src\UICrafter.Mobile\bin\Release\net8.0-android\publish\*.apk apk_files\
+
+      - name: Verify APK Files
+        run: |
+          dir apk_files\*.apk
+
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: android-apk
+          path: apk_files\*.apk
+
+      - name: Create GitHub Release
+        id: create_release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ env.TAG }}
+          files: apk_files/*.apk
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
