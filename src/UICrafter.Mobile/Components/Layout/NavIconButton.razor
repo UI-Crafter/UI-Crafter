@@ -1,0 +1,26 @@
+<MudStack AlignItems="AlignItems.Center" Spacing="0">
+    <MudIconButton Icon=@_icon Href=@Href Color=@_color Size="Size.Medium" />
+    <MudText Typo="Typo.caption" Class="mt-n1" Color="_color">@Title</MudText>
+</MudStack>
+
+
+@code {
+    [Parameter]
+    public string Title { get; set; } = string.Empty;
+
+    [Parameter]
+    public string ActiveIcon { get; set; } = string.Empty;
+
+    [Parameter]
+    public string Icon { get; set; } = string.Empty;
+
+    [Parameter]
+    public string Href { get; set; } = string.Empty;
+
+    [Parameter]
+    public Func<string, bool> IsActiveFunc { get; set; } = _ => false;
+
+    private string _icon => IsActiveFunc(Href) ? ActiveIcon : Icon;
+
+    private Color _color => IsActiveFunc(Href) ? Color.Info : Color.Default;
+}

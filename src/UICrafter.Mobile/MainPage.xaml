@@ -8,13 +8,11 @@
 			 x:DataType="states:RefreshViewState">
 	<RefreshView IsRefreshing="{Binding IsRefreshing}"
              Refreshing="RefreshView_Refreshing">
-		<ScrollView>
-			<BlazorWebView x:Name="blazorWebView" HostPage="wwwroot/index.html">
-				<BlazorWebView.RootComponents>
-					<RootComponent Selector="#app" ComponentType="{x:Type local:Components.Routes}" />
-				</BlazorWebView.RootComponents>
-			</BlazorWebView>
-		</ScrollView>
+		<BlazorWebView x:Name="blazorWebView" HostPage="wwwroot/index.html">
+			<BlazorWebView.RootComponents>
+				<RootComponent Selector="#app" ComponentType="{x:Type local:Components.Routes}" />
+			</BlazorWebView.RootComponents>
+		</BlazorWebView>
 	</RefreshView>
 
 </ContentPage>

@@ -1,24 +1,40 @@
-<MudToolBar Class="justify-space-between">
-    <MudIconButton Icon="@Icons.Material.Outlined.Menu" Color="@GetIconColor("Menu")" Class="@GetIconClass("Menu")" Href="/" OnClick="@(() => SelectIcon("Menu"))" />
-    <MudIconButton Icon="@Icons.Material.Outlined.Add" Color="@GetIconColor("Add")" Class="@GetIconClass("Add")" Href="appview" OnClick="@(() => SelectIcon("Add"))" />
-    <MudIconButton Icon="@Icons.Material.Outlined.Edit" Color="@GetIconColor("Edit")" Class="@GetIconClass("Edit")" Href="authpage" OnClick="@(() => SelectIcon("Edit"))" />
-</MudToolBar>
+@using MudBlazor.Utilities
+@inject NavigationManager NavigationManager
+
+<MudPaper Class=@ClassName Style=@Style Outlined>
+    <MudStack Row Justify="Justify.SpaceAround">
+        <NavIconButton Icon="@Icons.Material.Outlined.Home" ActiveIcon="@Icons.Material.Filled.Home" Href="/" Title="Home" IsActiveFunc=@IsActive />
+        <NavIconButton Icon="@Icons.Material.Outlined.Apps" ActiveIcon="@Icons.Material.Filled.Apps" Href="appview" Title="App-Views" IsActiveFunc=@IsActive />
+        <NavIconButton Icon="@Icons.Material.Outlined.AccountCircle" ActiveIcon="@Icons.Material.Filled.AccountCircle" Href="authpage" Title="Account" IsActiveFunc=@IsActive />
+    </MudStack>
+</MudPaper>
 
 @code {
-    private string? selectedIcon;
+    [Parameter] public string? Class { get; set; }
+    [Parameter] public string? Style { get; set; }
 
-    private void SelectIcon(string iconName)
+    private string ClassName => new CssBuilder("px-3 py-1")
+    .AddClass(Class)
+    .Build();
+
+    private string currentPath = string.Empty;
+
+    protected override void OnInitialized()
     {
-        selectedIcon = iconName;
+        currentPath = new Uri(NavigationManager.Uri).LocalPath;
+        NavigationManager.LocationChanged += OnLocationChanged;
     }
 
-    private Color GetIconColor(string iconName)
+    private void OnLocationChanged(object? sender, LocationChangedEventArgs e)
     {
-        return selectedIcon == iconName ? Color.Primary : Color.Inherit;
+        currentPath = new Uri(e.Location).LocalPath;
+        InvokeAsync(StateHasChanged);
     }
 
-    private string GetIconClass(string iconName)
+    private bool IsActive(string link) => currentPath[1..].Equals(link.Split('/')[0], StringComparison.InvariantCultureIgnoreCase);
+
+    public void Dispose()
     {
-        return selectedIcon == iconName ? "selected-icon-background" : string.Empty;
+        NavigationManager.LocationChanged -= OnLocationChanged;
     }
 }
