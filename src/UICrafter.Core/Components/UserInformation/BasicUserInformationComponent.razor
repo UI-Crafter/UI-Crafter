@@ -10,10 +10,10 @@
         <MudDivider Class="my-1" DividerType="DividerType.FullWidth" Style="padding: 1px 0;" />
 
         <MudText Typography="Typography.H6">Name:</MudText>
-        <MudText>@name</MudText>
+        <MudText>@user.GetName()</MudText>
 
         <MudText Typography="Typography.H6">Email:</MudText>
-        <MudText>@email</MudText>
+        <MudText>@user.GetEmail()</MudText>
     </MudPaper>
 
     <MudPaper Class="pa-4 my-2">
@@ -30,8 +30,8 @@
 @code {
     [Inject] private IAppViewRepository AppViewRepository { get; set; } = default!;
  
-    private string name = string.Empty;
-    private string email = string.Empty;
+    //private string name = string.Empty;
+    //private string email = string.Empty;
 
     private IList<AppView> AppViews { get; set; } = [];
     private ClaimsPrincipal? user;
@@ -53,8 +53,8 @@
         if (authState is not null)
         {
             user = authState.User;
-            name = user.GetName();
-            email = user.GetEmail();
+            //name = user.GetName();
+            //email = user.GetEmail();
         }
         _isLoading = false;
     }
