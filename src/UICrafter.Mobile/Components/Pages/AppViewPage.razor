@@ -5,55 +5,24 @@
 @inject IAppViewRepository AppViewRepository
 @inject RefreshViewState RefreshViewService
 
-<PageTitle>@appView.Name</PageTitle>
+<PageTitle>@appView?.Name</PageTitle>
 
 
 <div style=@(!viewId.HasValue ? null : "display: none;")>
     <LoadMetaDataMobile />
 </div>
+
 @if (!viewId.HasValue)
 {
     return;
 }
 
+<CenterLoading Visible="_isLoading" />
 
-@if (_isLoading)
-{
-    <MudProgressCircular Color="Color.Primary" Indeterminate="true" />
-}
-else
-{
-    @if (viewId.HasValue && componentList != null && componentList.UIComponents.Any())
-    {
-        <CascadingValue Value="jsonPublisher">
-            <CascadingValue Value="inputFieldPublisher">
-            @foreach (var component in componentList.UIComponents)
-            {
-                @switch (component.ComponentCase)
-                {
-                    case UIComponent.ComponentOneofCase.Button:
-                        <MobileAPIButton Button="component" />
-                        break;
-                    case UIComponent.ComponentOneofCase.InputField:
-                        <MobileInputField InputField="component" />
-                        break;
-                    case UIComponent.ComponentOneofCase.Textbox:
-                        <MobileTextBox Textbox="component" />
-                        break;
-                    default:
-                        break;
-                }
-            }
-            </CascadingValue>
-        </CascadingValue>
-    }
-    else
-    {
-        <MudText Typo="Typo.body1">
-            No components to display.
-        </MudText>
-    }
-}
+<MobileComponentListRender componentList="componentList"
+                           jsonPublisher="jsonPublisher"
+                           inputFieldPublisher="inputFieldPublisher" />
+
 
 @code {
     [Parameter]
@@ -65,7 +34,7 @@ else
     private InputFieldPublisher inputFieldPublisher = new InputFieldPublisher();
 
     private long? _oldId;
-    private bool _isLoading = false;
+    private bool _isLoading { get; set; } = false;
 
     protected override void OnInitialized()
     {
@@ -101,7 +70,7 @@ else
         }
         try
         {
-            appView = await AppViewRepository.GetAppViewById(viewId.Value);
+            appView = await AppViewRepository.GetAppViewById(viewId!.Value);
 
             if (appView != null && appView.Content != null)
             {

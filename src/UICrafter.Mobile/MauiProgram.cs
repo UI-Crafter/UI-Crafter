@@ -6,7 +6,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using MudBlazor.Services;
 using Serilog;
 using UICrafter.Core.AppView;
 using UICrafter.Core.DependencyInjection;
@@ -29,7 +28,7 @@ public static class MauiProgram
 			.ConfigureFonts(fonts => fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular"));
 
 		builder.Services.AddMauiBlazorWebView();
-		builder.Services.AddMudServices();
+		builder.Services.AddUICrafterMudServices();
 
 		var configBuilder = new ConfigurationBuilder()
 			.AddEmbeddedResource("UICrafter.Mobile.appsettings.json");

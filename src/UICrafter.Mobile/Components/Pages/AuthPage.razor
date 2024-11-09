@@ -4,6 +4,11 @@
 <PageTitle>User Claims</PageTitle>
 
 <MudContainer MaxWidth="MaxWidth.Large">
+
+    <MudPaper Class="pa-4 my-2">
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Href="/" OnClick="Logout">Logout</MudButton>
+    </MudPaper>
+
     <MudPaper Class="pa-4 my-2">
         <h1>User Claims</h1>
         <MudDivider Class="my-1" DividerType="DividerType.FullWidth" Style="padding: 1px 0;" />
@@ -31,9 +36,11 @@
         </ul>
 
     </MudPaper>
+
 </MudContainer>
 
 @code {
+    [Inject] private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
     [Inject] private IHttpClientProvider HttpClientProvider { get; set; } = default!;
     private IEnumerable<Claim> claims = [];
 
@@ -75,5 +82,11 @@
 
         var response = await httpClient.GetAsync("api/prototest");
         Response = await response.Content.ReadAsStringAsync();
+    }
+
+    public Task Logout()
+    {
+        return ((CustomAuthStateProvider)AuthenticationStateProvider)
+           .SignOutAsync();
     }
 }

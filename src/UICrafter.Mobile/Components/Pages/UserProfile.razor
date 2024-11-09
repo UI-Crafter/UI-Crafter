@@ -1,0 +1,17 @@
+@using UICrafter.Core.Components.UserInformation;
+@page "/profile"
+@attribute [Authorize]
+
+<PageTitle>User Profile</PageTitle>
+
+<BasicUserInformationComponent/>
+
+<MudButton Variant="Variant.Filled" Color="Color.Primary" Href="/" OnClick="Logout">Logout</MudButton>
+
+@code {
+    [Inject] private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
+    public Task Logout()
+    {
+        return ((CustomAuthStateProvider)AuthenticationStateProvider).SignOutAsync();
+    }
+}

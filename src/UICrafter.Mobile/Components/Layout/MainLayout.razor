@@ -11,23 +11,7 @@
 <MudSnackbarProvider />
 
 <div class="page">
- @*    <div class="sidebar">
-        <NavMenu />
-    </div> *@
-
     <main class="main">
-        <div class="top-row px-4">
-            <AuthorizeView>
-                <Authorized>
-                    Hello, @context.User.Identity?.Name
-                    <a href="#" @onclick="Logout">Log out</a>
-                </Authorized>
-                <NotAuthorized>
-                    <a href="#" @onclick="Login">Log in</a>
-                </NotAuthorized>
-            </AuthorizeView>
-        </div>
-
         <article class="content px-4">
             @Body
         </article>
