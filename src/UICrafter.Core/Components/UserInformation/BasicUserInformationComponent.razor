@@ -16,13 +16,15 @@
     </MudPaper>
 
     <MudPaper Class="pa-4 my-2">
-        You have @AppViews.Count AppViews
-        <ul>
+        <MudList T="string">
+            <MudListSubheader>
+                You have @AppViews.Count AppViews
+            </MudListSubheader>
             @foreach (var view in AppViews)
             {
-                <li>Name: @view.Name</li>
+                <MudListItem Text="view.Name" />
             }
-        </ul>
+        </MudList>
     </MudPaper>
 </MudContainer>
 
@@ -39,16 +41,20 @@
 
     protected override async Task OnInitializedAsync()
     {
-        AppViews = await AppViewRepository.GetAppViews() ?? new List<AppView>();
-    }
-
-    protected override async Task OnParametersSetAsync()
-    {
         var authState = await AuthState;
         if (authState is not null)
         {
             User = authState.User;
         }
-        _isLoading = false;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            AppViews = await AppViewRepository.GetAppViews() ?? new List<AppView>();
+            _isLoading = false;
+            await InvokeAsync(StateHasChanged);
+        }
     }
 }
