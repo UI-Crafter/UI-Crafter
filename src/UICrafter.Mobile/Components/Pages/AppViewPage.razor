@@ -26,21 +26,6 @@
                            jsonPublisher="jsonPublisher"
                            inputFieldPublisher="inputFieldPublisher" />
 
-@* @if (componentList != null && componentList.UIComponents.Any())
-{
-    <CascadingValue Value="jsonPublisher">
-        <CascadingValue Value="inputFieldPublisher">
-            <ComponentListRender UIComponents="componentList.UIComponents" />
-        </CascadingValue>
-    </CascadingValue>
-}
-else
-{
-    <MudText Typo="Typo.body1">
-        No components to display.
-    </MudText>
-} *@
-
 
 @code {
     [Parameter]
