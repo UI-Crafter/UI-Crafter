@@ -7,9 +7,12 @@
 }
 else
 {
-    <div class=@ClassName>
-        <MudProgressCircular Color="Color" Indeterminate />
-    </div>
+    @if (Visible)
+    {
+        <div class=@ClassName>
+            <MudProgressCircular Color="Color" Indeterminate />
+        </div>
+    }
 }
 
 @code {
@@ -24,4 +27,10 @@ else
     .AddClass(Class)
     .AddClass(Fixed ? "position-fixed" : "position-absolute")
     .Build();
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+        Log.Warning(ClassName);
+    }
 }

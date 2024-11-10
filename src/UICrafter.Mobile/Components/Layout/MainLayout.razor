@@ -12,18 +12,13 @@
 
 <div class="page">
     <main class="main">
-        <article class="content px-4">
-            @Body
-        </article>
+        @Body
     </main>
-
-    <AuthorizeView>
-        <Authorized>
-            <footer class="footer">
-                <NativeNavbar />
-            </footer>
-        </Authorized>
-    </AuthorizeView>
+    <footer>
+        <NativeNavbar Class="native-navbar-fixed" />
+        @* This is here to have a replica that will displace the size of the NativeNavBar, this is needed due to the setup of the MAUI pull down refresh. This can be removed if we move to a Blazor implementation instead.*@
+        <NativeNavbar Style="visibility: hidden;" />
+    </footer>
 </div>
 
 @code {

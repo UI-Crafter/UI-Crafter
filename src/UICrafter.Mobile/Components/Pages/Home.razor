@@ -1,5 +1,4 @@
 @page "/"
-@inject NavigationManager Navigation
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
 <MudContainer MaxWidth="MaxWidth.Medium" Class="pa-4 text-center">
@@ -7,11 +6,11 @@
 
     <AuthorizeView>
         <Authorized>
-            <MudText Typo="Typo.body1" Align="Align.Center" Class="mt-4 animate__animated animate__fadeIn">
+            <MudText Typo="Typo.body1" Align="Align.Center">
                 You select a view here:
             </MudText>
 
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" Href="/appview" Class="mt-2 animate__animated animate__pulse animate__infinite">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Href="/appview" Class="mt-2">
                 App Views
             </MudButton>
         </Authorized>

@@ -9,20 +9,25 @@
 
 
 <div style=@(!viewId.HasValue ? null : "display: none;")>
-    <LoadMetaDataMobile />
+    <MudTabs Border Outlined PanelClass="pa-2">
+        <MudTabPanel Text="My App-Views" Icon="@Icons.Material.Filled.Apps">
+            <LoadMetaDataMobile />
+        </MudTabPanel>
+        <MudTabPanel Text="Public App-Views" Icon="@Icons.Material.Filled.Public">
+            <LoadMetaDataMobile Public />
+        </MudTabPanel>
+    </MudTabs>
+    
 </div>
 
-@if (!viewId.HasValue)
+@if (viewId.HasValue)
 {
-    return;
+    <CenterLoading Visible="_isLoading" />
+
+    <MobileComponentListRender componentList="componentList"
+                               jsonPublisher="jsonPublisher"
+                               inputFieldPublisher="inputFieldPublisher" />
 }
-
-<CenterLoading Visible="_isLoading" />
-
-<MobileComponentListRender componentList="componentList"
-                           jsonPublisher="jsonPublisher"
-                           inputFieldPublisher="inputFieldPublisher" />
-
 
 @code {
     [Parameter]
