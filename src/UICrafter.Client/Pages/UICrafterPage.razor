@@ -1,6 +1,8 @@
 @page "/uicrafter"
 @attribute [Authorize]
 
+<PageTitle>UICrafter-Editor</PageTitle>
+
 <MudStack Row @onclick="DeselectComponent">
     <!-- Left section: Component Grid (20%) -->
     <MudStack Style="width: 20%">
@@ -10,13 +12,15 @@
 
     <!-- Center section: Dropzone (55%) -->
     <MudContainer Style="width: 55%;" MaxWidth="MaxWidth.Small">
-        <MudTabs Elevation="2" Rounded Centered KeepPanelsAlive Outlined>
-            <MudTabPanel Icon="@Icons.Material.Filled.DesignServices" Text="Editor">
-                <AppViewDesigner @bind-SelectedComponent="@SelectedComponent" @bind-DropContainer="@DropContainer" UIComponents="@UIComponents" />
-            </MudTabPanel>
-            <MudTabPanel Icon="@Icons.Material.Filled.Preview" Text="Preview" >
-                <AppViewPreview UIComponents="@UIComponents" />
-            </MudTabPanel>
+        <MudTabs Elevation="2" Centered KeepPanelsAlive Outlined>
+            <MudPaper Class="rounded mud-background-gray pa-2 flex-grow-1 overflow-auto" Style="height: 75vh;">
+                <MudTabPanel Icon="@Icons.Material.Filled.DesignServices" Text="Editor">
+                    <AppViewDesigner @bind-SelectedComponent="@SelectedComponent" @bind-DropContainer="@DropContainer" UIComponents="@UIComponents" />
+                </MudTabPanel>
+                <MudTabPanel Icon="@Icons.Material.Filled.Preview" Text="Preview" >
+                    <AppViewPreview UIComponents="@UIComponents" />
+                </MudTabPanel>
+            </MudPaper>
         </MudTabs>
     </MudContainer>
     
