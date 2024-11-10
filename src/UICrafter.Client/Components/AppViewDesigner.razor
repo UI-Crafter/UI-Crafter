@@ -1,10 +1,10 @@
 @inject IDialogService DialogService
 @using UICrafter.Client.Components.DnDComponents
 
-<MudContainer MaxWidth="MaxWidth.Small" @onclick:stopPropagation>
-    <MudDropContainer T="UIComponent" @ref="DropContainer" Items="UIComponents" ItemsSelector="@((item,dropzone) => item.DropZoneID == dropzone)" ItemDropped="ComponentUpdated" Class="d-flex flex-grow-1">
+<MudContainer MaxWidth="MaxWidth.Small" Gutters="false" @onclick:stopPropagation>
+    <MudDropContainer T="UIComponent" @ref="DropContainer" Items="UIComponents" ItemsSelector="@((item,dropzone) => item.DropZoneID == dropzone)" ItemDropped="ComponentUpdated">
         <ChildContent>
-            <MudDropZone T="UIComponent" Identifier="Drop Zone 1" AllowReorder="true" Class="rounded mud-background-gray pa-2 flex-grow-1 overflow-auto" Style="height: 75vh">
+            <MudDropZone T="UIComponent" Identifier="Drop Zone 1" AllowReorder="true" Class="rounded flex-grow-1">
             </MudDropZone>
         </ChildContent>
         <ItemRenderer>
@@ -26,12 +26,11 @@
             }
         </ItemRenderer>
     </MudDropContainer>
-    <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Preview" OnClick="Preview" Size="Size.Large">Preview</MudButton>
 </MudContainer>
 
 @code {
     [Parameter]
-    public required RepeatedField<UIComponent> UIComponents { get; set; }
+    public required ObservableCollection<UIComponent> UIComponents { get; set; }
 
     private UIComponent? _internalSelectedComponent;
     [Parameter]
@@ -90,16 +89,5 @@
         }
 
         component.Item.DropZoneID = component.DropzoneIdentifier;
-    }
-
-    private async Task Preview()
-    {
-        var parameters = new DialogParameters
-        {
-            { nameof(AppViewPreviewDialog.UIComponents), UIComponents }
-        };
-
-        var dialog = DialogService.Show<AppViewPreviewDialog>("", parameters);
-        await dialog.Result;
     }
 }

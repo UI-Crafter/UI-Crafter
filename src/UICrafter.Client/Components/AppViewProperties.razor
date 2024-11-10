@@ -45,7 +45,7 @@
     private ClaimsPrincipal User { get; set; } = default!;
 
     [Parameter]
-    public required RepeatedField<UIComponent> UIComponents { get; set; }
+    public required ObservableCollection<UIComponent> UIComponents { get; set; }
 
     private UIComponent? _internalSelectedComponent;
     [Parameter]
@@ -208,7 +208,10 @@
 
                 var parsedContent = UIComponentList.Parser.ParseFrom(AppView.Content);
 
-                UIComponents.AddRange(parsedContent.UIComponents);
+                foreach (var component in parsedContent.UIComponents)
+                {
+                    UIComponents.Add(component);
+                }
 
                 DropContainer?.Refresh();
             }

@@ -33,7 +33,7 @@
 
 @code {
     [Parameter]
-    public required RepeatedField<UIComponent> UIComponents { get; set; }
+    public required ObservableCollection<UIComponent> UIComponents { get; set; }
 
     private UIComponent? _internalSelectedComponent;
     [Parameter]
