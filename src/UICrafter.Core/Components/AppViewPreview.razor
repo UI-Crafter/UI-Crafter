@@ -1,0 +1,28 @@
+@using UICrafter.Core.Components.Render
+@* Extract from Mobile: AppViewPage *@
+<CascadingValue Value="jsonPublisher">
+    <CascadingValue Value="inputFieldPublisher">
+        <ComponentListRender UIComponents="UIComponents" />
+    </CascadingValue>
+</CascadingValue>
+
+
+@code {
+    [Parameter]
+    public required ObservableCollection<UIComponent> UIComponents { get; set; }
+
+    private JsonPublisher jsonPublisher = new JsonPublisher();
+    private InputFieldPublisher inputFieldPublisher = new InputFieldPublisher();
+
+    //public Task ReRender() => InvokeAsync(StateHasChanged);
+
+    protected override Task OnAfterRenderAsync(bool firstRender)
+    {
+        return base.OnAfterRenderAsync(firstRender);
+    }
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+    }
+}

@@ -5,14 +5,21 @@
     <!-- Left section: Component Grid (20%) -->
     <MudStack Style="width: 20%">
         <MudText>Components:</MudText>
-        <ComponentGrid @bind-SelectedComponent="@SelectedComponent" @bind-DropContainer="@DropContainer" UIComponents="@UIComponentList.UIComponents" />
+        <ComponentGrid @bind-SelectedComponent="@SelectedComponent" @bind-DropContainer="@DropContainer" UIComponents="@UIComponents" />
     </MudStack>
 
     <!-- Center section: Dropzone (55%) -->
-    <MudStack Style="width: 55%;" Class="align-center">
-        <MudText>App-view:</MudText>
-        <AppViewDesigner @bind-SelectedComponent="@SelectedComponent" @bind-DropContainer="@DropContainer" UIComponents="@UIComponentList.UIComponents" />
-    </MudStack>
+    <MudContainer Style="width: 55%;" MaxWidth="MaxWidth.Small">
+        <MudTabs Elevation="2" Rounded Centered KeepPanelsAlive Outlined>
+            <MudTabPanel Icon="@Icons.Material.Filled.DesignServices" Text="Editor">
+                <AppViewDesigner @bind-SelectedComponent="@SelectedComponent" @bind-DropContainer="@DropContainer" UIComponents="@UIComponents" />
+            </MudTabPanel>
+            <MudTabPanel Icon="@Icons.Material.Filled.Preview" Text="Preview" >
+                <AppViewPreview UIComponents="@UIComponents" />
+            </MudTabPanel>
+        </MudTabs>
+    </MudContainer>
+    
 
     <!-- Right section: Component Properties (25%) -->
     <MudStack Style="width: 25%;">
@@ -23,7 +30,7 @@
                 <MudIconButton Icon="@Icons.Material.Filled.ArrowBack" OnClick="DeselectComponent" Class="ml-auto my-n1 mud-background-gray" Size="Size.Small" Variant="Variant.Filled" />
             }
         </MudStack>
-        <Properties @bind-SelectedComponent="@SelectedComponent" @bind-DropContainer="@DropContainer" UIComponents="@UIComponentList.UIComponents" @bind-AppView="AppView"/>
+        <Properties @bind-SelectedComponent="@SelectedComponent" @bind-DropContainer="@DropContainer" UIComponents="@UIComponents" @bind-AppView="AppView" />
     </MudStack>
 </MudStack>
 
@@ -31,8 +38,9 @@
 @code {
     private UIComponent? SelectedComponent { get; set; }
     private MudDropContainer<UIComponent>? DropContainer { get; set; }
-    private UIComponentList UIComponentList { get; set; } = new UIComponentList();
     private AppView AppView { get; set; } = new AppView { Name = string.Empty };
+
+    private ObservableCollection<UIComponent> UIComponents { get; set; } = [];
 
     private void DeselectComponent()
     {

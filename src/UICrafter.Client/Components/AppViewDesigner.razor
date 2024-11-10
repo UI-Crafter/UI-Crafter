@@ -26,12 +26,11 @@
             }
         </ItemRenderer>
     </MudDropContainer>
-    <MudButton Class="mt-2" StartIcon="@Icons.Material.Filled.Preview" OnClick="Preview" Size="Size.Large">Preview</MudButton>
 </MudContainer>
 
 @code {
     [Parameter]
-    public required RepeatedField<UIComponent> UIComponents { get; set; }
+    public required ObservableCollection<UIComponent> UIComponents { get; set; }
 
     private UIComponent? _internalSelectedComponent;
     [Parameter]
@@ -90,16 +89,5 @@
         }
 
         component.Item.DropZoneID = component.DropzoneIdentifier;
-    }
-
-    private async Task Preview()
-    {
-        var parameters = new DialogParameters
-        {
-            { nameof(AppViewPreviewDialog.UIComponents), UIComponents }
-        };
-
-        var dialog = DialogService.Show<AppViewPreviewDialog>("", parameters);
-        await dialog.Result;
     }
 }

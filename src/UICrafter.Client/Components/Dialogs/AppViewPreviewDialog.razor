@@ -18,7 +18,7 @@
     private MudDialogInstance MudDialog { get; set; } = null!;
 
     [Parameter]
-    public required RepeatedField<UIComponent> UIComponents { get; set; }
+    public required ObservableCollection<UIComponent> UIComponents { get; set; }
 
     private JsonPublisher jsonPublisher = new JsonPublisher();
     private InputFieldPublisher inputFieldPublisher = new InputFieldPublisher();

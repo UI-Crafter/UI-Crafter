@@ -1,15 +1,18 @@
+@using System.Collections.Specialized
+@implements IDisposable
+
 @foreach (var component in UIComponents)
 {
-    @switch (component.ComponentCase)
+    switch (component.ComponentCase)
     {
         case UIComponent.ComponentOneofCase.Button:
-            <RenderAPIButton Button="component" />
+            <RenderAPIButton @key=component Button="component" />
             break;
         case UIComponent.ComponentOneofCase.InputField:
-            <RenderInputField InputField="component" />
+            <RenderInputField @key=component InputField="component" />
             break;
         case UIComponent.ComponentOneofCase.Textbox:
-            <RenderTextBox Textbox="component" />
+            <RenderTextBox @key=component Textbox="component" />
             break;
         default:
             break;
@@ -18,5 +21,20 @@
 
 @code {
     [Parameter]
-    public required RepeatedField<UIComponent> UIComponents { get; set; }
+    public required ObservableCollection<UIComponent> UIComponents { get; set; }
+
+    protected override void OnInitialized()
+    {
+        UIComponents.CollectionChanged += ReRender;
+    }
+
+    private void ReRender(object? sender, NotifyCollectionChangedEventArgs e)
+    {
+        InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose()
+    {
+        UIComponents.CollectionChanged -= ReRender;
+    }
 }
