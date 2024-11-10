@@ -1,6 +1,6 @@
 @if (isLoggedIn)
 {
-    <div style=@($"--mud-palette-lines-inputs: {avatarColor}")>
+    <div style=@($"--mud-palette-lines-inputs: {avatarColor}; --mud-palette-text-primary: {GetAvatarTextColor()};")>
         <MudAvatar Size="Size.Medium" Class="cursor-pointer" Variant="Variant.Filled" @onclick="ToggleOpen">
             @userInitials
         </MudAvatar>
@@ -53,23 +53,36 @@ else
         if (user.Identity != null && user.Identity.IsAuthenticated)
         {
             isLoggedIn = true;
+            userInitials = GetUserInitials(user);
 
-            var givenName = user.FindFirst(ClaimTypes.GivenName)?.Value;
-            var surname = user.FindFirst(ClaimTypes.Surname)?.Value;
-
-            if (!string.IsNullOrWhiteSpace(givenName) && !string.IsNullOrWhiteSpace(surname))
-            {
-                userInitials = $"{givenName[0]}{surname[0]}";
-            }
-
-            var userName = user.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? user.Identity.Name ?? "User";
-            avatarColor = StringToColorFNV1a(userName);
+            var azureId = user.GetAzureId();
+            avatarColor = StringToColorFNV1a(azureId.ToString());
         }
         else
         {
             isLoggedIn = false;
             userInitials = null;
         }
+    }
+
+    private string GetUserInitials(ClaimsPrincipal user)
+    {
+        var givenName = user.FindFirst(ClaimTypes.GivenName)?.Value;
+        var surname = user.FindFirst(ClaimTypes.Surname)?.Value;
+
+        if (!string.IsNullOrWhiteSpace(givenName) && !string.IsNullOrWhiteSpace(surname))
+        {
+            return $"{givenName[0]}{surname[0]}".ToUpper();
+        }
+
+        var name = user.GetName();
+        if (!string.IsNullOrWhiteSpace(name))
+        {
+            var nameParts = name.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            return string.Concat(nameParts.Take(3).Select(part => part[0])).ToUpper();
+        }
+
+        return string.Empty;
     }
 
     private void ModeToggle()
@@ -94,6 +107,18 @@ else
         int g = (int)((hash >> 8) & 0xFF);
         int b = (int)(hash & 0xFF);
         return $"#{r:X2}{g:X2}{b:X2}";
+    }
+
+    // Inspired from https://stackoverflow.com/questions/1754211/evaluate-whether-a-hex-value-is-dark-or-light/23791856
+    private string GetAvatarTextColor()
+    {
+        int r = Convert.ToInt32(avatarColor.Substring(1, 2), 16);
+        int g = Convert.ToInt32(avatarColor.Substring(3, 2), 16);
+        int b = Convert.ToInt32(avatarColor.Substring(5, 2), 16);
+
+        double brightness = (r * 0.299 + g * 0.587 + b * 0.114) / 255;
+
+        return brightness > 0.5 ? "#424242" : "#b2b0bf";
     }
 
     private string ModeButtonIcon => ThemeMode switch
