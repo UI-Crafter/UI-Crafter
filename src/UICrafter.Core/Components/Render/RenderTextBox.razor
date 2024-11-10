@@ -75,7 +75,7 @@
     {
         if (value is List<object> list)
         {
-            return string.Join(" ", list.Select(item => item.ToString()));
+            return string.Join("\n\n", list.Select(item => item.ToString()));
         }
         else if (value is Dictionary<string, object> dict)
         {

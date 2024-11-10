@@ -1,13 +1,13 @@
 @page "/"
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
-<MudContainer MaxWidth="MaxWidth.Medium" Class="pa-4 text-center ma-auto">
-    <MudText Typo="Typo.h4" Align="Align.Center">Welcome to Our App!</MudText>
+<MudContainer MaxWidth="MaxWidth.Medium" Class="pa-4 text-center">
+    <MudText Typo="Typo.h5" Align="Align.Center">Welcome to UICrafter!</MudText>
 
     <AuthorizeView>
         <Authorized>
-            <MudText Typo="Typo.body1" Align="Align.Center" Class="mt-4">
-                You can explore the app by clicking below:
+            <MudText Typo="Typo.body1" Align="Align.Center">
+                You select a view here:
             </MudText>
 
             <MudButton Variant="Variant.Filled" Color="Color.Primary" Href="/appview" Class="mt-2">
@@ -19,11 +19,14 @@
                 Please log in or register to access your views.
             </MudText>
 
-            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Login">
-                Login
-            </MudButton>
-        </NotAuthorized>
-    </AuthorizeView>
+            <MudStack Spacing="1" Justify="Justify.Center" AlignItems="AlignItems.Center" Class="mt-4">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Login" Class="login-button animate__animated animate__fadeIn">
+                    Login or Register
+                </MudButton>
+            </MudStack>
+            </NotAuthorized>
+
+    </AuthorizeView>  
 </MudContainer>
 
 @code {

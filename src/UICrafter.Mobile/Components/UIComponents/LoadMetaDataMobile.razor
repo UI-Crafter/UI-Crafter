@@ -1,7 +1,6 @@
 @using UICrafter.Core.Components.BaseComponents
 @inherits BaseLoadMetaDataList
 
-<MudText Class="my-2" Typo="Typo.h4">App Views</MudText>
 @{
     base.BuildRenderTree(__builder);
 }
@@ -11,4 +10,13 @@
     {
         return "/appview/" + view.Id;
     }
+
+    [Parameter]
+    public bool Public { get; set; }
+
+    protected override void OnInitialized()
+    {
+        LoadPublic = Public;
+    }
+
 }

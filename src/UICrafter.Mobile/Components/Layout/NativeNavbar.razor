@@ -5,7 +5,7 @@
     <MudStack Row Justify="Justify.SpaceAround">
         <NavIconButton Icon="@Icons.Material.Outlined.Home" ActiveIcon="@Icons.Material.Filled.Home" Href="/" Title="Home" IsActiveFunc=@IsActive />
         <NavIconButton Icon="@Icons.Material.Outlined.Apps" ActiveIcon="@Icons.Material.Filled.Apps" Href="appview" Title="App-Views" IsActiveFunc=@IsActive />
-        <NavIconButton Icon="@Icons.Material.Outlined.AccountCircle" ActiveIcon="@Icons.Material.Filled.AccountCircle" Href="authpage" Title="Account" IsActiveFunc=@IsActive />
+        <NavIconButton Icon="@Icons.Material.Outlined.AccountCircle" ActiveIcon="@Icons.Material.Filled.AccountCircle" Href="profile" Title="Profile" IsActiveFunc=@IsActive />
     </MudStack>
 </MudPaper>
 
@@ -31,7 +31,14 @@
         InvokeAsync(StateHasChanged);
     }
 
-    private bool IsActive(string link) => currentPath[1..].Equals(link.Split('/')[0], StringComparison.InvariantCultureIgnoreCase);
+    private bool IsActive(string link)
+    {
+        var comparePath = link.Split('/').FirstOrDefault(x => !string.IsNullOrWhiteSpace(x));
+        var path = currentPath.Split('/').FirstOrDefault(x => !string.IsNullOrWhiteSpace(x));
+        var isActive = path == comparePath;
+        return isActive;
+    }
+
 
     public void Dispose()
     {

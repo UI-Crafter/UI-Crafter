@@ -7,7 +7,6 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Web;
 using Microsoft.IdentityModel.Tokens;
-using MudBlazor.Services;
 using UICrafter;
 using UICrafter.API;
 using UICrafter.Components;
@@ -27,7 +26,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Logging.AddSeriloggerSetup(builder.Configuration);
 
 // Add MudBlazor services
-builder.Services.AddMudServices();
+builder.Services.AddUICrafterMudServices();
 
 // Http setup
 builder.Services.AddHttpClient();

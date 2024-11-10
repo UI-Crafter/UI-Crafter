@@ -1,0 +1,36 @@
+@using MudBlazor.Utilities
+@if (Overlay)
+{
+    <MudOverlay Visible=@Visible Absolute="!Fixed" Class=@(Fixed ? "position-fixed" : null) DarkBackground>
+        <MudProgressCircular Color="Color" Indeterminate />
+    </MudOverlay>
+}
+else
+{
+    @if (Visible)
+    {
+        <div class=@ClassName>
+            <MudProgressCircular Color="Color" Indeterminate />
+        </div>
+    }
+}
+
+@code {
+    [Parameter] public bool Fixed { get; set; }
+
+    [Parameter] public string? Class { get; set; }
+    [Parameter] public bool Visible { get; set; }
+    [Parameter] public bool Overlay { get; set; }
+    [Parameter] public Color Color { get; set; } = Color.Default;
+
+    private string ClassName => new CssBuilder("translate-middle top-50 start-50")
+    .AddClass(Class)
+    .AddClass(Fixed ? "position-fixed" : "position-absolute")
+    .Build();
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+        Log.Warning(ClassName);
+    }
+}
