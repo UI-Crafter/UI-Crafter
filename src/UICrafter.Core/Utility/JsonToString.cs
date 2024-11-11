@@ -65,24 +65,4 @@ public class JsonToString
 
 		return cleanedString.ToString();
 	}
-
-	// public string CleanUpString(string input)
-	// {
-	//     // Characters to be removed
-	//     //char[] charsToRemove = { '\"', '\'', '{', '}', '[', ']', '(', ')' };
-	//     char[] charsToRemove = { '\"'};
-	//     System.Text.StringBuilder cleanedString = new StringBuilder();
-
-	//     foreach (char c in input)
-	//     {
-	//         // Only append characters that are not in charsToRemove
-	//         if (!charsToRemove.Contains(c))
-	//         {
-	//             cleanedString.Append(c);
-	//         }
-	//     }
-
-	//     return cleanedString.ToString();
-	// }
-
 }
