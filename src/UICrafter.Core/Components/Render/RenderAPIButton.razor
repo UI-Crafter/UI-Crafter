@@ -109,7 +109,7 @@
 
             NotifyUser(Color.Error, $"{(int)response.StatusCode} - {response.StatusCode}", Severity.Error);
 
-            var jsonResponse = JsonSerializer.Serialize(new { StatusCode = $"{(int)response.StatusCode} - {response.StatusCode}", Data = responseData });
+            var jsonResponse = JsonSerializer.Serialize(new { StatusCode = $"{(int)response.StatusCode} - {response.ReasonPhrase}", Data = responseData });
             JSONPublisher.NotifySubscribers(Button.Guid, jsonResponse);
         }
 
