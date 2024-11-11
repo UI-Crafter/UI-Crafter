@@ -31,8 +31,8 @@
         }
         else
         {
-            string[] fieldPath = Textbox.Textbox.JsonField.Split('.');
-            if (JsonToString.TryGetNestedFieldValue(jsonResponse, fieldPath, out var fieldValue))
+            string field = Textbox.Textbox.JsonField;
+            if (JsonToString.TryGetNestedFieldValue(jsonResponse, field, out var fieldValue))
             {
                 string description = JsonToString.ObjectAsString(fieldValue);
                 Content = JsonToString.CleanUpString(description);

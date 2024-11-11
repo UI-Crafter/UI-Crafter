@@ -1,5 +1,6 @@
 namespace UICrafter.Core.Utility;
 
+using System.Collections.Generic;
 using System.Text.Json.Nodes;
 
 public static class JsonProcessor
@@ -19,8 +20,7 @@ public static class JsonProcessor
 		{
 			foreach (var property in obj)
 			{
-				string fieldName = property.Key;
-				ProcessNode(property.Value!, result, fieldName);
+				ProcessNode(property.Value!, result, property.Key);
 			}
 			AddToDictionary(result, parentName, node);
 		}
@@ -41,17 +41,18 @@ public static class JsonProcessor
 	{
 		if (value is Dictionary<string, object> dictionary)
 		{
-			string formattedFlags = string.Join("\n", dictionary.Select(kv => $"{kv.Key}: {kv.Value}"));
-			value = formattedFlags;
+			value = dictionary.Select(kv => $"{kv.Key}: {kv.Value}").ToString()!;
 		}
 
-		if (result.ContainsKey(key))
+		if (!result.ContainsKey(key))
 		{
-			result[key] = result[key] + "\n\n" + value.ToString();
+			//start the count at 1
+			result[key] = value.ToString()!;
 		}
 		else
 		{
-			result[key] = value.ToString();
+			//add 1 to the count
+			result[key] = result[key] + "\n \n" + value.ToString();
 		}
 	}
 }
