@@ -1,5 +1,6 @@
 @using System.Text.RegularExpressions
 @using Microsoft.AspNetCore.WebUtilities
+@using System.Collections.Concurrent
 @inherits BaseAPIButton
 @inject IHttpClientProvider HttpClientProvider
 @inject ISnackbar Snackbar
@@ -16,101 +17,51 @@
     public required JsonPublisher JSONPublisher { get; set; }
 
     [CascadingParameter]
-    public required InputFieldPublisher inputFieldPublisher { get; set; }
+    public required ConcurrentDictionary<string, BaseInput> LogicalNamesPairing { get; set; }
 
     private string ModifiedURL { get; set; } = string.Empty;
-    private Dictionary<string, string> LogicalNamesPairing = [];
 
     private bool _processing = false;
 
     protected override void OnInitialized()
     {
         ButtonText = Button.Button.Label;
-        OnClick = EventCallback.Factory.Create<MouseEventArgs>(this, CallApi);
-        GetLogicalNamesFromURL();
+        OnClick = EventCallback.Factory.Create<MouseEventArgs>(this, ExecuteApiCall);
     }
 
-    private void GetLogicalNamesFromURL()
+    private async Task ExecuteApiCall()
     {
+        if (_processing) return;
+
+        _processing = true;
+
         if (string.IsNullOrEmpty(Button.Button.URL))
         {
+            NotifyUser(Color.Info, "Button URL is empty", Severity.Info);
+            _processing = false;
             return;
         }
 
-        var url = Button.Button.URL;
-
-        var matches = Regex.Matches(url, @"\{([^}]+)\}");
-
-        foreach (Match match in matches)
-        {
-            var logicalName = match.Groups[1].Value;
-            LogicalNamesPairing.Add(logicalName, "");
-            Log.Debug("Logical Name: {logicalName}", logicalName);
-            inputFieldPublisher.Subscribe(logicalName, UpdateURL);
-        }
-    }
-
-    private void UpdateURL(string logicalName, string value)
-    {
-        if (LogicalNamesPairing.ContainsKey(logicalName))
-        {
-            LogicalNamesPairing[logicalName] = value;
-        }
-        Log.Debug("Changed URL storage");
-    }
-
-    private async Task CallApi()
-    {
         ModifiedURL = Button.Button.URL;
-
-        if (_processing)
-        {
-            return;
-        }
-
-        if (string.IsNullOrEmpty(ModifiedURL))
-        {
-            ButtonColor = Color.Info;
-            Snackbar.Add("Button URL is empty", Severity.Info);
-            return;
-        }
 
         foreach (var pair in LogicalNamesPairing)
         {
-            ModifiedURL = ModifiedURL.Replace($"{{{pair.Key}}}", pair.Value);
+            ModifiedURL = ModifiedURL.Replace($"{{{pair.Key}}}", pair.Value.GetValue());
         }
 
-        var httpClient = HttpClientProvider.GetDefaultHttpClient();
+        HttpResponseMessage response;
+
         try
         {
             Log.Information(ModifiedURL);
-            var response = await httpClient.GetAsync(ModifiedURL);
+            response = await ExecuteHttpRequest(Button.Button.HttpMethod, ModifiedURL, Button.Button.HttpBody);
 
-            if (response.IsSuccessStatusCode)
-            {
-                var responseData = await response.Content.ReadAsStringAsync(); ;
-
-                ButtonColor = Color.Success;
-
-                JSONPublisher.NotifySubscribers(Button.Guid, responseData);
-
-                Snackbar.Add("Success", Severity.Success);
-            }
-            else
-            {
-                ButtonColor = Color.Error;
-
-                var errorMessage = await response.Content.ReadAsStringAsync();
-                Log.Debug("Bad response from appview api {error}", errorMessage);
-                Snackbar.Add($"{response.StatusCode} - {response.ReasonPhrase ?? ReasonPhrases.GetReasonPhrase((int)response.StatusCode)}: {errorMessage}", Severity.Error);
-            }
-            Log.Information(((int)response.StatusCode).ToString());
+            await HandleApiResponse(response);
         }
         catch (Exception ex)
         {
-            ButtonColor = Color.Error;
-            Log.Information("Something went wrong fetching from endpoint {exception}", ex);
-            Snackbar.Add($"{ex.Message}", Severity.Error);
+            Log.Error("Something went wrong fetching from endpoint {exception}", ex);
+            NotifyUser(Color.Error, ex.Message, Severity.Error);
         }
         finally
         {
@@ -118,11 +69,64 @@
         }
     }
 
-    private void Dispose()
+    private void NotifyUser(Color buttonColor, string message, Severity severity)
     {
+        ButtonColor = buttonColor;
+        Snackbar.Add(message, severity);
+    }
+
+    private string ReplaceLogicalNames(string url)
+    {
+        var tmp = url;
+
         foreach (var pair in LogicalNamesPairing)
         {
-            inputFieldPublisher.Unsubscribe(pair.Key, UpdateURL);
+            tmp = tmp.Replace($"{{{pair.Key}}}", pair.Value.GetValue());
         }
+
+        return tmp;
+    }
+
+    private async Task<HttpResponseMessage> ExecuteHttpRequest(CallMethod httpMethod, string url, string? body)
+    {
+        var httpClient = HttpClientProvider.GetDefaultHttpClient();
+
+        foreach (var pair in LogicalNamesPairing)
+        {
+            body = body?.Replace($"{{{pair.Key}}}", pair.Value.GetValue());
+        }
+
+        body = "{" + body + "}";
+
+        return httpMethod switch
+        {
+            CallMethod.Get => await httpClient.GetAsync(url),
+            CallMethod.Post => await httpClient.PostAsync(url, new StringContent(body ?? string.Empty)),
+            CallMethod.Put => await httpClient.PutAsync(url, new StringContent(body ?? string.Empty)),
+            CallMethod.Delete => await httpClient.DeleteAsync(url),
+            _ => throw new InvalidOperationException($"Unsupported HTTP method: {httpMethod}")
+        };
+    }
+
+    private async Task HandleApiResponse(HttpResponseMessage response)
+    {
+        var responseData = await response.Content.ReadAsStringAsync();
+
+        if (response.IsSuccessStatusCode)
+        {
+            NotifyUser(Color.Success, "Success", Severity.Success);
+            JSONPublisher.NotifySubscribers(Button.Guid, responseData);
+        }
+        else
+        {
+            Log.Debug("Bad response from appview API: {ErrorMessage}", responseData);
+
+            NotifyUser(Color.Error, $"{(int)response.StatusCode} - {response.StatusCode}", Severity.Error);
+
+            var jsonResponse = JsonSerializer.Serialize(new { StatusCode = $"{(int)response.StatusCode} - {response.StatusCode}", Data = responseData });
+            JSONPublisher.NotifySubscribers(Button.Guid, jsonResponse);
+        }
+
+        Log.Information("Response status code: {StatusCode}", (int)response.StatusCode);
     }
 }

@@ -1,27 +1,32 @@
 @using System.Collections.Specialized
+@using System.Collections.Concurrent
 @implements IDisposable
 
-@foreach (var component in UIComponents)
-{
-    switch (component.ComponentCase)
+<CascadingValue Value="LogicalNamesPairing">
+    @foreach (var component in UIComponents)
     {
-        case UIComponent.ComponentOneofCase.Button:
-            <RenderAPIButton @key=component Button="component" />
-            break;
-        case UIComponent.ComponentOneofCase.InputField:
-            <RenderInputField @key=component InputField="component" />
-            break;
-        case UIComponent.ComponentOneofCase.Textbox:
-            <RenderTextBox @key=component Textbox="component" />
-            break;
-        default:
-            break;
+        switch (component.ComponentCase)
+        {
+            case UIComponent.ComponentOneofCase.Button:
+                <RenderAPIButton @key=component Button="component" />
+                break;
+            case UIComponent.ComponentOneofCase.InputField:
+                <RenderInputField @key=component InputField="component" />
+                break;
+            case UIComponent.ComponentOneofCase.Textbox:
+                <RenderTextBox @key=component Textbox="component" />
+                break;
+            default:
+                break;
+        }
     }
-}
+</CascadingValue>
 
 @code {
     [Parameter]
     public required ObservableCollection<UIComponent> UIComponents { get; set; }
+
+    private ConcurrentDictionary<string, BaseInput> LogicalNamesPairing = [];
 
     protected override void OnInitialized()
     {

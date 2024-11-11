@@ -25,8 +25,7 @@
     <CenterLoading Visible="_isLoading" />
 
     <MobileComponentListRender componentList="componentList"
-                               jsonPublisher="jsonPublisher"
-                               inputFieldPublisher="inputFieldPublisher" />
+                               jsonPublisher="jsonPublisher" />
 }
 
 @code {
@@ -36,7 +35,6 @@
 
     private UIComponentList componentList = new UIComponentList();
     private JsonPublisher jsonPublisher = new JsonPublisher();
-    private InputFieldPublisher inputFieldPublisher = new InputFieldPublisher();
 
     private long? _oldId;
     private bool _isLoading { get; set; } = false;
