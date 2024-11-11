@@ -2,7 +2,6 @@ namespace UICrafter.Core.Utility;
 
 using System.Text.Json.Nodes;
 
-//advanved json chat
 public class JsonProcessor
 {
 	public static Dictionary<string, object> ProcessJson(string json)
@@ -46,10 +45,8 @@ public class JsonProcessor
 			value = formattedFlags;
 		}
 
-		// Check if the key already exists
 		if (result.ContainsKey(key))
 		{
-			// Concatenate the new value with the existing one
 			result[key] = result[key] + "\n\n" + value.ToString();
 		}
 		else

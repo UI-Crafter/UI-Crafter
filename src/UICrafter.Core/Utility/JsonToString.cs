@@ -2,7 +2,6 @@ namespace UICrafter.Core.Utility;
 
 using System.Text.RegularExpressions;
 using System.Text;
-using System.Text.Json;
 
 public class JsonToString
 {
@@ -14,14 +13,14 @@ public class JsonToString
 		}
 		else if (valueObject is List<object> list)
 		{
-			return string.Join("\n\n", list.Select(item => ObjectAsString(item)));
+			return string.Join("\n\n", list.Select(ObjectAsString));
 		}
 		else
 		{
 			return valueObject?.ToString() ?? "null";
 		}
 	}
-	public static bool TryGetNestedFieldValue(object current, string[] fieldPath, out object result)
+	public static bool TryGetNestedFieldValue(object current, string[] fieldPath, out object? result)
 	{
 		result = current;
 
@@ -31,7 +30,7 @@ public class JsonToString
 			{
 				result = tempResult;
 			}
-			else if (result is List<object> list && int.TryParse(field, out int index) && index < list.Count)
+			else if (result is List<object> list && int.TryParse(field, out var index) && index < list.Count)
 			{
 				result = list[index];
 			}
@@ -48,21 +47,16 @@ public class JsonToString
 
 	public static string CleanUpString(string input)
 	{
-		// Characters to be removed directly
-		char[] charsToRemove = { '\"' };
+		char[] charsToRemove = {'\"'};
 		StringBuilder cleanedString = new StringBuilder();
 
-		// Decode Unicode escape sequences (e.g., \u0022) into actual characters
 		var decodedInput = Regex.Replace(input, @"\\u([0-9A-Fa-f]{4})", match =>
 		{
-			// Convert the matched Unicode code to a character
 			return ((char)int.Parse(match.Groups[1].Value, System.Globalization.NumberStyles.HexNumber)).ToString();
 		});
 
-		// Process the decoded string to remove unwanted characters
 		foreach (char c in decodedInput)
 		{
-			// Only append characters that are not in charsToRemove
 			if (!charsToRemove.Contains(c))
 			{
 				cleanedString.Append(c);
