@@ -1,3 +1,4 @@
+using Grpc.Net.Client.Web;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using UICrafter.Client;
@@ -22,7 +23,9 @@ builder.Services.AddScoped<IHttpClientProvider, HttpClientProvider>();
 builder.Services.AddUICrafterMudServices();
 
 // gRPC
-builder.Services.AddGrpcClient<AppViewService.AppViewServiceClient>(options => options.Address = new Uri(builder.HostEnvironment.BaseAddress));
+builder.Services.AddGrpcClient<AppViewService.AppViewServiceClient>(options => options.Address = new Uri(builder.HostEnvironment.BaseAddress))
+	.ConfigurePrimaryHttpMessageHandler(() => new GrpcWebHandler(new HttpClientHandler()));
+;
 
 // Repository
 builder.Services.AddScoped<IAppViewRepository, AppViewRepository>();

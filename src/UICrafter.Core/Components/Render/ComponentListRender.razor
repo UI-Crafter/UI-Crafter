@@ -2,7 +2,7 @@
 @using System.Collections.Concurrent
 @implements IDisposable
 
-<CascadingValue Value="LogicalNamesPairing">
+<CascadingValue Value="UIComponents">
     @foreach (var component in UIComponents)
     {
         switch (component.ComponentCase)
@@ -25,8 +25,6 @@
 @code {
     [Parameter]
     public required ObservableCollection<UIComponent> UIComponents { get; set; }
-
-    private ConcurrentDictionary<string, BaseInput> LogicalNamesPairing = [];
 
     protected override void OnInitialized()
     {

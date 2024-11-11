@@ -1,8 +1,6 @@
 @if (componentList != null && componentList.UIComponents.Any())
 {
-    <CascadingValue Value="jsonPublisher">
-        <ComponentListRender UIComponents="new ObservableCollection<UIComponent>(componentList.UIComponents)" />
-    </CascadingValue>
+    <ComponentListRender UIComponents="new ObservableCollection<UIComponent>(componentList.UIComponents)" />
 }
 else
 {
@@ -14,7 +12,4 @@ else
 @code {
     [Parameter]
     public required UIComponentList componentList { get; set; }
-
-    [Parameter]
-    public required JsonPublisher jsonPublisher { get; set; }
 }

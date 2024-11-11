@@ -156,6 +156,6 @@ app.MapGet("auth/login", (string? returnUrl) => TypedResults.Challenge(new Authe
 
 app.MapGroup("user/").MapUserAPI().RequireAuthorization();
 
-app.MapGrpcService<AppViewServicegRPC>().RequireAuthorization().EnableGrpcWeb();
+app.MapGrpcService<AppViewServicegRPC>().EnableGrpcWeb().RequireAuthorization();
 
 app.Run();

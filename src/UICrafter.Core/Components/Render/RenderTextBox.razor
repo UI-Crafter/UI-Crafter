@@ -1,5 +1,4 @@
 @inherits BaseTextBox
-@implements IDisposable
 
 @{
     base.BuildRenderTree(__builder);
@@ -9,27 +8,19 @@
     [Parameter]
     public required UIComponent Textbox { get; set; }
 
-    [CascadingParameter]
-    public required JsonPublisher JSONPublisher { get; set; }
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+
+        Label = Textbox.Textbox.Label;
+        Lines = Textbox.Textbox.NumberOfLines;
+    }
 
     protected override void OnInitialized()
     {
         base.OnInitialized();
 
-        Label = Textbox.Textbox.Label;
-        Content = Textbox.Textbox.Content;
-        Lines = Textbox.Textbox.NumberOfLines;
-
-
-        if (!string.IsNullOrEmpty(Textbox.Textbox.SourceRef))
-        {
-            JSONPublisher.Subscribe(Textbox.Textbox.SourceRef, UpdateTextboxContent);
-        }
-    }
-
-    public void Dispose()
-    {
-        JSONPublisher?.Unsubscribe(Textbox.Textbox.SourceRef, UpdateTextboxContent);
+        Textbox.Textbox.UpdateContent = UpdateTextboxContent;
     }
 
     private void UpdateTextboxContent(Dictionary<string, object> jsonResponse)

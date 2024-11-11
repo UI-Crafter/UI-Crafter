@@ -2,7 +2,7 @@ namespace UICrafter.Core.Utility;
 
 using System.Text.Json.Nodes;
 
-public class JsonProcessor
+public static class JsonProcessor
 {
 	public static Dictionary<string, object> ProcessJson(string json)
 	{
