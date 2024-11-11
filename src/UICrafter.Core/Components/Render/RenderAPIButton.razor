@@ -42,12 +42,7 @@
             return;
         }
 
-        ModifiedURL = Button.Button.URL;
-
-        foreach (var pair in LogicalNamesPairing)
-        {
-            ModifiedURL = ModifiedURL.Replace($"{{{pair.Key}}}", pair.Value.GetValue());
-        }
+        ModifiedURL = ReplaceLogicalNames(Button.Button.URL);
 
         HttpResponseMessage response;
 
@@ -75,28 +70,21 @@
         Snackbar.Add(message, severity);
     }
 
-    private string ReplaceLogicalNames(string url)
+    private string ReplaceLogicalNames(string s)
     {
-        var tmp = url;
-
         foreach (var pair in LogicalNamesPairing)
         {
-            tmp = tmp.Replace($"{{{pair.Key}}}", pair.Value.GetValue());
+            s = s.Replace($"{{{pair.Key}}}", pair.Value.GetValue());
         }
 
-        return tmp;
+        return s;
     }
 
     private async Task<HttpResponseMessage> ExecuteHttpRequest(CallMethod httpMethod, string url, string? body)
     {
         var httpClient = HttpClientProvider.GetDefaultHttpClient();
 
-        foreach (var pair in LogicalNamesPairing)
-        {
-            body = body?.Replace($"{{{pair.Key}}}", pair.Value.GetValue());
-        }
-
-        body = "{" + body + "}";
+        if (body is not null) body = ReplaceLogicalNames(body);
 
         return httpMethod switch
         {
