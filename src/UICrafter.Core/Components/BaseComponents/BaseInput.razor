@@ -12,4 +12,5 @@
     protected string LogicalName { get; set; } = string.Empty;
     protected EventCallback<FocusEventArgs> OnFocus { get; set; }
     protected virtual void OnChange() { }
+    public string GetValue() => Value;
 }
