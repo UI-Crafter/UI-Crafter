@@ -44,12 +44,10 @@
 
         ModifiedURL = ReplaceLogicalNames(Button.Button.URL);
 
-        HttpResponseMessage response;
-
         try
         {
             Log.Information(ModifiedURL);
-            response = await ExecuteHttpRequest(Button.Button.HttpMethod, ModifiedURL, Button.Button.HttpBody);
+            var response = await ExecuteHttpRequest(Button.Button.HttpMethod, ModifiedURL, Button.Button.HttpHeader, Button.Button.HttpBody);
 
             await HandleApiResponse(response);
         }
@@ -80,17 +78,17 @@
         return s;
     }
 
-    private async Task<HttpResponseMessage> ExecuteHttpRequest(CallMethod httpMethod, string url, string? body)
+    private async Task<HttpResponseMessage> ExecuteHttpRequest(CallMethod httpMethod, string url, string header, string body)
     {
         var httpClient = HttpClientProvider.GetDefaultHttpClient();
 
-        if (body is not null) body = ReplaceLogicalNames(body);
+        body = ReplaceLogicalNames(body);
 
         return httpMethod switch
         {
             CallMethod.Get => await httpClient.GetAsync(url),
-            CallMethod.Post => await httpClient.PostAsync(url, new StringContent(body ?? string.Empty)),
-            CallMethod.Put => await httpClient.PutAsync(url, new StringContent(body ?? string.Empty)),
+            CallMethod.Post => await httpClient.PostAsync(url, new StringContent(body)),
+            CallMethod.Put => await httpClient.PutAsync(url, new StringContent(body)),
             CallMethod.Delete => await httpClient.DeleteAsync(url),
             _ => throw new InvalidOperationException($"Unsupported HTTP method: {httpMethod}")
         };
