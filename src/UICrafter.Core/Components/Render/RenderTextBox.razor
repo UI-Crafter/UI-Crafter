@@ -23,7 +23,7 @@
         Textbox.Textbox.UpdateContent = UpdateTextboxContent;
     }
 
-    private void UpdateTextboxContent(Dictionary<string, object> jsonResponse)
+    private void UpdateTextboxContent(Dictionary<string, string> jsonResponse)
     {
         if (string.IsNullOrEmpty(Textbox.Textbox.JsonField))
         {
@@ -31,11 +31,9 @@
         }
         else
         {
-            string field = Textbox.Textbox.JsonField;
-            if (JsonToString.TryGetNestedFieldValue(jsonResponse, field, out var fieldValue))
+            if (jsonResponse.ContainsKey(Textbox.Textbox.JsonField))
             {
-                string description = JsonToString.ObjectAsString(fieldValue);
-                Content = JsonToString.CleanUpString(description);
+                Content = JsonToString.CleanUpString(jsonResponse[Textbox.Textbox.JsonField]);
             }
             else
             {
