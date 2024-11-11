@@ -52,11 +52,6 @@ public static class MauiProgram
 		// Register HttpClient using the configuration from IConfiguration
 		builder.Services.AddSingleton(new HttpClient { BaseAddress = new Uri(section.GetValue<string>("BaseUrl")!) });
 
-
-		// Add states for refreshing the UI
-		builder.Services.AddSingleton<RefreshViewState>();
-
-
 		builder.Services.AddTransient<IHttpClientProvider, HttpClientProvider>();
 
 		// Auth

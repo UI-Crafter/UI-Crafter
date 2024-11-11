@@ -3,7 +3,6 @@
 @attribute [Authorize]
 
 @inject IAppViewRepository AppViewRepository
-@inject RefreshViewState RefreshViewService
 
 <PageTitle>@appView?.Name</PageTitle>
 
@@ -38,19 +37,6 @@
 
     private long? _oldId;
     private bool _isLoading { get; set; } = false;
-
-    protected override void OnInitialized()
-    {
-        RefreshViewService.PropertyChanged += OnRefreshViewStateChanged!;
-    }
-
-    private async void OnRefreshViewStateChanged(object sender, PropertyChangedEventArgs e)
-    {
-        if (e.PropertyName == nameof(RefreshViewService.IsRefreshing) && RefreshViewService.IsRefreshing)
-        {
-            await LoadData();
-        }
-    }
 
     protected override async Task OnParametersSetAsync()
     {
@@ -91,7 +77,6 @@
         finally
         {
             _isLoading = false;
-            RefreshViewService.SetIsRefreshing(false);
             StateHasChanged();
         }
     }

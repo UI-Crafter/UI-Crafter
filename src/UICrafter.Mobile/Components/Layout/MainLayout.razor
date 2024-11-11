@@ -21,6 +21,15 @@
     </footer>
 </div>
 
+<script>
+    const ptr = PullToRefresh.init({
+        mainElement: 'main',
+        onRefresh() {
+            window.location.reload();
+        }
+    });
+</script>
+
 @code {
     [Inject] private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
 
