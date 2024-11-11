@@ -2,9 +2,7 @@
     <DialogContent>
         @* Extract from Mobile: AppViewPage *@
         <CascadingValue Value="jsonPublisher">
-            <CascadingValue Value="inputFieldPublisher">
                 <ComponentListRender UIComponents="UIComponents" />
-            </CascadingValue>
         </CascadingValue>
     </DialogContent>
     <DialogActions>
@@ -21,7 +19,6 @@
     public required ObservableCollection<UIComponent> UIComponents { get; set; }
 
     private JsonPublisher jsonPublisher = new JsonPublisher();
-    private InputFieldPublisher inputFieldPublisher = new InputFieldPublisher();
 
     protected override async Task OnInitializedAsync()
     {
