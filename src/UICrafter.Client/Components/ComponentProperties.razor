@@ -6,13 +6,13 @@
     {
         <MudTextField @bind-Value="SelectedComponent.Button.Label" Label="Button Label" Variant="Variant.Outlined" MaxLength="25" />
         <MudTextField @bind-Value="SelectedComponent.Button.URL" Label="Button URL" Variant="Variant.Outlined" />
-        <MudSelect T="CallMethod" Label="HTTP Method" @bind-Value="SelectedComponent.Button.HttpMethod">
+        <MudSelect T="CallMethod" Label="HTTP Method" @bind-Value="SelectedComponent.Button.HttpMethod" Variant="Variant.Outlined">
             @foreach(CallMethod method in Enum.GetValues(typeof(CallMethod)))
             {
                 <MudSelectItem Value="method">@method.ToString()</MudSelectItem>
             }
         </MudSelect>
-        <MudTextField @bind-Value="SelectedComponent.Button.HttpHeader" Label="HTTP Header" Variant="Variant.Outlined" Lines="3" />
+        <HttpHeaderEditor Headers=SelectedComponent.Button.HttpHeaders />
         if (SelectedComponent.Button.HttpMethod == CallMethod.Post || SelectedComponent.Button.HttpMethod == CallMethod.Put)
         {
             <MudTextField @bind-Value="SelectedComponent.Button.HttpBody" Label="HTTP Body" Variant="Variant.Outlined" Lines="5" />
