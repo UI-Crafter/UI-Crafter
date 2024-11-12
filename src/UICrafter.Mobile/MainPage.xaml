@@ -4,15 +4,10 @@
              xmlns:local="clr-namespace:UICrafter.Mobile"
 			 xmlns:states="clr-namespace:UICrafter.Mobile.Utility"
              x:Class="UICrafter.Mobile.MainPage"
-             BackgroundColor="{DynamicResource PageBackgroundColor}"
-			 x:DataType="states:RefreshViewState">
-	<RefreshView IsRefreshing="{Binding IsRefreshing}"
-             Refreshing="RefreshView_Refreshing">
-		<BlazorWebView x:Name="blazorWebView" HostPage="wwwroot/index.html">
-			<BlazorWebView.RootComponents>
-				<RootComponent Selector="#app" ComponentType="{x:Type local:Components.Routes}" />
-			</BlazorWebView.RootComponents>
-		</BlazorWebView>
-	</RefreshView>
-
+             BackgroundColor="{DynamicResource PageBackgroundColor}">
+	<BlazorWebView x:Name="blazorWebView" HostPage="wwwroot/index.html">
+		<BlazorWebView.RootComponents>
+			<RootComponent Selector="#app" ComponentType="{x:Type local:Components.Routes}" />
+		</BlazorWebView.RootComponents>
+	</BlazorWebView>
 </ContentPage>
