@@ -14,6 +14,15 @@ message AppView {
   bytes Content = 6;
   bool IsPublic = 7;
 }
+message AppViewMetadata {
+  int64 Id = 1;
+  string UserId = 2;
+  string Name = 3;
+  google.protobuf.Timestamp CreatedAtUTC = 4;
+  google.protobuf.Timestamp UpdatedAtUTC = 5;
+  string UserName = 6;
+  bool IsPublic = 7;
+}
 
 // Request and response messages for CRUD operations
 message CreateAppViewRequest {
@@ -32,8 +41,8 @@ message DeleteAppViewRequest {
   int64 id = 1;
 }
 
-message ListAppViewsResponse {
-  repeated AppView app_views = 1;
+message ListAppViewMetadataResponse {
+  repeated AppViewMetadata app_views = 1;
 }
 
 // CRUD service definition for AppView
@@ -68,15 +77,8 @@ service AppViewService {
     };
   }
 
-  // List all AppViews for a user (user_id is required)
-  rpc ListAppViews(google.protobuf.Empty) returns (ListAppViewsResponse) {
-    option (google.api.http) = {
-      get: "/v1/app_views"
-    };
-  }
-
   // List all public AppViews
-  rpc ListPublicAppViews(google.protobuf.Empty) returns (ListAppViewsResponse) {
+  rpc ListAppViewMetadata(google.protobuf.Empty) returns (ListAppViewMetadataResponse) {
     option (google.api.http) = {
       get: "/v1/public_app_views"
     };

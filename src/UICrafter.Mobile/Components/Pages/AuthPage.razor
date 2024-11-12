@@ -48,7 +48,7 @@
     private Task<AuthenticationState> AuthState { get; set; } = default!;
 
     private string Response { get; set; } = string.Empty;
-    private IList<AppView> AppViews { get; set; } = [];
+    private IList<AppViewMetadata> AppViews { get; set; } = [];
 
     [Inject] IAppViewRepository AppViewRepository { get; set; } = default!;
 
@@ -58,7 +58,7 @@
         {
             try
             {
-                AppViews = await AppViewRepository.GetAppViews() ?? AppViews;
+                AppViews = await AppViewRepository.GetAppViewMetadata() ?? AppViews;
                 Log.Debug("Got {count} appViews", AppViews.Count);
             }
             catch (Exception ex)

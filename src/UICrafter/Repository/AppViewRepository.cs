@@ -19,42 +19,28 @@ public class AppViewRepository : IAppViewRepository
 		_httpContextAccessor = httpContextAccessor;
 	}
 
-	public async Task<IList<AppView>> GetAppViews()
+	public async Task<IList<AppViewMetadata>> GetAppViewMetadata()
 	{
-		var userId = _httpContextAccessor.HttpContext!.User.GetAzureId();
 		return await _dbContext
 			.AppViews
 			.AsNoTracking()
-			.Where(x => x.UserId == userId)
-			.Select(x => new AppView
-			{
-				Id = x.Id,
-				UserId = x.UserId.ToString(),
-				Name = x.Name,
-				CreatedAt = x.CreatedAtUTC,
-				UpdatedAt = x.UpdatedAtUTC,
-				IsPublic = x.IsPublic,
-			})
+			.Join(_dbContext.Users,
+				appView => appView.UserId,
+				user => user.Id,
+				(appView, user) => new AppViewMetadata
+				{
+					Id = appView.Id,
+					UserId = appView.UserId.ToString(),
+					Name = appView.Name,
+					CreatedAtUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(appView.CreatedAtUTC),
+					UpdatedAtUTC = Google.Protobuf.WellKnownTypes.Timestamp.FromDateTime(appView.UpdatedAtUTC),
+					UserName = user.Name,
+					IsPublic = appView.IsPublic,
+				}
+			)
 			.ToListAsync();
 	}
 
-	public async Task<IList<AppView>> GetPublicAppViews()
-	{
-		return await _dbContext
-			.AppViews
-			.AsNoTracking()
-			.Where(x => x.IsPublic)
-			.Select(x => new AppView
-			{
-				Id = x.Id,
-				UserId = x.UserId.ToString(),
-				Name = x.Name,
-				CreatedAt = x.CreatedAtUTC,
-				UpdatedAt = x.UpdatedAtUTC,
-				IsPublic = x.IsPublic,
-			})
-			.ToListAsync();
-	}
 
 	public async Task<AppView> GetAppViewById(long id)
 	{

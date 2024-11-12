@@ -11,7 +11,7 @@
     [Parameter]
     public bool Public { get; set; }
 
-    protected override void HandleClick(AppView view) => ClickFunction.TryInvokeAsync(view.Id);
+    protected override void HandleClick(AppViewMetadata view) => ClickFunction.TryInvokeAsync(view.Id);
 
     protected override void OnInitialized()
     {
