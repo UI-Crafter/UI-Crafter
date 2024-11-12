@@ -24,7 +24,7 @@ public class ProxyAPICallHandler : IAPICallHandler
 			Url = url,
 			Method = httpMethod.ToString(),
 			Headers = headers.ToDictionary(header => header.Key, header => header.Value),
-			Body = string.IsNullOrWhiteSpace(body) ? null : ReplaceLogicalNames(UIComponents, body)
+			Body = string.IsNullOrWhiteSpace(body) ? null : APICallUtility.ReplaceLogicalNames(UIComponents, body)
 		};
 
 		var content = new StringContent(JsonSerializer.Serialize(proxyRequest), Encoding.UTF8, "application/json");
@@ -32,16 +32,5 @@ public class ProxyAPICallHandler : IAPICallHandler
 		var response = await httpClient.PostAsync("/proxy/forwarder", content);
 
 		return response;
-	}
-
-	public string ReplaceLogicalNames(IEnumerable<UIComponent> UIComponents, string s)
-	{
-		foreach (var (key, value) in UIComponents.Where(x => x.ComponentCase == UIComponent.ComponentOneofCase.InputField)
-												 .Select(x => (x.InputField.LogicalName, x.InputField.Value)))
-		{
-			s = s.Replace($"{{{key}}}", value);
-		}
-
-		return s;
 	}
 }

@@ -37,20 +37,10 @@ public class DefaultAPICallHandler : IAPICallHandler
 
 		if (!string.IsNullOrWhiteSpace(body))
 		{
-			body = ReplaceLogicalNames(UIComponents, body);
+			body = APICallUtility.ReplaceLogicalNames(UIComponents, body);
 			request.Content = new StringContent(body);
 		}
 
 		return await httpClient.SendAsync(request);
-	}
-
-	public string ReplaceLogicalNames(IEnumerable<UIComponent> UIComponents, string s)
-	{
-		foreach (var (key, value) in UIComponents.Where(x => x.ComponentCase == UIComponent.ComponentOneofCase.InputField).Select(x => (x.InputField.LogicalName, x.InputField.Value)))
-		{
-			s = s.Replace($"{{{key}}}", value);
-		}
-
-		return s;
 	}
 }
