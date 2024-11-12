@@ -1,3 +1,5 @@
+@using UICrafter.Client.Components.Properties
+
 @page "/uicrafter"
 @attribute [Authorize]
 
@@ -17,7 +19,7 @@
                 <MudTabPanel Icon="@Icons.Material.Filled.DesignServices" Text="Editor">
                     <AppViewDesigner @bind-SelectedComponent="@SelectedComponent" @bind-DropContainer="@DropContainer" UIComponents="@UIComponents" />
                 </MudTabPanel>
-                <MudTabPanel Icon="@Icons.Material.Filled.Preview" Text="Preview" >
+                <MudTabPanel Icon="@Icons.Material.Filled.Preview" Text="Preview">
                     <AppViewPreview UIComponents="@UIComponents" />
                 </MudTabPanel>
             </MudPaper>

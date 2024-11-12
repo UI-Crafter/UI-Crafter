@@ -1,0 +1,86 @@
+@using UICrafter.Client.Components.Properties.Components.Button
+@using UICrafter.Client.Components.Properties.Components
+
+@if (SelectedComponent is not null)
+{
+    <CascadingValue Value="SelectedComponent">
+        @if (SelectedComponent.ComponentCase == UIComponent.ComponentOneofCase.Button)
+        {
+            <ButtonProperties />
+        }
+        else if (SelectedComponent.ComponentCase == UIComponent.ComponentOneofCase.InputField)
+        {
+            <InputFieldProperties />
+        }
+        else if (SelectedComponent.ComponentCase == UIComponent.ComponentOneofCase.Textbox)
+        {
+            <TextboxProperties UIComponents="@UIComponents" />
+        }
+    </CascadingValue>
+
+    <MudButtonGroup Variant="Variant.Outlined" Class="mx-auto">
+        <MudButton StartIcon="@Icons.Material.Filled.Delete" OnClick=@DeleteSelectedComponent Size="Size.Large">Delete</MudButton>
+    </MudButtonGroup>
+}
+
+
+@code {
+    [Parameter]
+    public required ObservableCollection<UIComponent> UIComponents { get; set; }
+
+    private UIComponent? _internalSelectedComponent;
+    [Parameter]
+    public required UIComponent? SelectedComponent
+    {
+        get => _internalSelectedComponent;
+        set
+        {
+            if (SelectedComponentChanged.HasDelegate && value != _internalSelectedComponent)
+            {
+                _internalSelectedComponent = value;
+
+                SelectedComponentChanged.InvokeAsync(value);
+            }
+        }
+    }
+    [Parameter]
+    public required EventCallback<UIComponent?> SelectedComponentChanged { get; set; }
+
+    private MudDropContainer<UIComponent>? _internalDropContainer;
+    [Parameter]
+    public required MudDropContainer<UIComponent>? DropContainer
+    {
+        get => _internalDropContainer;
+        set
+        {
+            if (DropContainerChanged.HasDelegate && value != _internalDropContainer)
+            {
+                _internalDropContainer = value;
+                DropContainerChanged.InvokeAsync(value);
+            }
+        }
+    }
+    [Parameter]
+    public required EventCallback<MudDropContainer<UIComponent>?> DropContainerChanged { get; set; }
+
+    private void DeleteSelectedComponent()
+    {
+        if (SelectedComponent is null) return;
+
+        if (SelectedComponent.ComponentCase == UIComponent.ComponentOneofCase.Button)
+        {
+            var textBoxesWithSourceRef = UIComponents
+                .Where(component => component.ComponentCase == UIComponent.ComponentOneofCase.Textbox && component.Textbox.SourceRef == SelectedComponent.Guid)
+                .ToList();
+
+            foreach (var component in textBoxesWithSourceRef)
+            {
+                component.Textbox.SourceRef = Guid.Empty.ToString();
+            }
+        }
+
+        UIComponents.Remove(SelectedComponent);
+        SelectedComponent = null;
+        DropContainer?.Refresh();
+    }
+}
