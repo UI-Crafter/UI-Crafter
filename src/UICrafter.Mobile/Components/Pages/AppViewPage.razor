@@ -24,8 +24,7 @@
 {
     <CenterLoading Visible="_isLoading" />
 
-    <MobileComponentListRender componentList="componentList"
-                               jsonPublisher="jsonPublisher" />
+    <AppViewPreview UIComponents="new(componentList.UIComponents)" />
 }
 
 @code {
@@ -34,7 +33,6 @@
     private AppView? appView;
 
     private UIComponentList componentList = new UIComponentList();
-    private JsonPublisher jsonPublisher = new JsonPublisher();
 
     private long? _oldId;
     private bool _isLoading { get; set; } = false;
@@ -67,7 +65,6 @@
         _isLoading = true;
         if (_oldId != viewId)
         {
-            jsonPublisher = new();
             componentList = new();
             _oldId = viewId;
         }

@@ -14,18 +14,20 @@
     public required UIComponent Button { get; set; }
 
     [CascadingParameter]
-    public required JsonPublisher JSONPublisher { get; set; }
-
-    [CascadingParameter]
-    public required ConcurrentDictionary<string, BaseInput> LogicalNamesPairing { get; set; }
+    public required ObservableCollection<UIComponent> UIComponents { get; set; }
 
     private string ModifiedURL { get; set; } = string.Empty;
 
     private bool _processing = false;
 
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
+        ButtonText = Button.Button.Label;
+    }
+
     protected override void OnInitialized()
     {
-        ButtonText = Button.Button.Label;
         OnClick = EventCallback.Factory.Create<MouseEventArgs>(this, ExecuteApiCall);
     }
 
@@ -70,9 +72,9 @@
 
     private string ReplaceLogicalNames(string s)
     {
-        foreach (var pair in LogicalNamesPairing)
+        foreach (var (key, value) in UIComponents.Where(x => x.ComponentCase == UIComponent.ComponentOneofCase.InputField).Select(x => (x.InputField.LogicalName, x.InputField.Value)))
         {
-            s = s.Replace($"{{{pair.Key}}}", pair.Value.GetValue());
+            s = s.Replace($"{{{key}}}", value);
         }
 
         return s;
@@ -101,7 +103,7 @@
         if (response.IsSuccessStatusCode)
         {
             NotifyUser(Color.Success, "Success", Severity.Success);
-            JSONPublisher.NotifySubscribers(Button.Guid, responseData);
+            UpdateTextBoxContents(responseData);
         }
         else
         {
@@ -110,9 +112,22 @@
             NotifyUser(Color.Error, $"{(int)response.StatusCode} - {response.StatusCode}", Severity.Error);
 
             var jsonResponse = JsonSerializer.Serialize(new { StatusCode = $"{(int)response.StatusCode} - {response.ReasonPhrase}", Data = responseData });
-            JSONPublisher.NotifySubscribers(Button.Guid, jsonResponse);
+            UpdateTextBoxContents(jsonResponse);
         }
 
         Log.Information("Response status code: {StatusCode}", (int)response.StatusCode);
+    }
+
+    private void UpdateTextBoxContents(string responseData)
+    {
+        var json = JsonProcessor.ProcessJson(responseData);
+
+        foreach (var component in UIComponents.Where(x => x.ComponentCase == UIComponent.ComponentOneofCase.Textbox && x.Textbox.SourceRef == Button.Guid))
+        {
+            if (component.Textbox?.UpdateContent is not null)
+            {
+                component.Textbox.UpdateContent(json);
+            }
+        }
     }
 }

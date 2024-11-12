@@ -1,6 +1,5 @@
 @using System.Collections.Concurrent
 @inherits BaseInput
-@implements IDisposable
 
 @{
     base.BuildRenderTree(__builder);
@@ -10,29 +9,19 @@
     [Parameter]
     public required UIComponent InputField { get; set; }
 
-    [CascadingParameter]
-    public required JsonPublisher JSONPublisher { get; set; }
-
-    [CascadingParameter]
-    public required ConcurrentDictionary<string, BaseInput> LogicalNamesPairing { get; set; }
-
     protected override void OnParametersSet()
     {
-        LogicalNamesPairing.TryRemove(LogicalName, out _);
-
         base.OnParametersSet();
 
         Label = InputField.InputField.Label;
         LogicalName = InputField.InputField.LogicalName;
 
-        LogicalNamesPairing.TryAdd(LogicalName, this);
-
         Log.Information($"InputField: {Label} - {Value} - {LogicalName}");
     }
 
-    public void Dispose()
+    protected override void OnChange()
     {
-        LogicalNamesPairing.TryRemove(LogicalName, out _);
+        InputField.InputField.Value = Value;
     }
 }
 

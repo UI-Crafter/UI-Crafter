@@ -27,7 +27,6 @@
     {
         <MudTextField @bind-Value="SelectedComponent.Textbox.Label" Label="Textbox label" Variant="Variant.Outlined"/>
         <MudTextField @bind-Value="SelectedComponent.Textbox.NumberOfLines" Label="Number of lines" Variant="Variant.Outlined"/>
-        <MudTextField @bind-Value="SelectedComponent.Textbox.Content" Label="Textbox Content" Variant="Variant.Outlined" Lines="4"/>
         <MudSelect T="string" Label="Source Reference" @bind-Value="SelectedComponent.Textbox.SourceRef">
             <MudSelectItem Value="Guid.Empty.ToString()">None</MudSelectItem>
             @foreach (var component in UIComponents.Where(c => c.ComponentCase == UIComponent.ComponentOneofCase.Button))

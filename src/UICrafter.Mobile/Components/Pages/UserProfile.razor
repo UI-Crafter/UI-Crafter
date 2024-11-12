@@ -4,9 +4,12 @@
 
 <PageTitle>User Profile</PageTitle>
 
-<BasicUserInformationComponent/>
+<MudStack>
+    <BasicUserInformationComponent />
 
-<MudButton Variant="Variant.Filled" Color="Color.Primary" Href="/" OnClick="Logout">Logout</MudButton>
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" Href="/" OnClick="Logout" Class="mx-auto">Logout</MudButton>
+</MudStack>
+
 
 @code {
     [Inject] private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
