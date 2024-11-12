@@ -2,12 +2,14 @@
               Class="mb-2"
               Variant="Variant.Outlined"
               Label="@Label"
+              ReadOnly="@ReadOnly"
               @bind-Value="@Value"
               @onfocus="OnFocus"
               TextChanged="OnChange" />
 
 @code {
     protected string Label { get; set; } = string.Empty;
+    protected bool ReadOnly { get; set; } = false;
     protected string Value { get; set; } = string.Empty;
     protected string LogicalName { get; set; } = string.Empty;
     protected EventCallback<FocusEventArgs> OnFocus { get; set; }

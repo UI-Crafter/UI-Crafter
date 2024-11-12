@@ -1,12 +1,18 @@
-
+<MudText>Headers:</MudText>
 <MudStack Justify="Justify.Center">
-    @foreach (var header in Headers)
+    @if (Headers.Count > 0)
     {
-        <MudStack Row>
-            <MudTextField @bind-Value=header.Key />
-             =
-            <MudTextField @bind-Value=header.Value />
-        </MudStack>
+        <MudPaper Class="pa-2" Elevation="1" Outlined>
+            @foreach (var header in Headers)
+            {
+                <MudStack Class="my-2" Row>
+                    <MudTextField @bind-Value=header.Key />
+                    =
+                    <MudTextField @bind-Value=header.Value />
+                    <MudIconButton Icon="@Icons.Material.Filled.Delete" Variant="Variant.Outlined" Size="Size.Small" OnClick="() => Headers.Remove(header)" />
+                </MudStack>
+            }
+        </MudPaper>
     }
     <MudButton StartIcon="@Icons.Material.Filled.Add" OnClick="() => Headers.Add(new HttpHeader())">Add Header</MudButton>
 </MudStack>

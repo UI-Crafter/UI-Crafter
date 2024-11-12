@@ -110,6 +110,12 @@
     {
         if (AppView is null) return;
 
+        if (string.IsNullOrEmpty(AppView.Name))
+        {
+            Snackbar.Add("App-view missing name", Severity.Error);
+            return;
+        }
+
         Visible = true;
 
         var serializedContent = new UIComponentList { UIComponents = { UIComponents } }.ToByteString();
