@@ -2,8 +2,11 @@ namespace UICrafter.Client.Utility;
 
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Google.Protobuf.Collections;
+using UICrafter.Client.Models;
 using UICrafter.Core.UIComponents;
 using UICrafter.Core.Utility;
 
@@ -16,38 +19,25 @@ public class ProxyAPICallHandler : IAPICallHandler
 	public async Task<HttpResponseMessage> ExecuteHttpRequest(IEnumerable<UIComponent> UIComponents, CallMethod httpMethod, string url, RepeatedField<HttpHeader> headers, string body)
 	{
 		var httpClient = _httpClientProvider.GetDefaultHttpClient();
-
-		var method = httpMethod switch
+		var proxyRequest = new ProxyRequest
 		{
-			CallMethod.Get => HttpMethod.Get,
-			CallMethod.Post => HttpMethod.Post,
-			CallMethod.Put => HttpMethod.Put,
-			CallMethod.Delete => HttpMethod.Delete,
-			_ => throw new InvalidOperationException($"Unsupported HTTP method: {httpMethod}")
+			Url = url,
+			Method = httpMethod.ToString(),
+			Headers = headers.ToDictionary(header => header.Key, header => header.Value),
+			Body = string.IsNullOrWhiteSpace(body) ? null : ReplaceLogicalNames(UIComponents, body)
 		};
 
-		using var request = new HttpRequestMessage(method, url);
+		var content = new StringContent(JsonSerializer.Serialize(proxyRequest), Encoding.UTF8, "application/json");
 
-		if (headers.Count > 0)
-		{
-			foreach (var header in headers)
-			{
-				request.Headers.Add(header.Key, header.Value);
-			}
-		}
+		var response = await httpClient.PostAsync("/proxy/forwarder", content);
 
-		if (!string.IsNullOrWhiteSpace(body))
-		{
-			body = ReplaceLogicalNames(UIComponents, body);
-			request.Content = new StringContent(body);
-		}
-
-		return await httpClient.SendAsync(request);
+		return response;
 	}
 
 	public string ReplaceLogicalNames(IEnumerable<UIComponent> UIComponents, string s)
 	{
-		foreach (var (key, value) in UIComponents.Where(x => x.ComponentCase == UIComponent.ComponentOneofCase.InputField).Select(x => (x.InputField.LogicalName, x.InputField.Value)))
+		foreach (var (key, value) in UIComponents.Where(x => x.ComponentCase == UIComponent.ComponentOneofCase.InputField)
+												 .Select(x => (x.InputField.LogicalName, x.InputField.Value)))
 		{
 			s = s.Replace($"{{{key}}}", value);
 		}
