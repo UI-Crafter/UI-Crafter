@@ -8,6 +8,11 @@ enum CallMethod {
     DELETE = 3;
 }
 
+message HttpHeader {
+	string Key = 1;
+	string Value = 2;
+}
+
 message UIComponentList {
 	repeated UIComponent UIComponents = 1;
 }
@@ -28,11 +33,6 @@ message UIButton {
 	CallMethod HttpMethod = 3;
 	repeated HttpHeader HttpHeaders = 4;
 	string HttpBody = 5;
-}
-
-message HttpHeader {
-	string Key = 1;
-	string Value = 2;
 }
 
 message UIInputField {

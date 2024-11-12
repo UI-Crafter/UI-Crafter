@@ -93,14 +93,19 @@
 
         using var request = new HttpRequestMessage(method, url);
 
-        foreach (var header in headers)
+        if (headers.Count > 0)
         {
-            request.Headers.Add(header.Key, header.Value);
+            foreach (var header in headers)
+            {
+                request.Headers.Add(header.Key, header.Value);
+            }
         }
 
-        body = ReplaceLogicalNames(body);
-
-        request.Content = new StringContent(body);
+        if (!string.IsNullOrWhiteSpace(body))
+        {
+            body = ReplaceLogicalNames(body);
+            request.Content = new StringContent(body);
+        }
 
         return await httpClient.SendAsync(request);
     }
