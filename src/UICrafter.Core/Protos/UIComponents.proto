@@ -47,4 +47,5 @@ message UITextbox {
 	string Content = 3;
 	string SourceRef = 4;
 	string JsonField = 5;
+	string JsonQuery = 6;
 }
