@@ -21,9 +21,12 @@ public class AppViewRepository : IAppViewRepository
 
 	public async Task<IList<AppViewMetadata>> GetAppViewMetadata()
 	{
+		var userId = _httpContextAccessor.HttpContext!.User.GetAzureId();
+
 		return await _dbContext
 			.AppViews
 			.AsNoTracking()
+			.Where(x => x.UserId == userId || x.IsPublic)
 			.Join(_dbContext.Users,
 				appView => appView.UserId,
 				user => user.Id,
@@ -40,7 +43,6 @@ public class AppViewRepository : IAppViewRepository
 			)
 			.ToListAsync();
 	}
-
 
 	public async Task<AppView> GetAppViewById(long id)
 	{
