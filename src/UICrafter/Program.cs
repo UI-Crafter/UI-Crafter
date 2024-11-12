@@ -20,6 +20,7 @@ using Microsoft.OpenApi.Models;
 using UICrafter.Core.DependencyInjection;
 using UICrafter.Core.AppView;
 using UICrafter.Options;
+using UICrafter.Proxy;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -49,6 +50,9 @@ builder.Services.AddEndpointsApiExplorer();
 // Repository
 builder.Services.AddScoped<IAppViewRepository, AppViewRepository>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+// API Call handler
+builder.Services.AddScoped<IAPICallHandler, DefaultAPICallHandler>();
 
 // Database setup
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -154,8 +158,11 @@ app.MapGet("api/prototest", () =>
 app.MapGet("auth/login", (string? returnUrl) => TypedResults.Challenge(new AuthenticationProperties { RedirectUri = returnUrl }))
 			.AllowAnonymous();
 
-app.MapGroup("user/").MapUserAPI().RequireAuthorization();
+app.MapGroup("user/").RequireAuthorization().MapUserAPI();
 
-app.MapGrpcService<AppViewServicegRPC>().EnableGrpcWeb().RequireAuthorization();
+app.MapGrpcService<AppViewServicegRPC>().EnableGrpcWeb();
+
+app.MapGroup("proxy/forwarder").RequireAuthorization().MapUICrafterProxy();
+
 
 app.Run();

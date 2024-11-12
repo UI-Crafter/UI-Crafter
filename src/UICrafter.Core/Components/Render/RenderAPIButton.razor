@@ -2,8 +2,8 @@
 @using Microsoft.AspNetCore.WebUtilities
 @using System.Collections.Concurrent
 @inherits BaseAPIButton
-@inject IHttpClientProvider HttpClientProvider
 @inject ISnackbar Snackbar
+@inject IAPICallHandler APICallHandler
 
 @{
     base.BuildRenderTree(__builder);
@@ -28,6 +28,7 @@
 
     protected override void OnInitialized()
     {
+        base.OnInitialized();
         OnClick = EventCallback.Factory.Create<MouseEventArgs>(this, ExecuteApiCall);
     }
 
@@ -44,12 +45,12 @@
             return;
         }
 
-        ModifiedURL = ReplaceLogicalNames(Button.Button.URL);
+        ModifiedURL = APICallHandler.ReplaceLogicalNames(UIComponents, Button.Button.URL);
 
         try
         {
             Log.Information(ModifiedURL);
-            var response = await ExecuteHttpRequest(Button.Button.HttpMethod, ModifiedURL, Button.Button.HttpHeaders, Button.Button.HttpBody);
+            var response = await APICallHandler.ExecuteHttpRequest(UIComponents, Button.Button.HttpMethod, ModifiedURL, Button.Button.HttpHeaders, Button.Button.HttpBody);
 
             await HandleApiResponse(response);
         }
@@ -68,48 +69,6 @@
     {
         ButtonColor = buttonColor;
         Snackbar.Add(message, severity);
-    }
-
-    private string ReplaceLogicalNames(string s)
-    {
-        foreach (var (key, value) in UIComponents.Where(x => x.ComponentCase == UIComponent.ComponentOneofCase.InputField).Select(x => (x.InputField.LogicalName, x.InputField.Value)))
-        {
-            s = s.Replace($"{{{key}}}", value);
-        }
-
-        return s;
-    }
-
-    private async Task<HttpResponseMessage> ExecuteHttpRequest(CallMethod httpMethod, string url, RepeatedField<HttpHeader> headers, string body)
-    {
-        var httpClient = HttpClientProvider.GetDefaultHttpClient();
-
-        var method = httpMethod switch
-        {
-            CallMethod.Get => HttpMethod.Get,
-            CallMethod.Post => HttpMethod.Post,
-            CallMethod.Put => HttpMethod.Put,
-            CallMethod.Delete => HttpMethod.Delete,
-            _ => throw new InvalidOperationException($"Unsupported HTTP method: {httpMethod}")
-        };
-
-        using var request = new HttpRequestMessage(method, url);
-
-        if (headers.Count > 0)
-        {
-            foreach (var header in headers)
-            {
-                request.Headers.Add(header.Key, header.Value);
-            }
-        }
-
-        if (!string.IsNullOrWhiteSpace(body))
-        {
-            body = ReplaceLogicalNames(body);
-            request.Content = new StringContent(body);
-        }
-
-        return await httpClient.SendAsync(request);
     }
 
     private async Task HandleApiResponse(HttpResponseMessage response)
