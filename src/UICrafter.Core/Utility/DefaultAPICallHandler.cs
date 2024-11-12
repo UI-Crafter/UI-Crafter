@@ -5,7 +5,6 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Google.Protobuf.Collections;
 using UICrafter.Core.UIComponents;
-using UICrafter.Core.Utility;
 
 public class DefaultAPICallHandler : IAPICallHandler
 {
