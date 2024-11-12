@@ -6,9 +6,9 @@ public static class APICallUtility
 {
 	public static string ReplaceLogicalNames(IEnumerable<UIComponent> UIComponents, string s)
 	{
-		foreach (var (key, value) in UIComponents.Where(x => x.ComponentCase == UIComponent.ComponentOneofCase.InputField).Select(x => (x.InputField.LogicalName, x.InputField.Value)))
+		foreach (var component in UIComponents.Where(x => x.ComponentCase == UIComponent.ComponentOneofCase.InputField))
 		{
-			s = s.Replace($"{{{key}}}", value);
+			s = s.Replace($"{{{component.InputField.LogicalName}}}", component.InputField.Value);
 		}
 
 		return s;
