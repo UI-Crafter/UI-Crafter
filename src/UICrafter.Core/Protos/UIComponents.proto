@@ -8,11 +8,11 @@ enum CallMethod {
     DELETE = 3;
 }
 
-message UIComponentList{
+message UIComponentList {
 	repeated UIComponent UIComponents = 1;
 }
 
-message UIComponent{
+message UIComponent {
 	string Guid = 1;
 	string DropZoneID = 2;
 	oneof component{
@@ -22,21 +22,26 @@ message UIComponent{
 	}
 }
 
-message UIButton{
+message UIButton {
 	string Label = 1;
 	string URL = 2;
 	CallMethod HttpMethod = 3;
-	string HttpHeader = 4;
+	repeated HttpHeader HttpHeaders = 4;
 	string HttpBody = 5;
 }
 
-message UIInputField{
+message HttpHeader {
+	string Key = 1;
+	string Value = 2;
+}
+
+message UIInputField {
 	string Label = 1;
 	string Value = 2;
 	string LogicalName = 3;
 }
 
-message UITextbox{
+message UITextbox {
 	string Label = 1;
 	int32 NumberOfLines = 2;
 	string Content = 3;

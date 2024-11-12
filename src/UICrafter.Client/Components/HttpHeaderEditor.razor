@@ -1,0 +1,16 @@
+
+<MudStack Justify="Justify.Center">
+    @foreach (var header in Headers)
+    {
+        <MudStack Row>
+            <MudTextField @bind-Value=header.Key />
+             =
+            <MudTextField @bind-Value=header.Value />
+        </MudStack>
+    }
+    <MudButton StartIcon="@Icons.Material.Filled.Add" OnClick="() => Headers.Add(new HttpHeader())">Add Header</MudButton>
+</MudStack>
+
+@code {
+    [Parameter] public RepeatedField<HttpHeader> Headers { get; set; } = new();
+}

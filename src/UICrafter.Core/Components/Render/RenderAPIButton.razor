@@ -47,7 +47,7 @@
         try
         {
             Log.Information(ModifiedURL);
-            var response = await ExecuteHttpRequest(Button.Button.HttpMethod, ModifiedURL, Button.Button.HttpHeader, Button.Button.HttpBody);
+            var response = await ExecuteHttpRequest(Button.Button.HttpMethod, ModifiedURL, Button.Button.HttpHeaders, Button.Button.HttpBody);
 
             await HandleApiResponse(response);
         }
@@ -78,20 +78,31 @@
         return s;
     }
 
-    private async Task<HttpResponseMessage> ExecuteHttpRequest(CallMethod httpMethod, string url, string header, string body)
+    private async Task<HttpResponseMessage> ExecuteHttpRequest(CallMethod httpMethod, string url, RepeatedField<HttpHeader> headers, string body)
     {
         var httpClient = HttpClientProvider.GetDefaultHttpClient();
 
-        body = ReplaceLogicalNames(body);
-
-        return httpMethod switch
+        var method = httpMethod switch
         {
-            CallMethod.Get => await httpClient.GetAsync(url),
-            CallMethod.Post => await httpClient.PostAsync(url, new StringContent(body)),
-            CallMethod.Put => await httpClient.PutAsync(url, new StringContent(body)),
-            CallMethod.Delete => await httpClient.DeleteAsync(url),
+            CallMethod.Get => HttpMethod.Get,
+            CallMethod.Post => HttpMethod.Post,
+            CallMethod.Put => HttpMethod.Put,
+            CallMethod.Delete => HttpMethod.Delete,
             _ => throw new InvalidOperationException($"Unsupported HTTP method: {httpMethod}")
         };
+
+        using var request = new HttpRequestMessage(method, url);
+
+        foreach (var header in headers)
+        {
+            request.Headers.Add(header.Key, header.Value);
+        }
+
+        body = ReplaceLogicalNames(body);
+
+        request.Content = new StringContent(body);
+
+        return await httpClient.SendAsync(request);
     }
 
     private async Task HandleApiResponse(HttpResponseMessage response)
