@@ -7,9 +7,9 @@ using UICrafter.Repository;
 
 public static class UserAPI
 {
-	public static RouteGroupBuilder MapUserAPI(this RouteGroupBuilder group)
+	public static IEndpointRouteBuilder MapUserAPI(this IEndpointRouteBuilder builder)
 	{
-		group.MapPut("authenticated", async (HttpContext context, [FromServices] IUserRepository userRepo) =>
+		builder.MapPut("authenticated", async (HttpContext context, [FromServices] IUserRepository userRepo) =>
 		{
 			var user = context.User;
 			await userRepo.UpsertUserEntity(new UserEntity
@@ -20,6 +20,6 @@ public static class UserAPI
 			});
 		});
 
-		return group;
+		return builder;
 	}
 }

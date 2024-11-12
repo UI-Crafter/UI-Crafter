@@ -30,6 +30,7 @@
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.10" />
     <PackageReference Include="Riok.Mapperly" Version="4.1.0" />
     <PackageReference Include="Serilog.Sinks.BrowserConsole" Version="8.0.0" />
+    <PackageReference Include="Yarp.ReverseProxy" Version="2.2.0" />
     <ProjectReference Include="..\UICrafter.Client\UICrafter.Client.csproj" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="8.0.10" />
     <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="6.9.0" />

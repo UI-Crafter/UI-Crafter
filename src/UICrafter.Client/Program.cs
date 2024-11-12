@@ -30,4 +30,7 @@ builder.Services.AddGrpcClient<AppViewService.AppViewServiceClient>(options => o
 // Repository
 builder.Services.AddScoped<IAppViewRepository, AppViewRepository>();
 
+// API Call handler
+builder.Services.AddScoped<IAPICallHandler, ProxyAPICallHandler>();
+
 await builder.Build().RunAsync();
