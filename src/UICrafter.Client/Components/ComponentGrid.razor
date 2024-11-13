@@ -1,4 +1,4 @@
-<MudContainer Class="rounded mud-background-gray pa-4" @onclick:stopPropagation>
+<MudContainer Class="rounded mud-background-gray pa-4" @onmousedown:stopPropagation>
     <MudGrid>
         <MudItem sm="12" lg="4" Class="d-flex flex-column justify-start align-center">
             <MudIconButton Icon="@Icons.Material.Filled.SmartButton" Variant="Variant.Outlined" OnClick=@AddNewButton Size="Size.Large" />
@@ -85,5 +85,5 @@
 
     private void AddNewInputField() => AddNewComponent(new UIInputField { Label = "New Input Field", Value = string.Empty, LogicalName = string.Empty });
 
-    private void AddNewTextbox() => AddNewComponent(new UITextbox { Label = "New Textbox", NumberOfLines = 2, Content = string.Empty, SourceRef = Guid.Empty.ToString(), JsonField = string.Empty });
+    private void AddNewTextbox() => AddNewComponent(new UITextbox { Label = "New API-Output", NumberOfLines = 2, SourceRef = Guid.Empty.ToString(), JsonField = string.Empty, CleanupTextBox = true });
 }

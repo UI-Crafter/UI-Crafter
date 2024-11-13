@@ -1,9 +1,11 @@
+@using UICrafter.Client.Components.Properties
+
 @page "/uicrafter"
 @attribute [Authorize]
 
 <PageTitle>UICrafter-Editor</PageTitle>
 
-<MudStack Row @onclick="DeselectComponent">
+<MudStack Row @onmousedown="DeselectComponent">
     <!-- Left section: Component Grid (20%) -->
     <MudStack Style="width: 20%">
         <MudText>Components:</MudText>
@@ -17,7 +19,7 @@
                 <MudTabPanel Icon="@Icons.Material.Filled.DesignServices" Text="Editor">
                     <AppViewDesigner @bind-SelectedComponent="@SelectedComponent" @bind-DropContainer="@DropContainer" UIComponents="@UIComponents" />
                 </MudTabPanel>
-                <MudTabPanel Icon="@Icons.Material.Filled.Preview" Text="Preview" >
+                <MudTabPanel Icon="@Icons.Material.Filled.Preview" Text="Preview">
                     <AppViewPreview UIComponents="@UIComponents" />
                 </MudTabPanel>
             </MudPaper>
@@ -45,8 +47,9 @@
 
     private ObservableCollection<UIComponent> UIComponents { get; set; } = [];
 
-    private void DeselectComponent()
+    private void DeselectComponent(MouseEventArgs args)
     {
+
         if (SelectedComponent is null) return;
 
         SelectedComponent = null;

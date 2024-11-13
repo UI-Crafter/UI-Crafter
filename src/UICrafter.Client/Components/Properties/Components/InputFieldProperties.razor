@@ -1,0 +1,18 @@
+@using System.Text.RegularExpressions
+
+<MudTextField T="string" Value="SelectedComponent.InputField.Label" ValueChanged="OnInputFieldChange" Label="Input Label" Variant="Variant.Outlined" MaxLength="25" />
+<MudTextField @bind-Value="SelectedComponent.InputField.LogicalName" Label="Logical Name" Variant="Variant.Outlined" MaxLength="25" ReadOnly />
+
+
+@code {
+    [CascadingParameter]
+    public required UIComponent SelectedComponent { get; set; }
+
+    private void OnInputFieldChange(string input)
+    {
+        if (SelectedComponent?.ComponentCase != UIComponent.ComponentOneofCase.InputField) return;
+
+        SelectedComponent.InputField.Label = input;
+        SelectedComponent.InputField.LogicalName = Regex.Replace(input.ToLower().Replace(" ", "-"), @"[^a-z0-9-]", "");
+    }
+}

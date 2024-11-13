@@ -1,0 +1,37 @@
+<MudTextField @bind-Value="SelectedComponent.Textbox.Label" Label="Textbox label" Variant="Variant.Outlined" />
+<MudTextField @bind-Value="SelectedComponent.Textbox.NumberOfLines" Label="Number of lines" Variant="Variant.Outlined" />
+<MudSelect T="string" Label="Source Reference" @bind-Value="SelectedComponent.Textbox.SourceRef">
+    <MudSelectItem Value="Guid.Empty.ToString()">None</MudSelectItem>
+    @foreach (var component in UIComponents.Where(c => c.ComponentCase == UIComponent.ComponentOneofCase.Button))
+    {
+        <MudSelectItem Value="@component.Guid">@component.Button.Label</MudSelectItem>
+    }
+</MudSelect>
+
+<MudField Label="Json field or query" Variant="Variant.Outlined" InnerPadding="false">
+    <MudStack Row>
+        <MudRadioGroup T="bool" @bind-value=@SelectedComponent.Textbox.IsJsonQuery>
+            <MudRadio Value="false">Field</MudRadio>
+            <MudRadio Value="true">Query</MudRadio>
+        </MudRadioGroup>
+        <MudCheckBox Class="ml-auto" Size="Size.Medium" T="bool" @bind-Value=@SelectedComponent.Textbox.CleanupTextBox>Cleanup Output</MudCheckBox>
+    </MudStack>
+</MudField>
+
+@if (SelectedComponent.Textbox.IsJsonQuery)
+{
+    <MudTextField @bind-Value="SelectedComponent.Textbox.JsonField" Label="Json Query" Variant="Variant.Outlined" />
+}
+else
+{
+    <MudTextField @bind-Value="SelectedComponent.Textbox.JsonField" Label="Json Field" Variant="Variant.Outlined" />
+}
+
+
+@code {
+    [CascadingParameter]
+    public required UIComponent SelectedComponent { get; set; }
+
+    [Parameter]
+    public required ObservableCollection<UIComponent> UIComponents { get; set; }
+}

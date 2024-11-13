@@ -1,3 +1,4 @@
+@using UICrafter.Client.Components.Dialogs
 @inject IDialogService DialogService
 @inject ISnackbar Snackbar
 
@@ -109,6 +110,12 @@
     private async Task SaveAppView()
     {
         if (AppView is null) return;
+
+        if (string.IsNullOrWhiteSpace(AppView.Name))
+        {
+            Snackbar.Add("App-view missing name", Severity.Error);
+            return;
+        }
 
         Visible = true;
 

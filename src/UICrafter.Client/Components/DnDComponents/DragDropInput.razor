@@ -13,8 +13,8 @@
 
     protected override void OnInitialized()
     {
+        ReadOnly = true;
         Label = UIComponent.InputField.Label;
-        Value = UIComponent.InputField.Value;
         LogicalName = UIComponent.InputField.LogicalName;
         OnFocus = EventCallback.Factory.Create<FocusEventArgs>(this, () => OnSelect.InvokeAsync(UIComponent));
     }

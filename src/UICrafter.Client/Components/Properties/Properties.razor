@@ -1,4 +1,4 @@
-<MudStack Class="rounded mud-background-gray pa-4 " @onclick:stopPropagation>
+<MudStack Class="rounded mud-background-gray pa-4 overflow-auto" Style="max-height: 75vh;" @onmousedown:stopPropagation>
     @if (SelectedComponent is not null)
     {
         <ComponentProperties @bind-SelectedComponent="@SelectedComponent" @bind-DropContainer="@DropContainer" UIComponents="@UIComponents" />

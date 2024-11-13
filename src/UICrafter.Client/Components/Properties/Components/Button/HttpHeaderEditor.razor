@@ -1,0 +1,20 @@
+
+<MudField Label="Headers" Variant="Variant.Outlined">
+    <MudStack Justify="Justify.Center">
+        @foreach (var header in Headers)
+        {
+            <MudStack Class="my-2" Row>
+                <MudTextField @bind-Value=header.Key />
+                <MudIconButton Icon="@Icons.Material.Filled.Close" Size="Size.Small" OnClick="() => Headers.Remove(header)" Color="Color.Error" />
+                <MudTextField @bind-Value=header.Value />
+            </MudStack>
+        }
+        <MudIconButton Icon="@Icons.Material.Filled.Add" Size="Size.Small" Class="mx-auto" OnClick="() => Headers.Add(new HttpHeader())" />
+    </MudStack>
+</MudField>
+
+
+
+@code {
+    [Parameter] public RepeatedField<HttpHeader> Headers { get; set; } = [];
+}
