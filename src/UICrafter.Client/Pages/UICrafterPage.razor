@@ -5,7 +5,7 @@
 
 <PageTitle>UICrafter-Editor</PageTitle>
 
-<MudStack Row @onclick="DeselectComponent">
+<MudStack Row @onmousedown="DeselectComponent">
     <!-- Left section: Component Grid (20%) -->
     <MudStack Style="width: 20%">
         <MudText>Components:</MudText>
@@ -47,8 +47,9 @@
 
     private ObservableCollection<UIComponent> UIComponents { get; set; } = [];
 
-    private void DeselectComponent()
+    private void DeselectComponent(MouseEventArgs args)
     {
+
         if (SelectedComponent is null) return;
 
         SelectedComponent = null;

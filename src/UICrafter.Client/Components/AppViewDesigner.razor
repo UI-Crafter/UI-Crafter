@@ -1,7 +1,7 @@
 @inject IDialogService DialogService
 @using UICrafter.Client.Components.DnDComponents
 
-<MudContainer MaxWidth="MaxWidth.Small" Gutters="false" @onclick:stopPropagation>
+<MudContainer MaxWidth="MaxWidth.Small" Gutters="false" @onmousedown:stopPropagation>
     <MudDropContainer T="UIComponent" @ref="DropContainer" Items="UIComponents" ItemsSelector="@((item,dropzone) => item.DropZoneID == dropzone)" ItemDropped="ComponentUpdated">
         <ChildContent>
             <MudDropZone T="UIComponent" Identifier="Drop Zone 1" AllowReorder="true" Class="rounded flex-grow-1">
