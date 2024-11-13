@@ -1,5 +1,4 @@
 @using DevLab.JmesPath
-@using Newtonsoft.Json.Linq
 @inherits BaseTextBox
 
 @{
@@ -9,6 +8,8 @@
 @code {
     [Parameter]
     public required UIComponent Textbox { get; set; }
+
+    [Inject] private ISnackbar Snackbar { get; set; } = default!;
 
     protected override void OnParametersSet()
     {
@@ -34,9 +35,24 @@
         else if (Textbox.Textbox.IsJsonQuery)
         {
             var _jmesPath = new JmesPath();
-            var result = _jmesPath.Transform(jsonResponse["response"], Textbox.Textbox.JsonField);
-            Content = JsonToString.CleanUpString(result);
+            string? result = null;
+            try
+            {
+                result = _jmesPath.Transform(jsonResponse["response"], Textbox.Textbox.JsonField);
+            }
+            catch (Exception ex)
+            {
+                Snackbar.Add($"API did not return valid json: {ex.Message}", Severity.Error);
+            }
 
+            if (result is not null)
+            {
+                Content = JsonToString.CleanUpString(result);
+            }
+            else
+            {
+                Content = "JsonQuery transformation failed.";
+            }
         }
         else if (jsonResponse.ContainsKey(Textbox.Textbox.JsonField))
         {
