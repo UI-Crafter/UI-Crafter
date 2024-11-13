@@ -28,7 +28,7 @@
 
     private void UpdateTextboxContent(Dictionary<string, string> jsonResponse)
     {
-        if (string.IsNullOrEmpty(Textbox.Textbox.JsonField))
+        if (string.IsNullOrWhiteSpace(Textbox.Textbox.JsonField))
         {
             Content = CleanUpString(jsonResponse["response"]);
         }

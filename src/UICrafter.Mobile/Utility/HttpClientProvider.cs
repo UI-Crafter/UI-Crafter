@@ -30,7 +30,7 @@ public class HttpClientProvider : IHttpClientProvider
 
 		var accessToken = user.Claims.FirstOrDefault(c => c.Type == "AccessToken")?.Value;
 
-		if (string.IsNullOrEmpty(accessToken))
+		if (string.IsNullOrWhiteSpace(accessToken))
 		{
 			throw new InvalidOperationException("Access token is missing.");
 		}

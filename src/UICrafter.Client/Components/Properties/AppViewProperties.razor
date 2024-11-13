@@ -111,7 +111,7 @@
     {
         if (AppView is null) return;
 
-        if (string.IsNullOrEmpty(AppView.Name))
+        if (string.IsNullOrWhiteSpace(AppView.Name))
         {
             Snackbar.Add("App-view missing name", Severity.Error);
             return;

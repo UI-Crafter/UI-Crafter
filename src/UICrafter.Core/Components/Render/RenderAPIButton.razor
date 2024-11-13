@@ -38,7 +38,7 @@
 
         _processing = true;
 
-        if (string.IsNullOrEmpty(Button.Button.URL))
+        if (string.IsNullOrWhiteSpace(Button.Button.URL))
         {
             NotifyUser(Color.Info, "Button URL is empty", Severity.Info);
             _processing = false;
@@ -86,7 +86,7 @@
 
             NotifyUser(Color.Error, $"{(int)response.StatusCode} - {response.StatusCode}", Severity.Error);
 
-            string jsonResponse = "{ StatusCode =" + response.StatusCode + "-" + response.ReasonPhrase + ", Data = responseData }";
+            var jsonResponse = JsonSerializer.Serialize(new { StatusCode = $"{(int)response.StatusCode} - {response.ReasonPhrase}", Data = responseData });
             UpdateTextBoxContents(jsonResponse);
         }
 

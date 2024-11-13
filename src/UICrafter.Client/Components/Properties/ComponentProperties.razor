@@ -70,8 +70,7 @@
         if (SelectedComponent.ComponentCase == UIComponent.ComponentOneofCase.Button)
         {
             var textBoxesWithSourceRef = UIComponents
-                .Where(component => component.ComponentCase == UIComponent.ComponentOneofCase.Textbox && component.Textbox.SourceRef == SelectedComponent.Guid)
-                .ToList();
+                .Where(component => component.ComponentCase == UIComponent.ComponentOneofCase.Textbox && component.Textbox.SourceRef == SelectedComponent.Guid);
 
             foreach (var component in textBoxesWithSourceRef)
             {
