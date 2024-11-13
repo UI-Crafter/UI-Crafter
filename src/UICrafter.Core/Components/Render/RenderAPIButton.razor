@@ -127,7 +127,7 @@
 
             NotifyUser(Color.Error, $"{(int)response.StatusCode} - {response.StatusCode}", Severity.Error);
 
-            var jsonResponse = JsonSerializer.Serialize(new { StatusCode = $"{(int)response.StatusCode} - {response.ReasonPhrase}", Data = responseData });
+            string jsonResponse = "{ StatusCode =" + response.StatusCode + "-" + response.ReasonPhrase + ", Data = responseData }";
             UpdateTextBoxContents(jsonResponse);
         }
 

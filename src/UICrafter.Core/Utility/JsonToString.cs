@@ -7,7 +7,7 @@ public class JsonToString
 {
 	public static string CleanUpString(string input)
 	{
-		char[] charsToRemove = { '\"' };
+		char[] charsToRemove = { '\"', '[', ']', '(', ')', '{', '}' };
 		var cleanedString = new StringBuilder();
 
 		var decodedInput = Regex.Replace(input, @"\\u([0-9A-Fa-f]{4})", match => ((char)int.Parse(match.Groups[1].Value, System.Globalization.NumberStyles.HexNumber)).ToString());
