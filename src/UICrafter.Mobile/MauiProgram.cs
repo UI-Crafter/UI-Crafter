@@ -89,6 +89,9 @@ public static class MauiProgram
 		// Repository
 		builder.Services.AddScoped<IAppViewRepository, AppViewRepository>();
 
+		// API Call handler
+		builder.Services.AddScoped<IAPICallHandler, DefaultAPICallHandler>();
+
 		builder.Logging.AddSeriloggerSetup(builder.Configuration);
 
 		return builder.Build();
