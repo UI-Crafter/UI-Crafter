@@ -12,17 +12,9 @@ public class AppViewRepository : IAppViewRepository
 
 	public AppViewRepository(AppViewServiceClient appViewServiceClient) => _appViewServiceClient = appViewServiceClient;
 
-
-	public async Task<IList<AppView>> GetAppViews()
+	public async Task<IList<AppViewMetadata>> GetAppViewMetadata()
 	{
-		var response = await _appViewServiceClient.ListAppViewsAsync(new Google.Protobuf.WellKnownTypes.Empty());
-
-		return response.AppViews;
-	}
-
-	public async Task<IList<AppView>> GetPublicAppViews()
-	{
-		var response = await _appViewServiceClient.ListPublicAppViewsAsync(new Google.Protobuf.WellKnownTypes.Empty());
+		var response = await _appViewServiceClient.ListAppViewMetadataAsync(new Google.Protobuf.WellKnownTypes.Empty());
 
 		return response.AppViews;
 	}

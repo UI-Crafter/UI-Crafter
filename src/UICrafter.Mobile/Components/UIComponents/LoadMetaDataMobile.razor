@@ -6,7 +6,7 @@
 }
 
 @code {
-    protected override string? SetupHref(AppView view)
+    protected override string? SetupHref(AppViewMetadata view)
     {
         return "/appview/" + view.Id;
     }

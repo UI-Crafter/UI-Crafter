@@ -14,7 +14,7 @@ else
     {
         <MudTextField @bind-Value="SearchString" Class="ma-2" Placeholder="Search" Adornment="Adornment.Start" Immediate="true" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium"></MudTextField>
         <MudList T="AppView">
-            @foreach (var view in AppViews.Where(x => x.Name.Contains(SearchString, StringComparison.InvariantCultureIgnoreCase)))
+            @foreach (var view in AppViews.Where(x => (LoadPublic || x.UserId == User?.GetAzureId().ToString()) && x.Name.Contains(SearchString, StringComparison.InvariantCultureIgnoreCase)))
             {
                 <MudListItem OnClick="() => HandleClick(view)" Href=@(SetupHref(view))>
                     <MudText>Name: @view.Name</MudText>
@@ -22,6 +22,7 @@ else
                     <MudStack Row>
                         <MudText>Public:</MudText>
                         <MudIcon Icon="@(view.IsPublic ? Icons.Material.Filled.Public : Icons.Material.Filled.PublicOff)" />
+                        <MudText>@view.UserName</MudText>
                     </MudStack>
                 </MudListItem>
             }
@@ -30,29 +31,25 @@ else
 }
 
 @code {
-    private IList<AppView> AppViews { get; set; } = new List<AppView>();
+    [CascadingParameter] Task<AuthenticationState> AuthenticationState { get; set; } = default!;
+    private IList<AppViewMetadata> AppViews { get; set; } = new List<AppViewMetadata>();
     private bool IsLoading { get; set; } = true;
     private string SearchString { get; set; } = string.Empty;
 
+    private ClaimsPrincipal? User { get; set; }
     protected bool LoadPublic { get; set; } = false;
 
-    protected virtual void HandleClick(AppView view) { }
-    protected virtual string? SetupHref(AppView view) { return null; }
+    protected virtual void HandleClick(AppViewMetadata view) { }
+    protected virtual string? SetupHref(AppViewMetadata view) { return null; }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+        User = (await AuthenticationState).User;
         if (firstRender)
         {
             try
             {
-                if (LoadPublic)
-                {
-                    AppViews = await AppViewRepository.GetPublicAppViews() ?? AppViews;
-                }
-                else
-                {
-                    AppViews = await AppViewRepository.GetAppViews() ?? AppViews;
-                }
+                AppViews = await AppViewRepository.GetAppViewMetadata() ?? AppViews;
                 Log.Information("Called gRPC");
             }
             catch (Exception ex)

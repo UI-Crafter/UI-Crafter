@@ -33,7 +33,7 @@
 @code {
     [Inject] private IAppViewRepository AppViewRepository { get; set; } = default!;
 
-    private IList<AppView> AppViews { get; set; } = [];
+    private IList<AppViewMetadata> AppViews { get; set; } = [];
 
     private bool _isLoading { get; set; } = true;
 
@@ -54,7 +54,7 @@
     {
         if (firstRender)
         {
-            AppViews = await AppViewRepository.GetAppViews() ?? new List<AppView>();
+            AppViews = await AppViewRepository.GetAppViewMetadata() ?? new List<AppViewMetadata>();
             _isLoading = false;
             await InvokeAsync(StateHasChanged);
         }

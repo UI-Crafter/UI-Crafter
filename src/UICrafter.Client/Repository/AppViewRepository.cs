@@ -13,17 +13,9 @@ public class AppViewRepository : IAppViewRepository
 
 	public AppViewRepository(AppViewServiceClient appViewServiceClient) => _appViewServiceClient = appViewServiceClient;
 
-
-	public async Task<IList<AppView>> GetAppViews()
+	public async Task<IList<AppViewMetadata>> GetAppViewMetadata()
 	{
-		var response = await _appViewServiceClient.ListAppViewsAsync(new Empty());
-
-		return response.AppViews;
-	}
-
-	public async Task<IList<AppView>> GetPublicAppViews()
-	{
-		var response = await _appViewServiceClient.ListPublicAppViewsAsync(new Empty());
+		var response = await _appViewServiceClient.ListAppViewMetadataAsync(new Empty());
 
 		return response.AppViews;
 	}
@@ -36,4 +28,5 @@ public class AppViewRepository : IAppViewRepository
 
 	public async Task DeleteAppViewById(long id) => await _appViewServiceClient.DeleteAppViewAsync(new DeleteAppViewRequest { Id = id });
 
+	
 }
