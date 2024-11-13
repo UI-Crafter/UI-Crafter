@@ -9,7 +9,7 @@
 </MudSelect>
 
 <MudField Label="Json field or query" Variant="Variant.Outlined" InnerPadding="false">
-    <MudRadioGroup T="bool" Value=@SelectedComponent.Textbox.IsJsonQuery ValueChanged="RadioChanged">
+    <MudRadioGroup T="bool" @bind-value=@SelectedComponent.Textbox.IsJsonQuery>
         <MudRadio Value="false">Field</MudRadio>
         <MudRadio Value="true">Query</MudRadio>
     </MudRadioGroup>
@@ -31,12 +31,4 @@ else
 
     [Parameter]
     public required ObservableCollection<UIComponent> UIComponents { get; set; }
-
-    private void RadioChanged(bool isQuery)
-    {
-        SelectedComponent.Textbox.IsJsonQuery = isQuery;
-
-        (SelectedComponent.Textbox.JsonField) = (SelectedComponent.Textbox.JsonField);
-        Log.Debug(SelectedComponent.Textbox.JsonField + ", " + SelectedComponent.Textbox.IsJsonQuery);
-    }
 }

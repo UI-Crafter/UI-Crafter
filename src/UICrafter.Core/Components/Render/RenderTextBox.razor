@@ -37,18 +37,15 @@
             var result = _jmesPath.Transform(jsonResponse["response"], Textbox.Textbox.JsonField);
             Content = JsonToString.CleanUpString(result);
 
-        } else
-        {
-            if (jsonResponse.ContainsKey(Textbox.Textbox.JsonField))
-            {
-                Content = JsonToString.CleanUpString(jsonResponse[Textbox.Textbox.JsonField]);
-            }
-            else
-            {
-                Content = $"Field '{Textbox.Textbox.JsonField}' not found in JSON response.";
-            }
         }
-
+        else if (jsonResponse.ContainsKey(Textbox.Textbox.JsonField))
+        {
+            Content = JsonToString.CleanUpString(jsonResponse[Textbox.Textbox.JsonField]);
+        }
+        else
+        {
+            Content = $"Field '{Textbox.Textbox.JsonField}' not found in JSON response.";
+        }
         InvokeAsync(StateHasChanged);
     }
 }
