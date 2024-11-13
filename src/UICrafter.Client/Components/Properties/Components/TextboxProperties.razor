@@ -9,10 +9,13 @@
 </MudSelect>
 
 <MudField Label="Json field or query" Variant="Variant.Outlined" InnerPadding="false">
-    <MudRadioGroup T="bool" @bind-value=@SelectedComponent.Textbox.IsJsonQuery>
-        <MudRadio Value="false">Field</MudRadio>
-        <MudRadio Value="true">Query</MudRadio>
-    </MudRadioGroup>
+    <MudStack Row>
+        <MudRadioGroup T="bool" @bind-value=@SelectedComponent.Textbox.IsJsonQuery>
+            <MudRadio Value="false">Field</MudRadio>
+            <MudRadio Value="true">Query</MudRadio>
+        </MudRadioGroup>
+        <MudCheckBox Class="ml-auto" Size="Size.Medium" T="bool" @bind-Value=@SelectedComponent.Textbox.CleanupTextBox>Cleanup Output</MudCheckBox>
+    </MudStack>
 </MudField>
 
 @if (SelectedComponent.Textbox.IsJsonQuery)

@@ -48,4 +48,5 @@ message UITextbox {
 	string SourceRef = 4;
 	string JsonField = 5;
 	bool IsJsonQuery = 6;
+	bool CleanupTextBox = 7;
 }

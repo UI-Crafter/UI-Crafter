@@ -85,5 +85,5 @@
 
     private void AddNewInputField() => AddNewComponent(new UIInputField { Label = "New Input Field", Value = string.Empty, LogicalName = string.Empty });
 
-    private void AddNewTextbox() => AddNewComponent(new UITextbox { Label = "New API-Output", NumberOfLines = 2, SourceRef = Guid.Empty.ToString(), JsonField = string.Empty });
+    private void AddNewTextbox() => AddNewComponent(new UITextbox { Label = "New API-Output", NumberOfLines = 2, SourceRef = Guid.Empty.ToString(), JsonField = string.Empty, CleanupTextBox = true });
 }

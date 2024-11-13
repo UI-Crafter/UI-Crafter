@@ -30,38 +30,50 @@
     {
         if (string.IsNullOrEmpty(Textbox.Textbox.JsonField))
         {
-            Content = "No JsonField or JsonQuery specified.";
+            Content = CleanUpString(jsonResponse["response"]);
         }
         else if (Textbox.Textbox.IsJsonQuery)
         {
-            var _jmesPath = new JmesPath();
-            string? result = null;
-            try
-            {
-                result = _jmesPath.Transform(jsonResponse["response"], Textbox.Textbox.JsonField);
-            }
-            catch (Exception ex)
-            {
-                Snackbar.Add($"API did not return valid json: {ex.Message}", Severity.Error);
-            }
-
-            if (result is not null)
-            {
-                Content = JsonToString.CleanUpString(result);
-            }
-            else
-            {
-                Content = "JsonQuery transformation failed.";
-            }
-        }
-        else if (jsonResponse.ContainsKey(Textbox.Textbox.JsonField))
-        {
-            Content = JsonToString.CleanUpString(jsonResponse[Textbox.Textbox.JsonField]);
+            UpdateTextboxContentJsonQuery(jsonResponse);
         }
         else
         {
-            Content = $"Field '{Textbox.Textbox.JsonField}' not found in JSON response.";
+            UpdateTextboxContentJsonField(jsonResponse);
         }
         InvokeAsync(StateHasChanged);
+    }
+
+    private void UpdateTextboxContentJsonQuery(Dictionary<string, string> jsonResponse)
+    {
+        string? result = null;
+        var _jmesPath = new JmesPath();
+        try
+        {
+            result = _jmesPath.Transform(jsonResponse["response"], Textbox.Textbox.JsonField);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add($"API did not return valid json: {ex.Message}", Severity.Error);
+        }
+
+        Content = result is not null
+            ? CleanUpString(result)
+            : "JsonQuery transformation failed.";
+    }
+
+    private void UpdateTextboxContentJsonField(Dictionary<string, string> jsonResponse)
+    {
+        Content = jsonResponse.TryGetValue(Textbox.Textbox.JsonField, out var field)
+            ? CleanUpString(field)
+            : $"Field '{Textbox.Textbox.JsonField}' not found in JSON response.";
+    }
+
+    private string CleanUpString(string result)
+    {
+        if (Textbox.Textbox.CleanupTextBox)
+        {
+            return JsonToString.CleanUpString(result);
+        }
+        return result;
     }
 }
