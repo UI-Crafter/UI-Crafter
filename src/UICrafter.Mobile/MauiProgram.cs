@@ -52,9 +52,9 @@ public static class MauiProgram
 
 		builder.Services.AddConfiguredHttpClient();
 		// Register HttpClient using the configuration from IConfiguration
-		builder.Services.AddSingleton(new HttpClient { BaseAddress = new Uri(section.GetValue<string>("BaseUrl")!) });
+		builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(section.GetValue<string>("BaseUrl")!) });
 
-		builder.Services.AddTransient<IHttpClientProvider, HttpClientProvider>();
+		builder.Services.AddScoped<IHttpClientProvider, HttpClientProvider>();
 
 		// Auth
 		builder.Services.AddAuthorizationCore();
