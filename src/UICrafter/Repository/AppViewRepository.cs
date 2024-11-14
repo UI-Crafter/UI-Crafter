@@ -57,6 +57,16 @@ public class AppViewRepository : IAppViewRepository
 
 	public async Task<AppView> CreateAppView(AppView view)
 	{
+		if (string.IsNullOrWhiteSpace(view.Name))
+		{
+			throw new ArgumentException("App-view missing name");
+		}
+
+		if (view.Content.Length == 0)
+		{
+			throw new ArgumentException("App-view contains no components");
+		}
+
 		var entity = _appViewMapper.ToAppViewEntity(view);
 
 		var userId = _httpContextAccessor.HttpContext?.User.GetAzureId();
@@ -78,6 +88,16 @@ public class AppViewRepository : IAppViewRepository
 
 	public async Task<AppView> UpdateAppView(AppView view)
 	{
+		if (string.IsNullOrWhiteSpace(view.Name))
+		{
+			throw new ArgumentException("App-view missing name");
+		}
+
+		if (view.Content.Length == 0)
+		{
+			throw new ArgumentException("App-view contains no components");
+		}
+
 		var userId = _httpContextAccessor.HttpContext!.User.GetAzureId();
 		var entity = await _dbContext.AppViews
 			.Where(x => x.Id == view.Id && x.UserId == userId) // Are you the owner check

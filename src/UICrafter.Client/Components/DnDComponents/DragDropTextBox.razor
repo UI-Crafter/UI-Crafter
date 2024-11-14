@@ -14,8 +14,14 @@
 
     protected override void OnInitialized()
     {
+        base.OnInitialized();
+        OnFocus = EventCallback.Factory.Create<FocusEventArgs>(this, () => OnSelect.InvokeAsync(UIComponent));
+    }
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
         Label = UIComponent.Textbox.Label;
         Lines = UIComponent.Textbox.NumberOfLines;
-        OnFocus = EventCallback.Factory.Create<FocusEventArgs>(this, () => OnSelect.InvokeAsync(UIComponent));
     }
 }
