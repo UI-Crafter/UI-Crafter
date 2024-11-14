@@ -1,6 +1,6 @@
 <MudDialog Class="">
     <DialogContent>
-        <MudText>Are you sure you want to delete this app-view?</MudText>
+        <MudText>Are you sure? All unsaved changes will be lost</MudText>
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="() => MudDialog.Close(DialogResult.Ok(true))">Yes</MudButton>
@@ -13,7 +13,7 @@
     [CascadingParameter]
     private MudDialogInstance MudDialog { get; set; } = null!;
 
-    protected override void OnInitialized()
+    protected override void OnInitialized() 
     {
         base.OnInitialized();
         MudDialog.Options.NoHeader = true;
