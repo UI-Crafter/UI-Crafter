@@ -5,18 +5,19 @@ using System.Net.Http.Headers;
 using Microsoft.AspNetCore.Components.Authorization;
 using UICrafter.Core.Utility;
 
-public class HttpClientProvider : IHttpClientProvider
+public partial class HttpClientProvider : IHttpClientProvider, IDisposable
 {
-	private readonly HttpClient _httpClient;
+	private readonly HttpClient _defaulthttpClient = new();
+	private readonly HttpClient _authenticatedhttpClient;
 	private readonly AuthenticationStateProvider _authenticationStateProvider;
 
 	public HttpClientProvider(HttpClient httpClient, AuthenticationStateProvider authenticationStateProvider)
 	{
-		_httpClient = httpClient;
+		_authenticatedhttpClient = httpClient;
 		_authenticationStateProvider = authenticationStateProvider;
 	}
 
-	public HttpClient GetDefaultHttpClient() => _httpClient;
+	public HttpClient GetDefaultHttpClient() => _defaulthttpClient;
 
 	public async Task<HttpClient> GetAuthenticatedHttpClient()
 	{
@@ -35,7 +36,13 @@ public class HttpClientProvider : IHttpClientProvider
 			throw new InvalidOperationException("Access token is missing.");
 		}
 
-		_httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
-		return _httpClient;
+		_authenticatedhttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+		return _authenticatedhttpClient;
+	}
+
+	public void Dispose()
+	{
+		_defaulthttpClient.Dispose();
+		GC.SuppressFinalize(this);
 	}
 }
