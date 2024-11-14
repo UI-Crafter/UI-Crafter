@@ -20,7 +20,7 @@
                     <AppViewDesigner @bind-SelectedComponent="@SelectedComponent" @bind-DropContainer="@DropContainer" UIComponents="@UIComponents" />
                 </MudTabPanel>
                 <MudTabPanel Icon="@Icons.Material.Filled.Preview" Text="Preview">
-                    <AppViewPreview UIComponents="@UIComponents" />
+                    <ComponentListRender UIComponents="@UIComponents" />
                 </MudTabPanel>
             </MudPaper>
         </MudTabs>
@@ -49,7 +49,6 @@
 
     private void DeselectComponent(MouseEventArgs args)
     {
-
         if (SelectedComponent is null) return;
 
         SelectedComponent = null;

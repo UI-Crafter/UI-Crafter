@@ -13,8 +13,9 @@
 
     protected override void HandleClick(AppViewMetadata view) => ClickFunction.TryInvokeAsync(view.Id);
 
-    protected override void OnInitialized()
+    protected override void OnParametersSet()
     {
+        base.OnParametersSet();
         LoadPublic = Public;
     }
 }
