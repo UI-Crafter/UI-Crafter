@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 env:
-  DOTNET_VERSION: '8.0.x'
+  DOTNET_VERSION: '9.0.x'
 
 permissions:
   contents: write
@@ -80,12 +80,12 @@ jobs:
       - name: Build Android App
         run: |
           cd src\UICrafter.Mobile
-          dotnet publish -f net8.0-android -c Release
+          dotnet publish -f net9.0-android -c Release
 
       - name: Copy APK Files
         run: |
           mkdir apk_files
-          copy src\UICrafter.Mobile\bin\Release\net8.0-android\publish\*.apk apk_files\
+          copy src\UICrafter.Mobile\bin\Release\net9.0-android\publish\*.apk apk_files\
 
       - name: Verify APK Files
         run: |
