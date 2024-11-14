@@ -2,7 +2,6 @@ using Grpc.Net.Client.Web;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using UICrafter.Client;
-using UICrafter.Client.Repository;
 using UICrafter.Client.Utility;
 using UICrafter.Core.AppView;
 using UICrafter.Core.DependencyInjection;
@@ -28,7 +27,7 @@ builder.Services.AddGrpcClient<AppViewService.AppViewServiceClient>(options => o
 ;
 
 // Repository
-builder.Services.AddScoped<IAppViewRepository, AppViewRepository>();
+builder.Services.AddScoped<IAppViewRepository, DefaultAppViewRepository>();
 
 // API Call handler
 builder.Services.AddScoped<IAPICallHandler, ProxyAPICallHandler>();
