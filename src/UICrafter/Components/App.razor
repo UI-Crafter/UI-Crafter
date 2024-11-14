@@ -7,6 +7,15 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="Content-Security-Policy-Report-Only"
+          content="base-uri 'self';
+               default-src 'self';
+               img-src data: https:;
+               object-src 'none';
+               script-src 'self';
+               style-src 'self';
+               upgrade-insecure-requests;
+               report-uri /csp-violations;" />
     <base href="/" />
     <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
     <link href="_content/MudBlazor/MudBlazor.min.css" rel="stylesheet" />

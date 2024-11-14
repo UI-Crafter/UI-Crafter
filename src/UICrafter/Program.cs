@@ -21,6 +21,7 @@ using UICrafter.Core.DependencyInjection;
 using UICrafter.Core.AppView;
 using UICrafter.Options;
 using UICrafter.Proxy;
+using static Google.Rpc.PreconditionFailure.Types;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -109,6 +110,17 @@ builder.Services.AddRazorComponents()
 
 builder.Services.AddHttpContextAccessor();
 
+//FOR CSP reports
+builder.Services.AddControllers(options =>
+{
+	var jsonInputFormatter = options.InputFormatters.
+	OfType<Microsoft.AspNetCore.Mvc.Formatters.SystemTextJsonInputFormatter>().Single();
+
+	jsonInputFormatter.SupportedMediaTypes.Add("application/csp-report");
+
+});
+
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -129,6 +141,7 @@ else
 app.UseHttpsRedirection();
 
 app.UseStaticFiles();
+app.UseRouting();
 app.UseAntiforgery();
 
 app.UseGrpcWeb();
@@ -141,19 +154,11 @@ app.MapRazorComponents<App>()
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapGet("api/prototest", () =>
+app.UseEndpoints( endpoints =>
 {
-	// Create a new Person object
-	var person = new AppView { Name = "Muppet" };
+	app.MapControllers("/csp-violations");
+});
 
-	// Serialize the person object to a binary byte array
-	var serializedPerson = person.ToByteArray();
-
-	// Convert the byte array to a Base64 string
-	var base64Person = Convert.ToBase64String(serializedPerson);
-
-	return base64Person;
-}).RequireAuthorization();
 
 app.MapGet("auth/login", (string? returnUrl) => TypedResults.Challenge(new AuthenticationProperties { RedirectUri = returnUrl }))
 			.AllowAnonymous();
