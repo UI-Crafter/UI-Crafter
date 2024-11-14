@@ -1,0 +1,21 @@
+<MudDialog Class="">
+    <DialogContent>
+        <MudText>Are you sure? All unsaved changes will be lost</MudText>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="() => MudDialog.Close(DialogResult.Ok(true))">Yes</MudButton>
+        <MudButton OnClick="() => MudDialog.Cancel()">No</MudButton>
+    </DialogActions>
+</MudDialog>
+
+
+@code {
+    [CascadingParameter]
+    private MudDialogInstance MudDialog { get; set; } = null!;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        MudDialog.Options.NoHeader = true;
+    }
+}

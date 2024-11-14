@@ -19,6 +19,9 @@
     <MudSwitch @bind-Value="AppView.IsPublic" Class="uicrafter-switch" Label="Public" ThumbIcon="@(AppView.IsPublic ? Icons.Material.Filled.Public : Icons.Material.Filled.PublicOff)" LabelPosition="LabelPosition.Start" />
 
     <MudButtonGroup Variant="Variant.Outlined" Class="uicrafter-tooltip-buttongroup justify-center ma-2">
+        <MudTooltip Text="New" Arrow Placement="Placement.Bottom">
+            <MudIconButton Icon="@Icons.Material.Filled.Add" OnClick="@NewAppView" />
+        </MudTooltip>
         <MudTooltip Text="Upload" Arrow Placement="Placement.Bottom">
             <MudIconButton Icon="@Icons.Material.Filled.CloudUpload" OnClick="@SaveAppView" />
         </MudTooltip>
@@ -105,6 +108,19 @@
 
         var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
         User = authState.User;
+    }
+
+    private async Task NewAppView()
+    {
+        if (!UIComponents.Any()) return;
+
+        var dialog = DialogService.Show<CreateNewDialog>();
+        var result = await dialog.Result;
+
+        if (result is not null && !result.Canceled){
+            ClearAppView();
+            AppView = new AppView();
+        }
     }
 
     private async Task SaveAppView()
