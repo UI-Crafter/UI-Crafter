@@ -13,9 +13,9 @@
     [CascadingParameter]
     private MudDialogInstance MudDialog { get; set; } = null!;
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
-        await base.OnInitializedAsync();
+        base.OnInitialized();
         MudDialog.Options.NoHeader = true;
     }
 }
