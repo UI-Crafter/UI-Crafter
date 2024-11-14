@@ -7,7 +7,7 @@ public partial class JsonToString
 {
 	public static string CleanUpString(string input)
 	{
-		char[] charsToRemove = { '\"', '[', ']', '(', ')', '{', '}' };
+		char[] charsToRemove = ['\"', '[', ']', '(', ')', '{', '}'];
 		var cleanedString = new StringBuilder();
 
 		var decodedInput = CleanStringRegex().Replace(input, match => ((char)int.Parse(match.Groups[1].Value, System.Globalization.NumberStyles.HexNumber)).ToString());

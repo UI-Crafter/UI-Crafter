@@ -5,7 +5,7 @@ body {
 .mud-background-gray {
 	--mud-palette-surface: var(--mud-palette-background-gray);
 }
-	
+
 /* Custom css to avoid tooltip offsetting the button group */
 .uicrafter-tooltip-buttongroup > .mud-tooltip-root {
 	display: inline-flex;
@@ -46,3 +46,29 @@ body {
 	-ms-transform: translate(-50%, -50%);
 	transform: translate(-50%, -50%);
 }
+
+.uicrafter-preview-container {
+	display: grid;
+	grid-template-rows: 1fr auto 1fr;
+	height: 100%;
+	width: 100%;
+}
+
+	.uicrafter-preview-container .top,
+	.uicrafter-preview-container .middle,
+	.uicrafter-preview-container .bottom {
+		overflow: scroll;
+	}
+
+.uicrafter-preview-flex-grow,
+.uicrafter-preview-flex-grow > .mud-input-control-input-container,
+.uicrafter-preview-flex-grow > .mud-input-control-input-container > .mud-input {
+	flex-grow: 1;
+}
+
+
+		.uicrafter-preview-pre {
+			height: 100%;
+			white-space: pre-wrap;
+			overflow-wrap: break-word;
+		}
