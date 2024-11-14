@@ -17,9 +17,17 @@ public sealed class Theme
 	/// The systems darkmode setting
 	/// </summary>
 	public bool SystemDarkMode { get; set; }
+	/// <summary>
+	/// Returns true if the Theme is supposed to be dark mode, this take the preference and SystemDarkMode into account. The SystemDarkMode needs to be set externally.
+	/// </summary>
+	public bool IsDarkMode => ThemeMode switch
+	{
+		ThemeMode.LightMode => false,
+		ThemeMode.DarkMode => true,
+		ThemeMode.Automatic => SystemDarkMode,
+		_ => false
+	};
 }
-
-
 
 /// <summary>
 /// Represents the available theme states for the application.

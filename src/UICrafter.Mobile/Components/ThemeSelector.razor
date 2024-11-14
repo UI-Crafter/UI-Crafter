@@ -1,0 +1,24 @@
+@using UICrafter.Mobile.Utility
+@using UICrafter.Core.Models
+@inject ThemeService ThemeService
+
+<MudSelect T="ThemeMode" Label="Theme Mode" Value="SelectedThemeMode" ValueChanged="OnThemeModeChanged" AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopLeft">
+    <MudSelectItem Value="ThemeMode.LightMode">Light Mode</MudSelectItem>
+    <MudSelectItem Value="ThemeMode.DarkMode">Dark Mode</MudSelectItem>
+    <MudSelectItem Value="ThemeMode.Automatic">Automatic</MudSelectItem>
+</MudSelect>
+
+@code {
+    private ThemeMode SelectedThemeMode { get; set; }
+
+    protected override void OnInitialized()
+    {
+        SelectedThemeMode = ThemeService.GetThemeMode();
+    }
+
+    private void OnThemeModeChanged(ThemeMode newThemeMode)
+    {
+        SelectedThemeMode = newThemeMode;
+        ThemeService.SetThemeMode(newThemeMode);
+    }
+}

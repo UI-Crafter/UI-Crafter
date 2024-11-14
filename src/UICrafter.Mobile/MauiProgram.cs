@@ -29,6 +29,9 @@ public static class MauiProgram
 		builder.Services.AddMauiBlazorWebView();
 		builder.Services.AddUICrafterMudServices();
 
+		// Theme singleton
+		builder.Services.AddSingleton<ThemeService>();
+
 		var configBuilder = new ConfigurationBuilder()
 			.AddEmbeddedResource("UICrafter.Mobile.appsettings.json");
 

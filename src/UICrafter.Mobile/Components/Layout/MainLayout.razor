@@ -1,13 +1,9 @@
+@using UICrafter.Core.Models
 @inherits LayoutComponentBase
 
-@* Required *@
-<MudThemeProvider />
+<MudThemeProvider IsDarkMode="IsDarkMode" Theme="ThemeUtility.CreateTheme()" />
 <MudPopoverProvider />
-
-@* Needed for dialogs *@
 <MudDialogProvider />
-
-@* Needed for snackbars *@
 <MudSnackbarProvider />
 
 <div class="page">
@@ -16,7 +12,6 @@
     </main>
     <footer>
         <NativeNavbar Class="native-navbar-fixed" />
-        @* This is here to have a replica that will displace the size of the NativeNavBar, this is needed due to the setup of the MAUI pull down refresh. This can be removed if we move to a Blazor implementation instead.*@
         <NativeNavbar Style="visibility: hidden;" />
     </footer>
 </div>
@@ -32,6 +27,28 @@
 
 @code {
     [Inject] private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;
+    [Inject] private ThemeService ThemeService { get; set; } = default!;
+
+    private bool IsDarkMode => ThemeService.ThemeMode switch
+    {
+        ThemeMode.DarkMode => true,
+        ThemeMode.LightMode => false,
+        ThemeMode.Automatic => Application.Current.RequestedTheme == AppTheme.Dark,
+        _ => false
+    };
+
+    protected override void OnInitialized()
+    {
+        ThemeService.PropertyChanged += async (sender, args) =>
+        {
+            if (args.PropertyName == nameof(ThemeService.ThemeMode))
+            {
+                await InvokeAsync(StateHasChanged);
+            }
+        };
+
+        base.OnInitialized();
+    }
 
     public Task Login()
     {

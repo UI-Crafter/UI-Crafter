@@ -141,20 +141,6 @@ app.MapRazorComponents<App>()
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapGet("api/prototest", () =>
-{
-	// Create a new Person object
-	var person = new AppView { Name = "Muppet" };
-
-	// Serialize the person object to a binary byte array
-	var serializedPerson = person.ToByteArray();
-
-	// Convert the byte array to a Base64 string
-	var base64Person = Convert.ToBase64String(serializedPerson);
-
-	return base64Person;
-}).RequireAuthorization();
-
 app.MapGet("auth/login", (string? returnUrl) => TypedResults.Challenge(new AuthenticationProperties { RedirectUri = returnUrl }))
 			.AllowAnonymous();
 
