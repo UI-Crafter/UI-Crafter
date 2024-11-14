@@ -1,3 +1,4 @@
+@using UICrafter.Client.Components.Dialogs
 <MudTextField @bind-Value="SelectedComponent.Textbox.Label" Label="Textbox label" Variant="Variant.Outlined" />
 <MudTextField @bind-Value="SelectedComponent.Textbox.NumberOfLines" Label="Number of lines" Variant="Variant.Outlined" />
 <MudSelect T="string" Label="Source Reference" @bind-Value="SelectedComponent.Textbox.SourceRef">
@@ -14,19 +15,14 @@
             <MudRadio Value="false">Field</MudRadio>
             <MudRadio Value="true">Query</MudRadio>
         </MudRadioGroup>
-        <MudCheckBox Class="ml-auto" Size="Size.Medium" T="bool" @bind-Value=@SelectedComponent.Textbox.CleanupTextBox>Cleanup Output</MudCheckBox>
+        <MudCheckBox Class="ml-auto" Size="Size.Medium" T="bool" @bind-Value=@SelectedComponent.Textbox.CleanupTextBox>Clean Output</MudCheckBox>
     </MudStack>
 </MudField>
 
-@if (SelectedComponent.Textbox.IsJsonQuery)
-{
-    <MudTextField @bind-Value="SelectedComponent.Textbox.JsonField" Label="Json Query" Variant="Variant.Outlined" />
-}
-else
-{
-    <MudTextField @bind-Value="SelectedComponent.Textbox.JsonField" Label="Json Field" Variant="Variant.Outlined" />
-}
-
+<MudStack Row Justify="Justify.Center">
+    <MudTextField @bind-Value="SelectedComponent.Textbox.JsonField" Label=@(SelectedComponent.Textbox.IsJsonQuery ? "Json Query" : "Json Field") Variant="Variant.Outlined" />
+    <MudButton StartIcon="@Icons.Material.Outlined.Code" Variant="Variant.Outlined" Style="height: 56px;" Size="Size.Large" IconSize="Size.Large" Class="mt-2" OnClick="OpenPreview">Preview</MudButton>
+</MudStack>
 
 @code {
     [CascadingParameter]
@@ -34,4 +30,28 @@ else
 
     [Parameter]
     public required ObservableCollection<UIComponent> UIComponents { get; set; }
+
+    [Inject] IDialogService DialogService { get; set; } = default!;
+
+    private async Task OpenPreview()
+    {
+        var parameters = new DialogParameters<JsonReponsePreviewDialog>
+        {
+            { x => x.UIComponents, new ObservableCollection<UIComponent>(UIComponents.Select(x => x.Clone())) },
+            { x => x.OutputComponent, SelectedComponent.Clone() },
+        };
+
+        var dialog = DialogService.Show<JsonReponsePreviewDialog>(null, parameters);
+
+        var result = await dialog.Result;
+
+        var returnedComponent = ((UIComponent?)result?.Data);
+
+        if (returnedComponent is not null)
+        {
+            SelectedComponent.Textbox.JsonField = returnedComponent.Textbox.JsonField;
+            SelectedComponent.Textbox.IsJsonQuery = returnedComponent.Textbox.IsJsonQuery;
+            SelectedComponent.Textbox.CleanupTextBox = returnedComponent.Textbox.CleanupTextBox;
+        }
+    }
 }

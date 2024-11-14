@@ -1,0 +1,136 @@
+<MudDialog Class="uicrafter-dialog" Style="height: 85vh">
+    <DialogContent>
+        <MudStack Row Style="height: 100%;" Class="pa-4">
+            <MudPaper Class="mud-background-gray pa-2" Style="height: 100%; width: 600px;">
+                <MudContainer Style="height: 100%;">
+                    <ComponentListRender UIComponents="UIComponents" />
+                </MudContainer>
+            </MudPaper>
+            <div class="uicrafter-preview-container">
+                <MudField Variant="Variant.Outlined" Class="top uicrafter-preview-flex-grow">
+                    @if (_responseString is not null)
+                    {
+                        <pre class="uicrafter-preview-pre">
+                            @_responseString
+                        </pre>
+                    }
+                </MudField>
+                <MudStack Row Class="middle my-2" Justify="Justify.Center">
+                    <MudTextField T="string" Value=@OutputComponent.Textbox.JsonField ValueChanged="OnJsonFieldChanged" Variant="Variant.Outlined" Label=@(OutputComponent.Textbox.IsJsonQuery ? "Json Query" : "Json Field") Immediate />
+                    <MudField Label="Json field or query" Variant="Variant.Outlined" InnerPadding="false" Style="width: 24rem; flex-grow: 0;">
+                        <MudStack Row>
+                            <MudRadioGroup T="bool" Value=@OutputComponent.Textbox.IsJsonQuery ValueChanged="OnIsJsonQueryChanged">
+                                <MudRadio Value="false">Field</MudRadio>
+                                <MudRadio Value="true">Query</MudRadio>
+                            </MudRadioGroup>
+                            <MudCheckBox Class="ml-auto" Size="Size.Medium" T="bool" Value=@OutputComponent.Textbox.CleanupTextBox ValueChanged="OnCleanOutputChanged">Clean Output</MudCheckBox>
+                        </MudStack>
+                    </MudField>
+                </MudStack>
+                <MudField Variant="Variant.Outlined" Class="bottom uicrafter-preview-flex-grow">
+                    @if (_response is not null && _response.TryGetValue("response", out var json))
+                    {
+                        <pre class="uicrafter-preview-pre">
+                            @Output
+                        </pre>
+                    }
+                </MudField>
+            </div>
+        </MudStack>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="CloseDialog">Close</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter]
+    private MudDialogInstance MudDialog { get; set; } = null!;
+
+    [Parameter]
+    public ObservableCollection<UIComponent> UIComponents { get; set; } = [];
+    [Parameter]
+    public required UIComponent OutputComponent { get; set; }
+
+    [Inject] private ISnackbar Snackbar { get; set; } = default!;
+
+    private Action<Dictionary<string, string>>? _savedUpdateContent;
+
+    private Dictionary<string, string>? _response;
+
+    private string? _responseString;
+
+    private string Output { get; set; } = string.Empty;
+
+    private void CloseDialog()
+    {
+        MudDialog.Close(DialogResult.Ok(OutputComponent));
+    }
+
+    protected override void OnInitialized()
+    {
+        base.OnInitialized();
+        MudDialog.Options.NoHeader = true;
+        MudDialog.Options.MaxWidth = MaxWidth.ExtraLarge;
+        MudDialog.Options.FullWidth = true;
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        base.OnAfterRender(firstRender);
+        var renderedOutput = UIComponents.FirstOrDefault(x => x.Guid == OutputComponent.Guid);
+        if (renderedOutput is not null)
+        {
+            _savedUpdateContent = renderedOutput.Textbox.UpdateContent;
+            renderedOutput.Textbox.UpdateContent = InterdictionAction;
+        }
+        else
+        {
+            Snackbar.Add("Interdiction action failed, something went wrong", Severity.Error);
+        }
+    }
+
+    private void InterdictionAction(Dictionary<string, string> response)
+    {
+        _response = response;
+
+        if (_response.TryGetValue("response", out var responseJson))
+        {
+            var json = JsonSerializer.Deserialize<dynamic>(responseJson);
+            _responseString = JsonSerializer.Serialize(json, new JsonSerializerOptions { WriteIndented = true, });
+        }
+
+        if (_savedUpdateContent is not null && _savedUpdateContent != InterdictionAction)
+        {
+            _savedUpdateContent.Invoke(response);
+        }
+        UpdateOutput();
+        StateHasChanged();
+    }
+
+    private void OnJsonFieldChanged(string value)
+    {
+        OutputComponent.Textbox.JsonField = value;
+        UpdateOutput();
+    }
+
+    private void OnIsJsonQueryChanged(bool value)
+    {
+        OutputComponent.Textbox.IsJsonQuery = value;
+        UpdateOutput();
+    }
+
+    private void OnCleanOutputChanged(bool value)
+    {
+        OutputComponent.Textbox.CleanupTextBox = value;
+        UpdateOutput();
+    }
+
+    private void UpdateOutput()
+    {
+        if (_response is not null)
+        {
+            Output = JsonContentHelper.GetUpdatedContent(_response, OutputComponent.Textbox);
+        }
+    }
+}

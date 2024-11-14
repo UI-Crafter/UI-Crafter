@@ -28,52 +28,7 @@
 
     private void UpdateTextboxContent(Dictionary<string, string> jsonResponse)
     {
-        if (string.IsNullOrWhiteSpace(Textbox.Textbox.JsonField))
-        {
-            Content = CleanUpString(jsonResponse["response"]);
-        }
-        else if (Textbox.Textbox.IsJsonQuery)
-        {
-            UpdateTextboxContentJsonQuery(jsonResponse);
-        }
-        else
-        {
-            UpdateTextboxContentJsonField(jsonResponse);
-        }
+        Content = JsonContentHelper.GetUpdatedContent(jsonResponse, Textbox.Textbox);
         InvokeAsync(StateHasChanged);
-    }
-
-    private void UpdateTextboxContentJsonQuery(Dictionary<string, string> jsonResponse)
-    {
-        string? result = null;
-        var _jmesPath = new JmesPath();
-        try
-        {
-            result = _jmesPath.Transform(jsonResponse["response"], Textbox.Textbox.JsonField);
-        }
-        catch (Exception ex)
-        {
-            Snackbar.Add($"API did not return valid json: {ex.Message}", Severity.Error);
-        }
-
-        Content = result is not null
-            ? CleanUpString(result)
-            : "JsonQuery transformation failed.";
-    }
-
-    private void UpdateTextboxContentJsonField(Dictionary<string, string> jsonResponse)
-    {
-        Content = jsonResponse.TryGetValue(Textbox.Textbox.JsonField, out var field)
-            ? CleanUpString(field)
-            : $"Field '{Textbox.Textbox.JsonField}' not found in JSON response.";
-    }
-
-    private string CleanUpString(string result)
-    {
-        if (Textbox.Textbox.CleanupTextBox)
-        {
-            return JsonToString.CleanUpString(result);
-        }
-        return result;
     }
 }
