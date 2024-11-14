@@ -15,7 +15,6 @@ using UICrafter.Core.Utility;
 using UICrafter.Mobile.DependencyInjection;
 using UICrafter.Mobile.Extensions;
 using UICrafter.Mobile.Options;
-using UICrafter.Mobile.Repository;
 using UICrafter.Mobile.Utility;
 
 public static class MauiProgram
@@ -87,7 +86,7 @@ public static class MauiProgram
 			});
 
 		// Repository
-		builder.Services.AddScoped<IAppViewRepository, AppViewRepository>();
+		builder.Services.AddScoped<IAppViewRepository, DefaultAppViewRepository>();
 
 		// API Call handler
 		builder.Services.AddScoped<IAPICallHandler, DefaultAPICallHandler>();

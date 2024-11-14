@@ -160,7 +160,7 @@ app.MapGet("auth/login", (string? returnUrl) => TypedResults.Challenge(new Authe
 
 app.MapGroup("user/").RequireAuthorization().MapUserAPI();
 
-app.MapGrpcService<AppViewServicegRPC>().EnableGrpcWeb();
+app.MapGrpcService<AppViewServicegRPC>().EnableGrpcWeb().RequireAuthorization();
 
 app.MapGroup("proxy/forwarder").RequireAuthorization().MapUICrafterProxy();
 
