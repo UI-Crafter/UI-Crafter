@@ -6,15 +6,10 @@
 }
 else
 {
-    if (AppViews.Count == 0)
-    {
-        <MudText Class="ma-2">No App-Views were found</MudText>
-    }
-    else
-    {
-        <MudTextField @bind-Value="SearchString" Class="ma-2" Placeholder="Search" Adornment="Adornment.Start" Immediate="true" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium"></MudTextField>
-        <MudList T="AppView">
-            @foreach (var view in AppViews.Where(x => (LoadPublic || x.UserId == User?.GetAzureId().ToString()) && x.Name.Contains(SearchString, StringComparison.InvariantCultureIgnoreCase)))
+    <MudTextField @bind-Value="SearchString" Class="ma-2" Placeholder="Search" Adornment="Adornment.Start" Immediate="true" AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium"></MudTextField>
+    <MudList T="AppView">
+        @if (FilteredViews.Any()){
+            foreach (var view in FilteredViews)
             {
                 <MudListItem OnClick="() => HandleClick(view)" Href=@(SetupHref(view))>
                     <MudText>Name: @view.Name</MudText>
@@ -26,13 +21,19 @@ else
                     </MudStack>
                 </MudListItem>
             }
-        </MudList>
-    }
+        }
+        else{
+            <MudText Class="ma-2">No App-Views were found</MudText>
+        }
+    </MudList>
 }
 
 @code {
     [CascadingParameter] Task<AuthenticationState> AuthenticationState { get; set; } = default!;
+
     private IList<AppViewMetadata> AppViews { get; set; } = new List<AppViewMetadata>();
+    private IEnumerable<AppViewMetadata> FilteredViews => AppViews.Where(x => (LoadPublic || x.UserId == User?.GetAzureId().ToString()) && x.Name.Contains(SearchString, StringComparison.InvariantCultureIgnoreCase));
+
     private bool IsLoading { get; set; } = true;
     private string SearchString { get; set; } = string.Empty;
 
