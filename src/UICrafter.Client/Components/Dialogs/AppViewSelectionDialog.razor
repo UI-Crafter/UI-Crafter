@@ -1,13 +1,10 @@
 <MudDialog Class="uicrafter-dialog" Style="height: 75vh">
     <DialogContent>
-        <MudTabs>
-            <MudTabPanel Class="pa-2" Text="My app-views">
-                <LoadMetaDataWeb ClickFunction="SelectAppView" Public="false" />
-            </MudTabPanel>
-            <MudTabPanel Class="pa-2" Text="App-view hub">
-                <LoadMetaDataWeb ClickFunction="SelectAppView" Public="true" />
-            </MudTabPanel>
+        <MudTabs @bind-ActivePanelIndex="activeIndex">
+            <MudTabPanel Class="pa-2" Text="My app-views" />
+            <MudTabPanel Class="pa-2" Text="App-view hub" />
         </MudTabs>
+        <LoadMetaDataWeb ClickFunction="SelectAppView" Public="@isPublic" />
     </DialogContent>
     <DialogActions>
         <MudButton OnClick="() => MudDialog.Cancel()">Cancel</MudButton>
@@ -18,6 +15,9 @@
 @code {
     [CascadingParameter]
     private MudDialogInstance MudDialog { get; set; } = null!;
+
+    private int activeIndex = 0;
+    private bool isPublic => activeIndex == 1;
 
     private void SelectAppView(long id)
     {

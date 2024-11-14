@@ -1,7 +1,7 @@
 @using System.Text.RegularExpressions
 
-<MudTextField T="string" Value="SelectedComponent.InputField.Label" ValueChanged="OnInputFieldChange" Label="Input Label" Variant="Variant.Outlined" MaxLength="25" />
-<MudTextField @bind-Value="SelectedComponent.InputField.LogicalName" Label="Logical Name" Variant="Variant.Outlined" MaxLength="25" ReadOnly />
+<MudTextField T="string" Value="SelectedComponent.InputField.Label" ValueChanged="OnInputFieldChange" Label="Input Label" Variant="Variant.Outlined" Immediate />
+<MudTextField Value="SelectedComponent.InputField.LogicalName" Label="Logical Name" Variant="Variant.Outlined" ReadOnly />
 
 
 @code {

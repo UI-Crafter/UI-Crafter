@@ -1,5 +1,6 @@
-<MudTextField @bind-Value="SelectedComponent.Button.Label" Label="Button Label" Variant="Variant.Outlined" MaxLength="25" />
-<MudTextField @bind-Value="SelectedComponent.Button.URL" Label="Button URL" Variant="Variant.Outlined" />
+
+<MudTextField @bind-Value="SelectedComponent.Button.Label" Label="Button Label" Variant="Variant.Outlined" MaxLength="25" Immediate />
+<MudTextField @bind-Value="SelectedComponent.Button.URL" Label="Button URL" Variant="Variant.Outlined" Immediate />
 <MudSelect T="CallMethod" Label="HTTP Method" @bind-Value="SelectedComponent.Button.HttpMethod" Variant="Variant.Outlined">
     @foreach (CallMethod method in Enum.GetValues(typeof(CallMethod)))
     {
@@ -9,7 +10,7 @@
 <HttpHeaderEditor Headers=SelectedComponent.Button.HttpHeaders />
 @if (SelectedComponent.Button.HttpMethod == CallMethod.Post || SelectedComponent.Button.HttpMethod == CallMethod.Put)
 {
-    <MudTextField @bind-Value="SelectedComponent.Button.HttpBody" Label="HTTP Body" Variant="Variant.Outlined" Lines="5" />
+    <MudTextField @bind-Value="SelectedComponent.Button.HttpBody" Label="HTTP Body" Variant="Variant.Outlined" Lines="5" Immediate />
 }
 
 

@@ -13,9 +13,15 @@
 
     protected override void OnInitialized()
     {
+        base.OnInitialized();
         ReadOnly = true;
+        OnFocus = EventCallback.Factory.Create<FocusEventArgs>(this, () => OnSelect.InvokeAsync(UIComponent));
+    }
+
+    protected override void OnParametersSet()
+    {
+        base.OnParametersSet();
         Label = UIComponent.InputField.Label;
         LogicalName = UIComponent.InputField.LogicalName;
-        OnFocus = EventCallback.Factory.Create<FocusEventArgs>(this, () => OnSelect.InvokeAsync(UIComponent));
     }
 }
