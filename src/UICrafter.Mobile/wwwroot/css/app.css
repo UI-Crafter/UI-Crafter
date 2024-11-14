@@ -76,6 +76,19 @@ h1:focus {
 	width: 100vw;
 }
 
+.main {
+	min-height: 100%;
+	width: 100%;
+	/* hide scrollbar but allow scrolling */
+	-ms-overflow-style: none; /* for Internet Explorer, Edge */
+	scrollbar-width: none; /* for Firefox */
+	overflow-y: scroll;
+}
+
+.main::-webkit-scrollbar {
+	display: none; /* for Chrome, Safari, and Opera */
+}
+
 .native-navbar-fixed {
 	position: fixed;
 	bottom: 0;
@@ -135,4 +148,8 @@ h1:focus {
 	left: 50%;
 	-ms-transform: translate(-50%, -50%);
 	transform: translate(-50%, -50%);
+}
+
+body {
+	--mud-palette-surface: var(--mud-palette-background)
 }

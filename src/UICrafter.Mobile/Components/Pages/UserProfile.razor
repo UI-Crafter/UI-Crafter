@@ -4,11 +4,14 @@
 
 <PageTitle>User Profile</PageTitle>
 
-<MudStack>
-    <BasicUserInformationComponent />
+<MudPaper Class="pa-4">
+    <MudStack>
+        <BasicUserInformationComponent />
+        <ThemeSelector />
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Href="/" OnClick="Logout" Class="mx-auto">Logout</MudButton>
+    </MudStack>
+</MudPaper>
 
-    <MudButton Variant="Variant.Filled" Color="Color.Primary" Href="/" OnClick="Logout" Class="mx-auto">Logout</MudButton>
-</MudStack>
 
 
 @code {

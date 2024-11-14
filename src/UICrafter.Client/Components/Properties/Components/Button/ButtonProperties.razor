@@ -1,7 +1,7 @@
 
 <MudTextField @bind-Value="SelectedComponent.Button.Label" Label="Button Label" Variant="Variant.Outlined" MaxLength="25" Immediate />
 <MudTextField @bind-Value="SelectedComponent.Button.URL" Label="Button URL" Variant="Variant.Outlined" Immediate />
-<MudSelect T="CallMethod" Label="HTTP Method" @bind-Value="SelectedComponent.Button.HttpMethod" Variant="Variant.Outlined">
+<MudSelect T="CallMethod" Label="HTTP Method" @bind-Value="SelectedComponent.Button.HttpMethod" Variant="Variant.Outlined" AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopLeft">
     @foreach (CallMethod method in Enum.GetValues(typeof(CallMethod)))
     {
         <MudSelectItem Value="method">@method.ToString()</MudSelectItem>

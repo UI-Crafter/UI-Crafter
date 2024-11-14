@@ -1,21 +1,17 @@
 @using System.Security.Claims
 @attribute [Authorize]
 
-<MudContainer MaxWidth="MaxWidth.Medium" Class="pa-4">
-    <MudPaper Class="pa-4 my-2">
-        <MudStack>
-            <MudText Typo="Typo.h4">User Profile</MudText>
-            <MudDivider Class="my-1" DividerType="DividerType.FullWidth" Style="padding: 1px 0;" />
+<MudStack>
+    <MudText Typo="Typo.h4">User Profile</MudText>
+    <MudDivider Class="my-1" DividerType="DividerType.FullWidth" Style="padding: 1px 0;" />
 
-            <MudText Typo="Typo.h6">Name:</MudText>
-            <MudText>@User.GetName()</MudText>
+    <MudText Typo="Typo.h6">Name:</MudText>
+    <MudText>@User.GetName()</MudText>
 
-            <MudText Typo="Typo.h6">Email:</MudText>
-            <MudText>@User.GetEmail()</MudText>
-            <MudButton Class="mx-auto my-2" Href="/test/debug" Color="Color.Warning" Variant="Variant.Outlined">Debug</MudButton>
-        </MudStack>
-    </MudPaper>
-</MudContainer>
+    <MudText Typo="Typo.h6">Email:</MudText>
+    <MudText>@User.GetEmail()</MudText>
+    <MudButton Class="mx-auto my-2" Href="/test/debug" Color="Color.Warning" Variant="Variant.Outlined">Debug</MudButton>
+</MudStack>
 
 @code {
     [Inject] private IAppViewRepository AppViewRepository { get; set; } = default!;
