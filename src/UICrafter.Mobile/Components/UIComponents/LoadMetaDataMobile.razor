@@ -1,9 +1,20 @@
 @using UICrafter.Core.Components.BaseComponents
 @inherits BaseLoadMetaDataList
 
-@{
-    base.BuildRenderTree(__builder);
-}
+<div id="reload">
+    @{
+        base.BuildRenderTree(__builder);
+    }
+</div>
+
+<script>
+    const ptr = PullToRefresh.init({
+        mainElement: '#reload',
+        onRefresh() {
+            window.location.reload();
+        }
+    });
+</script>
 
 @code {
     protected override string? SetupHref(AppViewMetadata view)
