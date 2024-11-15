@@ -31,10 +31,10 @@ else
 @code {
     [CascadingParameter] Task<AuthenticationState> AuthenticationState { get; set; } = default!;
 
-    private IList<AppViewMetadata> AppViews { get; set; } = new List<AppViewMetadata>();
+    protected IList<AppViewMetadata> AppViews { get; set; } = new List<AppViewMetadata>();
     private IEnumerable<AppViewMetadata> FilteredViews => AppViews.Where(x => LoadPublic ? x.IsPublic : (x.UserId == User?.GetAzureId().ToString()) && x.Name.Contains(SearchString, StringComparison.InvariantCultureIgnoreCase));
 
-    private bool IsLoading { get; set; } = true;
+    protected bool IsLoading { get; set; } = true;
     private string SearchString { get; set; } = string.Empty;
 
     private ClaimsPrincipal? User { get; set; }
