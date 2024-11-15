@@ -26,10 +26,4 @@ else
     private string ClassName => new CssBuilder(Fixed ? "center-loading-fixed" : "center-loading")
     .AddClass(Class)
     .Build();
-
-    protected override void OnAfterRender(bool firstRender)
-    {
-        base.OnAfterRender(firstRender);
-        Log.Warning(ClassName);
-    }
 }

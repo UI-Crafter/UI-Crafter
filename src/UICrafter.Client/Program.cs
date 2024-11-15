@@ -24,7 +24,6 @@ builder.Services.AddUICrafterMudServices();
 // gRPC
 builder.Services.AddGrpcClient<AppViewService.AppViewServiceClient>(options => options.Address = new Uri(builder.HostEnvironment.BaseAddress))
 	.ConfigurePrimaryHttpMessageHandler(() => new GrpcWebHandler(new HttpClientHandler()));
-;
 
 // Repository
 builder.Services.AddScoped<IAppViewRepository, DefaultAppViewRepository>();

@@ -26,6 +26,8 @@ public static class MauiProgram
 			.UseMauiApp<App>()
 			.ConfigureFonts(fonts => fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular"));
 
+		builder.Logging.AddSeriloggerSetup(builder.Configuration);
+
 		builder.Services.AddMauiBlazorWebView();
 		builder.Services.AddUICrafterMudServices();
 
@@ -45,14 +47,10 @@ public static class MauiProgram
 		// Register IConfiguration as a service
 		builder.Configuration.AddConfiguration(config);
 
-		var section = config.GetRequiredSection("ApiSettings");
-
 		// Add Options and configure ApiSettings
 		builder.Services.AddOptions<ApiSettings>().Bind(config.GetRequiredSection("ApiSettings")).ValidateDataAnnotations().ValidateOnStart();
 
 		builder.Services.AddConfiguredHttpClient();
-		// Register HttpClient using the configuration from IConfiguration
-		builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(section.GetValue<string>("BaseUrl")!) });
 
 		builder.Services.AddScoped<IHttpClientProvider, HttpClientProvider>();
 
@@ -93,8 +91,6 @@ public static class MauiProgram
 
 		// API Call handler
 		builder.Services.AddScoped<IAPICallHandler, DefaultAPICallHandler>();
-
-		builder.Logging.AddSeriloggerSetup(builder.Configuration);
 
 		return builder.Build();
 	}

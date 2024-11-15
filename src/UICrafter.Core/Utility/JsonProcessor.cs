@@ -7,9 +7,11 @@ public static class JsonProcessor
 {
 	public static Dictionary<string, string> ProcessJson(string json)
 	{
-		var result = new Dictionary<string, string>();
+		var result = new Dictionary<string, string>
+		{
+			["response"] = json
+		};
 		var node = JsonNode.Parse(json)!;
-		AddToDictionary(result, "response", node);
 		ProcessNode(node, result);
 		return result;
 	}
@@ -20,6 +22,10 @@ public static class JsonProcessor
 		{
 			foreach (var property in obj)
 			{
+				if (property.Value is null)
+				{
+					AddToDictionary(result, property.Key, "null");
+				}
 				ProcessNode(property.Value!, result, property.Key);
 			}
 			AddToDictionary(result, parentName, node);
@@ -28,7 +34,10 @@ public static class JsonProcessor
 		{
 			foreach (var item in array)
 			{
-				ProcessNode(item, result, parentName);
+				if (item is not null)
+				{
+					ProcessNode(item, result, parentName);
+				}
 			}
 		}
 		else if (node is JsonValue value)
@@ -44,11 +53,7 @@ public static class JsonProcessor
 			value = dictionary.Select(kv => $"{kv.Key}: {kv.Value}").ToString()!;
 		}
 
-		if (!result.ContainsKey(key))
-		{
-			result[key] = value.ToString()!;
-		}
-		else
+		if (!result.TryAdd(key, value.ToString() ?? "null"))
 		{
 			result[key] = result[key] + "\n \n" + value.ToString();
 		}

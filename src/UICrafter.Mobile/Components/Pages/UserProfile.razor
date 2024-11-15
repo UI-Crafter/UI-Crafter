@@ -1,4 +1,3 @@
-@using UICrafter.Core.Components.UserInformation;
 @page "/profile"
 @attribute [Authorize]
 
@@ -11,8 +10,6 @@
         <MudButton Variant="Variant.Filled" Color="Color.Primary" Href="/" OnClick="Logout" Class="mx-auto">Logout</MudButton>
     </MudStack>
 </MudPaper>
-
-
 
 @code {
     [Inject] private AuthenticationStateProvider AuthenticationStateProvider { get; set; } = default!;

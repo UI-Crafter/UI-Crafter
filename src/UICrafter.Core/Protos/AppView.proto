@@ -14,6 +14,7 @@ message AppView {
   bytes Content = 6;
   bool IsPublic = 7;
 }
+
 message AppViewMetadata {
   int64 Id = 1;
   string UserId = 2;

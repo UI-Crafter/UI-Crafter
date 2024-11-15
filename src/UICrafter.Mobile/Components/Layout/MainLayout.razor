@@ -10,10 +10,10 @@
     <main class="main">
         @Body
     </main>
-    <footer>
+    <div>
         <NativeNavbar Class="native-navbar-fixed" />
         <NativeNavbar Style="visibility: hidden;" />
-    </footer>
+    </div>
 </div>
 
 <script>
@@ -33,12 +33,13 @@
     {
         ThemeMode.DarkMode => true,
         ThemeMode.LightMode => false,
-        ThemeMode.Automatic => Application.Current.RequestedTheme == AppTheme.Dark,
+        ThemeMode.Automatic => Application.Current?.RequestedTheme == AppTheme.Dark,
         _ => false
     };
 
     protected override void OnInitialized()
     {
+        base.OnInitialized();
         ThemeService.PropertyChanged += async (sender, args) =>
         {
             if (args.PropertyName == nameof(ThemeService.ThemeMode))
@@ -46,19 +47,5 @@
                 await InvokeAsync(StateHasChanged);
             }
         };
-
-        base.OnInitialized();
-    }
-
-    public Task Login()
-    {
-        return ((CustomAuthStateProvider)AuthenticationStateProvider)
-            .LogInAsync();
-    }
-
-    public Task Logout()
-    {
-        return ((CustomAuthStateProvider)AuthenticationStateProvider)
-           .SignOutAsync();
     }
 }
