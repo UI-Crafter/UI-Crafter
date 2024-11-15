@@ -32,7 +32,9 @@ else
     [CascadingParameter] Task<AuthenticationState> AuthenticationState { get; set; } = default!;
 
     protected IList<AppViewMetadata> AppViews { get; set; } = new List<AppViewMetadata>();
-    private IEnumerable<AppViewMetadata> FilteredViews => AppViews.Where(x => LoadPublic ? x.IsPublic : (x.UserId == User?.GetAzureId().ToString()) && x.Name.Contains(SearchString, StringComparison.InvariantCultureIgnoreCase));
+    private IEnumerable<AppViewMetadata> FilteredViews => AppViews
+    .Where(x => (LoadPublic ? x.IsPublic : (x.UserId == User?.GetAzureId().ToString()))
+        && x.Name.Contains(SearchString, StringComparison.InvariantCultureIgnoreCase));
 
     protected bool IsLoading { get; set; } = true;
     private string SearchString { get; set; } = string.Empty;
