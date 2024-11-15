@@ -72,6 +72,25 @@ builder.Services.Configure<JwtBearerOptions>(JwtBearerDefaults.AuthenticationSch
 	{
 		ValidAudiences = jwtSettings.ValidAudiences,
 	};
+
+	// Prevents redirect to login for API
+	options.Events = new JwtBearerEvents
+	{
+		OnChallenge = context =>
+		{
+			// Suppress the redirect to login and instead return 401
+			context.HandleResponse();
+			context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+			return Task.CompletedTask;
+		},
+		OnAuthenticationFailed = context =>
+		{
+			// Handle authentication failures, if needed, by customizing the response
+			context.NoResult();
+			context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+			return Task.CompletedTask;
+		}
+	};
 });
 
 builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
