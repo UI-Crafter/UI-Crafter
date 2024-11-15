@@ -1,4 +1,3 @@
-using Google.Protobuf;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
@@ -18,7 +17,6 @@ using UICrafter.Services;
 using UICrafter.Utility;
 using Microsoft.OpenApi.Models;
 using UICrafter.Core.DependencyInjection;
-using UICrafter.Core.AppView;
 using UICrafter.Options;
 using UICrafter.Proxy;
 
@@ -45,7 +43,10 @@ else
 }
 
 // Swagger setup
-builder.Services.AddEndpointsApiExplorer();
+if (builder.Environment.IsDevelopment())
+{
+	builder.Services.AddEndpointsApiExplorer();
+}
 
 // Repository
 builder.Services.AddScoped<IAppViewRepository, AppViewRepository>();
@@ -63,6 +64,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 	.AddMicrosoftIdentityWebApi(builder.Configuration)
 	.EnableTokenAcquisitionToCallDownstreamApi()
 	.AddInMemoryTokenCaches();
+
 builder.Services.Configure<JwtBearerOptions>(JwtBearerDefaults.AuthenticationScheme, options =>
 {
 	var jwtSettings = builder.Configuration.GetSection("JwtSettings").Get<JwtBearerAuthenticationOptions>()!;
@@ -70,26 +72,8 @@ builder.Services.Configure<JwtBearerOptions>(JwtBearerDefaults.AuthenticationSch
 	{
 		ValidAudiences = jwtSettings.ValidAudiences,
 	};
-
-	// Prevents redirect to login for API
-	options.Events = new JwtBearerEvents
-	{
-		OnChallenge = context =>
-		{
-			// Suppress the redirect to login and instead return 401
-			context.HandleResponse();
-			context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-			return Task.CompletedTask;
-		},
-		OnAuthenticationFailed = context =>
-		{
-			// Handle authentication failures, if needed, by customizing the response
-			context.NoResult();
-			context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-			return Task.CompletedTask;
-		}
-	};
 });
+
 builder.Services.AddAuthentication(OpenIdConnectDefaults.AuthenticationScheme)
 	.AddMicrosoftIdentityWebApp(builder.Configuration);
 builder.Services.Configure<OpenIdConnectOptions>(OpenIdConnectDefaults.AuthenticationScheme, options => OpenIdConnectConfiguration.Configure(options, builder.Configuration));
@@ -116,7 +100,6 @@ if (app.Environment.IsDevelopment())
 {
 	app.UseWebAssemblyDebugging();
 	app.UseSwagger();
-	app.UseSwaggerUI();
 	app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1"));
 }
 else
@@ -149,6 +132,4 @@ app.MapGroup("user/").RequireAuthorization().MapUserAPI();
 app.MapGrpcService<AppViewServicegRPC>().EnableGrpcWeb().RequireAuthorization();
 
 app.MapGroup("proxy/forwarder").RequireAuthorization().MapUICrafterProxy();
-
-
 app.Run();

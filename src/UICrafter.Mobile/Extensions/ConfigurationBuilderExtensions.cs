@@ -15,12 +15,7 @@ public static class ConfigurationBuilderExtensions
 	public static IConfigurationBuilder AddEmbeddedResource(this IConfigurationBuilder builder, string name)
 	{
 		var asm = Assembly.GetExecutingAssembly();
-		using var stream = asm.GetManifestResourceStream(name);
-
-		if (stream == null)
-		{
-			throw new FileNotFoundException($"Embedded resource '{name}' not found in assembly '{asm.FullName}'.");
-		}
+		using var stream = asm.GetManifestResourceStream(name) ?? throw new FileNotFoundException($"Embedded resource '{name}' not found in assembly '{asm.FullName}'.");
 
 		using var reader = new StreamReader(stream);
 		var jsonContent = reader.ReadToEnd();
@@ -30,5 +25,4 @@ public static class ConfigurationBuilderExtensions
 
 		return builder.AddJsonStream(jsonStream);
 	}
-
 }

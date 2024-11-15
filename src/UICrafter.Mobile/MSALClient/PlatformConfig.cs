@@ -24,7 +24,7 @@ public class PlatformConfig
 	public object ParentWindow { get; set; }
 
 	// private constructor to ensure singleton
-	private PlatformConfig()
-	{
-	}
+#pragma warning disable CS8618
+	private PlatformConfig() { }
+#pragma warning restore CS8618
 }

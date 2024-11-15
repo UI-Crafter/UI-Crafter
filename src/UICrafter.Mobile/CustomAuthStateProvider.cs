@@ -7,7 +7,7 @@ using Microsoft.Identity.Client;
 using Serilog;
 using UICrafter.Mobile.MSALClient;
 
-public class CustomAuthStateProvider : AuthenticationStateProvider, IDisposable
+public partial class CustomAuthStateProvider : AuthenticationStateProvider, IDisposable
 {
 	private readonly HttpClient _httpClient;
 	private ClaimsPrincipal _currentUser = new(new ClaimsIdentity());

@@ -37,8 +37,6 @@ public static class OpenIdConnectConfiguration
 			await Task.CompletedTask;
 		};
 
-		options.Events.OnRedirectToIdentityProvider = async context => Console.WriteLine("OnRedirectToIdentityProvider");
-
 		options.Events.OnRemoteFailure = context =>
 		{
 			var message = context.Failure?.Message;

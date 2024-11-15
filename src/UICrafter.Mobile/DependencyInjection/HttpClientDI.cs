@@ -14,7 +14,7 @@ public static class HttpClientDI
 	public static IServiceCollection AddConfiguredHttpClient(this IServiceCollection services)
 	{
 		// Register HttpClient using the configured BaseUrl from ApiSettings
-		services.AddSingleton(sp =>
+		services.AddScoped(sp =>
 		{
 			var apiSettings = sp.GetRequiredService<IOptions<ApiSettings>>().Value;
 			return new HttpClient { BaseAddress = new Uri(apiSettings.BaseUrl) };

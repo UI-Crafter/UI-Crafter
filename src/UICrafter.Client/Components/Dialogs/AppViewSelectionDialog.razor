@@ -24,9 +24,9 @@
         MudDialog.Close(DialogResult.Ok(id));
     }
 
-    protected override async Task OnInitializedAsync()
+    protected override void OnInitialized()
     {
-        await base.OnInitializedAsync();
+        base.OnInitialized();
         MudDialog.Options.NoHeader = true;
         MudDialog.Options.MaxWidth = MaxWidth.Small;
         MudDialog.Options.FullWidth = true;

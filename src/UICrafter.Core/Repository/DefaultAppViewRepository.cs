@@ -26,6 +26,4 @@ public class DefaultAppViewRepository : IAppViewRepository
 	public async Task<AppView> UpdateAppView(AppView view) => await _appViewServiceClient.UpdateAppViewAsync(new UpdateAppViewRequest { AppView = view });
 
 	public async Task DeleteAppViewById(long id) => await _appViewServiceClient.DeleteAppViewAsync(new DeleteAppViewRequest { Id = id });
-
-	
 }

@@ -13,7 +13,7 @@ public static class ClaimsPrincipalExtensions
 	/// <exception cref="FormatException">Thrown if the claim value cannot be parsed as a <see cref="Guid"/>.</exception>
 	public static Guid GetAzureId(this ClaimsPrincipal principal)
 	{
-		return Guid.Parse(GetClaimValue(principal, "oid", "http://schemas.microsoft.com/identity/claims/objectidentifier"));
+		return Guid.Parse(principal.GetClaimValue("oid", "http://schemas.microsoft.com/identity/claims/objectidentifier"));
 	}
 
 	/// <summary>
@@ -24,7 +24,7 @@ public static class ClaimsPrincipalExtensions
 	/// <returns>A <see cref="string"/> representing the username or name.</returns>
 	public static string GetName(this ClaimsPrincipal principal)
 	{
-		return GetClaimValue(principal, "preferred_username", ClaimsIdentity.DefaultNameClaimType, "name");
+		return principal.GetClaimValue("preferred_username", ClaimsIdentity.DefaultNameClaimType, "name");
 	}
 
 	/// <summary>
@@ -35,7 +35,7 @@ public static class ClaimsPrincipalExtensions
 	/// <returns>A <see cref="string"/> representing the email address, or null if not present.</returns>
 	public static string GetEmail(this ClaimsPrincipal principal)
 	{
-		return GetClaimValue(principal, "emails", ClaimTypes.Email)!;
+		return principal.GetClaimValue("emails", ClaimTypes.Email)!;
 	}
 
 	/// <summary>
@@ -45,7 +45,7 @@ public static class ClaimsPrincipalExtensions
 	/// <returns>The access token as a <see cref="string"/>, or null if the "AccessToken" claim is not present.</returns>
 	public static string? GetAccessToken(this ClaimsPrincipal principal)
 	{
-		return GetClaimValue(principal, "AccessToken");
+		return principal.GetClaimValue("AccessToken");
 	}
 
 	/// <summary>

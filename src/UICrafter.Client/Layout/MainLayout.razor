@@ -29,7 +29,6 @@
     <a class="dismiss">🗙</a>
 </div>
 
-
 @code {
     [CascadingParameter] public Theme theme { get; set; } = new();
     [Inject] private IJSRuntime JSRuntime { get; set; } = default!;
@@ -71,5 +70,3 @@
         await JSRuntime.InvokeVoidAsync("blazorUtility.setThemeCookie", Convert.ToBase64String(Encoding.UTF8.GetBytes(json)));
     }
 }
-
-
