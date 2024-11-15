@@ -7,7 +7,7 @@
 <PageTitle>@appView?.Name</PageTitle>
 
 <MudPaper Style="min-height: 100%; width: 100%;">
-    <div style=@(!viewId.HasValue ? null : "display: none;")>
+    <div id="hide-loading-list" style=@(!viewId.HasValue ? null : "display: none;")>
         <MudTabs Border Outlined PanelClass="pa-2">
             <MudTabPanel Text="My App-Views" Icon="@Icons.Material.Filled.Apps">
                 <LoadMetaDataMobile />

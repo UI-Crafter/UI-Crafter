@@ -1,5 +1,8 @@
 @using UICrafter.Core.Components.BaseComponents
 @inherits BaseLoadMetaDataList
+@inject IAppViewRepository AppViewRepository
+@inject IJSRuntime JSRuntime
+@implements IDisposable
 
 <div id="reload">
     @{
@@ -8,15 +11,35 @@
 </div>
 
 <script>
+    let dotnetRef = {};
+
+    window.initializeDotNetReference = (dotNetHelper) => {
+      dotnetRef = dotNetHelper;
+    };
+
     const ptr = PullToRefresh.init({
-        mainElement: '#reload',
+        mainElement: 'main',
         onRefresh() {
-            window.location.reload();
+            if (dotnetRef) {
+                dotnetRef.invokeMethodAsync('ReloadData');
+            }
+        },
+        shouldPullToRefresh() {
+            const hideLoadingList = document.querySelector('#hide-loading-list');
+            const isHidden = hideLoadingList && hideLoadingList.style.display === 'none';
+
+            if (isHidden) {
+                return false;
+            }
+
+            return !document.querySelector('main').scrollTop;
         }
     });
 </script>
 
 @code {
+    private DotNetObjectReference<LoadMetaDataMobile>? objRef;
+
     protected override string? SetupHref(AppViewMetadata view)
     {
         return "/appview/" + view.Id;
@@ -27,6 +50,29 @@
 
     protected override void OnInitialized()
     {
+        objRef = DotNetObjectReference.Create(this);
         LoadPublic = Public;
     }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        await base.OnAfterRenderAsync(firstRender);
+        if (firstRender)
+        {
+            await JSRuntime.InvokeVoidAsync("initializeDotNetReference", objRef);
+        }
+    }
+
+    [JSInvokable]
+    public async Task ReloadData()
+    {
+        IsLoading = true;
+        await InvokeAsync(StateHasChanged);
+        await Task.Yield();
+        AppViews = await AppViewRepository.GetAppViewMetadata();
+        IsLoading = false;
+        await InvokeAsync(StateHasChanged);
+    }
+
+    public void Dispose() => objRef?.Dispose();
 }
