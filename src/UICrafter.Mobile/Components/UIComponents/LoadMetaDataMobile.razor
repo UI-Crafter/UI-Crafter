@@ -14,7 +14,9 @@
     let dotnetRef = {};
 
     window.initializeDotNetReference = (dotNetHelper) => {
-      dotnetRef = dotNetHelper;
+        try {
+            dotnetRef = dotNetHelper;
+        } catch (error) {}
     };
 
     const ptr = PullToRefresh.init({
@@ -59,19 +61,27 @@
         await base.OnAfterRenderAsync(firstRender);
         if (firstRender)
         {
-            await JSRuntime.InvokeVoidAsync("initializeDotNetReference", objRef);
+            try
+            {
+                await JSRuntime.InvokeVoidAsync("initializeDotNetReference", objRef);
+            }
+            catch { }
         }
     }
 
     [JSInvokable]
     public async Task ReloadData()
     {
-        IsLoading = true;
-        await InvokeAsync(StateHasChanged);
-        await Task.Yield();
-        AppViews = await AppViewRepository.GetAppViewMetadata();
-        IsLoading = false;
-        await InvokeAsync(StateHasChanged);
+        try
+        {
+            IsLoading = true;
+            await InvokeAsync(StateHasChanged);
+            await Task.Yield();
+            AppViews = await AppViewRepository.GetAppViewMetadata();
+            IsLoading = false;
+            await InvokeAsync(StateHasChanged);
+        }
+        catch { }
     }
 
     public void Dispose() => objRef?.Dispose();
