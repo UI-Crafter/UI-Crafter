@@ -67,6 +67,28 @@ public static class OpenIdConnectConfiguration
 			await userRepository.UpsertUserEntity(userEntity);
 		};
 
+		var redirectToIdpHandler = options.Events.OnRedirectToIdentityProvider;
+		options.Events.OnRedirectToIdentityProvider = async context =>
+		{
+			await redirectToIdpHandler(context);
+
+			if (context.ProtocolMessage.RedirectUri.StartsWith("http:", StringComparison.OrdinalIgnoreCase))
+			{
+				context.ProtocolMessage.RedirectUri = context.ProtocolMessage.RedirectUri.Replace("http:", "https:");
+			}
+		};
+
+		var redirectToIdpForSignOutHandler = options.Events.OnRedirectToIdentityProviderForSignOut;
+		options.Events.OnRedirectToIdentityProviderForSignOut = async context =>
+		{
+			await redirectToIdpForSignOutHandler(context);
+
+			if (context.ProtocolMessage.RedirectUri.StartsWith("http:", StringComparison.OrdinalIgnoreCase))
+			{
+				context.ProtocolMessage.RedirectUri = context.ProtocolMessage.RedirectUri.Replace("http:", "https:");
+			}
+		};
+
 		options.Prompt = "login";
 	}
 }
