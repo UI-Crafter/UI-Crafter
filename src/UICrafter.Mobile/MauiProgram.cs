@@ -1,5 +1,6 @@
 namespace UICrafter.Mobile;
 
+using Grpc.Net.Client.Web;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -66,6 +67,8 @@ public static class MauiProgram
 
 				options.Address = new Uri(settings.Value.BaseUrl);
 			})
+			.ConfigurePrimaryHttpMessageHandler(() =>
+				new GrpcWebHandler(new HttpClientHandler()))
 			.AddCallCredentials(async (context, metadata, services) =>
 			{
 				try
